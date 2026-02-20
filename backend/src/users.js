@@ -1,0 +1,230 @@
+const fs = require("fs");
+const path = require("path");
+
+function toSafeFilename(str) {
+    return str
+        .toLowerCase()
+        .replace(/[^a-z0-9.\-_]/g, '_')  // replace anything unsafe with _
+        .replace(/_+/g, '_')              // collapse multiple underscores
+        .replace(/^_|_$/g, '');           // trim leading/trailing underscores
+}
+
+function readUsers(baseDir) {
+    if (!fs.existsSync(`${baseDir}/users.json`)) {
+        return;
+    }
+    return JSON.parse(fs.readFileSync(`${baseDir}/users.json`));
+}
+
+function resolveTrackPath(musicDir, artist, song) {
+    if(!fs.existsSync(musicDir)) {
+        return "";
+    }
+    if(!fs.existsSync(`${musicDir}/${artist}`)) {
+        return "";
+    }
+    if(!fs.existsSync(`${musicDir}/${artist}/${song}`)) {
+        return "";
+    }
+    return `/api/songs/${artist}/${song}`;
+}
+
+function genPlaylistId() {
+    const valid = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let id = "";
+    for (let i = 0; i < 10; i++) {
+        id += valid.charAt(Math.round(Math.random() * valid.length));
+    }
+    return id;
+}
+
+function setup(baseDir) {
+    if (!fs.existsSync(baseDir)) {
+        console.log(`User directory ${baseDir} does not exist, creating...`);
+        fs.mkdirSync(baseDir, {recursive: true});
+    }
+    if (!fs.existsSync(`${baseDir}/users.json`)) {
+        console.log(`User file ${baseDir} does not exist, creating...`);
+        const users = {
+            current_user: null,
+            users: []
+        }
+        fs.writeFileSync(`${baseDir}/users.json`, JSON.stringify(users));
+    }
+    if (!fs.existsSync(`${baseDir}/accounts`)) {
+        console.log(`Account directory ${baseDir}/accounts does not exist, creating...`);
+        fs.mkdirSync(`${baseDir}/accounts`, {recursive: true});
+    }
+    const users = readUsers(baseDir);
+    users.users.forEach((user) => {
+        const userDir = `${baseDir}/accounts/${user.id}`;
+        if (!fs.existsSync(userDir)) {
+            console.log(`Account directory for ${user.id} does not exist, aborting...`);
+            throw new Error(`Account directory for ${user.id} does not exist, even though user is registered`);
+        }
+        if (!fs.existsSync(`${userDir}/userdata.json`)) {
+            throw new Error(`userdata.json for ${user.id} does not exist, even though user is registered`);
+        }
+    })
+}
+
+function users(app, baseDir, musicDir) {
+    setup(baseDir);
+
+
+    app.get("/api/users", async (req, res) => {
+        res.json(readUsers(baseDir));
+    });
+    app.get("/api/users/default_cover", (req, res) => {
+        res.sendFile(path.resolve(`${baseDir}/cover.png`));
+    });
+    app.get("/api/users/register", async (req, res) => {
+        const name = req.query.name;
+        const id = toSafeFilename(name);
+        const path = `/api/users/${id}`;
+
+        if (!fs.existsSync(`${baseDir}/accounts/${id}`)) {
+            fs.mkdirSync(`${baseDir}/accounts/${id}`, {recursive: true});
+
+            const pictureExists = fs.existsSync(`${baseDir}/accounts/${id}/picture.png`);
+
+            const userdata = {
+                name,
+                picture: pictureExists ? `/api/users/${id}/picture` : ""
+            }
+            fs.writeFileSync(`${baseDir}/accounts/${id}/userdata.json`, JSON.stringify(userdata));
+
+
+            const users = await readUsers(baseDir);
+            users.current_user = id;
+            users.users.push({id, path})
+            fs.writeFileSync(`${baseDir}/users.json`, JSON.stringify(users));
+
+            res.json({success: true, id});
+        } else {
+            res.json({success: false, reason: "account directory already exists"});
+        }
+
+    });
+    app.get("/api/users/switch", async (req, res) => {
+        const user = req.query.id;
+        if (!fs.existsSync(`${baseDir}/accounts/${user}`)) {
+            res.json({success: false, reason: "account does not exist"});
+            return;
+        }
+        const users = await readUsers(baseDir);
+        users.current_user = user;
+        fs.writeFileSync(`${baseDir}/users.json`, JSON.stringify(users));
+
+        res.json({success: true, user});
+    })
+    app.get("/api/users/:userId", async (req, res) => {
+        const user = req.params.userId;
+        if (!fs.existsSync(`${baseDir}/accounts/${user}`)) {
+            res.json({success: false, reason: "account does not exist"});
+            return;
+        }
+        const userdata = JSON.parse(fs.readFileSync(`${baseDir}/accounts/${user}/userdata.json`));
+        let playlists = [];
+        if (fs.existsSync(`${baseDir}/accounts/${user}/playlists`)) {
+            const lists = fs.readdirSync(`${baseDir}/accounts/${user}/playlists`);
+            playlists = lists.filter((s) => {
+                return s.endsWith(".json");
+            }).map((s) => {
+                return s.substring(0, s.indexOf(".json"));
+            })
+        }
+        res.json({name: userdata.name, picture: userdata.picture, playlists});
+    });
+    app.get("/api/users/:userId/playlists/create", async (req, res) => {
+        const user = req.params.userId;
+        if (!fs.existsSync(`${baseDir}/accounts/${user}`)) {
+            res.json({success: false, reason: "account does not exist"});
+            return;
+        }
+
+        const title = req.query.title;
+        const cover = "/api/users/default_cover";
+        const content = [];
+
+        const id = genPlaylistId();
+
+        const playlistDir = `${baseDir}/accounts/${user}/playlists`;
+        if (!fs.existsSync(playlistDir)) {
+            fs.mkdirSync(playlistDir, {recursive: true});
+        }
+        if (fs.existsSync(path.join(playlistDir, `${id}.json`))) {
+            res.json({success: false, reason: "playlist id SOMEHOW already exists"});
+            return;
+        }
+        const playlist = {cover, title, content};
+        fs.writeFileSync(`${baseDir}/accounts/${user}/playlists/${id}.json`, JSON.stringify(playlist));
+
+        res.json({success: true, id});
+    });
+    app.get("/api/users/:userId/playlists/:playlistId/add", async (req, res) => {
+        const user = req.params.userId;
+        if (!fs.existsSync(`${baseDir}/accounts/${user}`)) {
+            res.json({success: false, reason: "account does not exist"});
+            return;
+        }
+        const playlist = req.params.playlistId;
+        if(!fs.existsSync(`${baseDir}/accounts/${user}/playlists/${playlist}.json`)) {
+            res.json({success: false, reason: "playlist does not exist"});
+            return;
+        }
+        const data = JSON.parse(fs.readFileSync(`${baseDir}/accounts/${user}/playlists/${playlist}.json`));
+
+        const song = req.query.song;
+        const artist = req.query.artist;
+
+        const trackDir = resolveTrackPath(musicDir, artist, song);
+        if(trackDir.length > 0) {
+            data.content.push(
+                trackDir
+            )
+
+        }
+
+        fs.writeFileSync(`${baseDir}/accounts/${user}/playlists/${playlist}.json`, JSON.stringify(data));
+        res.json(data);
+    })
+    app.get("/api/users/:userId/playlists/:playlistId", async (req, res) => {
+        const user = req.params.userId;
+        const playlist = req.params.playlistId;
+
+        if (!fs.existsSync(`${baseDir}/accounts/${user}`)) {
+            res.json({success: false, reason: "account does not exist"});
+            return;
+        }
+
+        const playlistDir = `${baseDir}/accounts/${user}/playlists`;
+        const playlistData = JSON.parse(fs.readFileSync(path.join(playlistDir, playlist+".json")));
+        res.json({
+            id: playlist,
+            title: playlistData.title,
+            cover: playlistData.cover,
+            content: playlistData.content
+        });
+    })
+    app.get("/api/users/:userId/picture", async (req, res) => {
+
+    });
+}
+
+/**
+ * users
+ *+ |- users.json
+ *+ |  |- {current_user: string, users: [{id: string, path: string}]}
+ *+ |- accounts
+ *+    |- user_id
+ *        |- playlists
+ *        |  |- playlist_id.json
+ *        |     |- {cover?: string, title: string, content: [{title: string, artist: string}, ...]}
+ *+       |- userdata.json
+ *+       |  |- {name: string, picture: string}
+ *        |- picture.png?
+ * */
+
+
+module.exports = users;

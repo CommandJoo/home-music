@@ -1,0 +1,114 @@
+#sidebar-user-wrapper {
+    width: 4.5vw;
+    height: 4.5vw;
+    flex-shrink: 0;
+}
+
+#sidebar-user-wrapper #user-content {
+    z-index: 100000;
+    position: absolute;
+    display: flex;
+    justify-content: flex-start;
+
+    #sidebar-entry.user {
+        #entry-preview {
+            overflow: hidden;
+
+            h1 {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                width: 100%;
+                background-color: var(--color, #333);
+                color: var(--bg-light);
+                font-size: 3.2rem;
+                font-weight: 500;
+            }
+        }
+
+        #entry-content {
+
+        }
+    }
+}
+
+
+#sidebar-user-wrapper.opened #user-content {
+    z-index: 100000;
+    position: absolute;
+    width: 20vw;
+    height: fit-content;
+    flex-direction: column;
+
+    background: var(--bg-light);
+    border: 1px solid var(--border-highlight);
+    border-radius: 8px;
+
+    gap: 0.3vh;
+    padding: 0.5vh;
+
+    #account-entry {
+        height: 4.5vw;
+        display: flex;
+
+        background: var(--bg);
+
+        box-sizing: border-box;
+        padding: 0.3vh;
+        gap: 1vh;
+
+        border-radius: 8px;
+        overflow: hidden;
+
+        border: 1px solid var(--border);
+
+        #preview {
+            h1 {
+                border-radius: 6px;
+                height: 100%;
+                aspect-ratio: 1/1;
+                background-color: var(--color, #333);
+                color: var(--bg-light);
+                font-size: 3.2rem;
+                font-weight: 500;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+            }
+
+            img {
+                border-radius: 6px;
+            }
+        }
+
+        h2 {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        &.add {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .icon {
+                fill: var(--border);
+            }
+        }
+    }
+
+    #account-entry:hover {
+        border: 1px solid var(--border-highlight);
+
+        &.add {
+            .icon {
+                fill: var(--border-highlight);
+            }
+        }
+    }
+}
