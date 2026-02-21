@@ -14,6 +14,17 @@
     justify-content: center;
     flex-shrink: 0;
 
+    &.generic {
+        transition: --hue-a 0.2s, --hue-b 0.2s;
+        background: linear-gradient(to bottom right, hsl(var(--hue-a) 65% 50%), hsl(var(--hue-b) 65% 50%));
+    }
+
+    &.generic:hover {
+        filter: brightness(1.2);
+        transition: filter 0.2s;
+        background: linear-gradient(to top right, hsl(var(--hue-b) 65% 50%), hsl(var(--hue-a) 65% 50%));
+    }
+
     #entry-preview {
         align-self: flex-start;
         height: 100%;
@@ -34,10 +45,9 @@
         }
 
         .icon {
-            fill: #777;
+            fill: var(--bg);
         }
     }
-
 }
 
 #sidebar-entry:hover {
@@ -47,7 +57,7 @@
 
     #entry-preview {
         .icon {
-            fill: #999;
+            fill: var(--bg);
         }
     }
 }

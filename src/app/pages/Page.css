@@ -1,0 +1,29 @@
+.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+
+    #search {
+        align-self: center;
+        background-color: var(--bg);
+        height: 6vh;
+        box-sizing: border-box;
+
+        width: 100%;
+
+        border: 2px solid var(--border);
+        border-radius: 8px;
+    }
+
+    #page {
+        position: relative;
+        height: 78vh;
+        overflow-y: scroll;
+        background-color: var(--bg);
+        box-sizing: border-box;
+
+        border: 2px solid var(--border);
+        border-radius: 8px;
+    }
+}

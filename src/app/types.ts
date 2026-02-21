@@ -27,14 +27,16 @@ export type Recording = {
     }
 }
 
-export type Collection = {
-    type: "album"|"artist";
+export type Playlist = {
+    title: string;
     songs: Song[];
 }
 
-export type PlayItem = {
-    type: "collection"|"song";
-    item: Collection|Song;
+export type Page = {
+    type: "downloads"|"library"|"artist"|"playlist"
+    artist?: Artist
+    songs?: Song[];
+    playlists?: Playlist[];
 }
 
 export type Users = {
@@ -46,6 +48,7 @@ export type Users = {
 }
 
 export type User = {
+    id: string;
     name: string;
     picture: string;
     playlists: string[];

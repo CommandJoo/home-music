@@ -1,12 +1,9 @@
 import "./UserSidebarEntry.css"
-import type {User, Users} from "../types.ts";
+import type {User} from "../types.ts";
 import SidebarEntry from "./SidebarEntry.tsx";
 import {type CSSProperties, useEffect, useState} from "react";
 import { FaPlus } from "react-icons/fa";
-
-type UserSidebarEntryProps = {
-    users?: Users
-}
+import {useMusic} from "../../MusicProvider.tsx";
 
 function stringToColor(str: string): string {
     let hash = 0;
@@ -14,7 +11,7 @@ function stringToColor(str: string): string {
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
     const hue = Math.abs(hash) % 360;
-    return `hsl(${hue}, 65%, 50%)`;
+    return `hsl(${hue}, 65%, 60%)`;
 }
 
 function picture(user: User) {
@@ -22,10 +19,11 @@ function picture(user: User) {
         return <img style={{"--color": stringToColor(user.name.length > 0 ? stringToColor(user.name) : "#333")} as CSSProperties} src={user.picture}/>
     }
     console.log(stringToColor(user.name))
-    return <h1 style={{"--color": stringToColor(stringToColor(user.name))} as CSSProperties}>{user.name.charAt(0).toUpperCase()}</h1>;
+    return <h1 style={{"--color": stringToColor(user.name)} as CSSProperties}>{user.name.charAt(0).toUpperCase()}</h1>;
 }
 
 function Account({user, close}: { user: { id: string, path: string }, close: () => void }) {
+    const {changeUser} = useMusic();
     const [userInfo, setUserInfo] = useState<User | null>(null);
 
     useEffect(() => {
@@ -39,6 +37,7 @@ function Account({user, close}: { user: { id: string, path: string }, close: () 
     }, [user]);
 
     return <div id={"account-entry"} onClick={() => {
+        changeUser(user.id);
         close();
     }}>
         {userInfo && <>
@@ -48,30 +47,9 @@ function Account({user, close}: { user: { id: string, path: string }, close: () 
     </div>
 }
 
-export default function UserSidebarEntry(props: UserSidebarEntryProps) {
+export default function UserSidebarEntry() {
+    const {users, currentUser} = useMusic();
     const [open, setOpen] = useState(false);
-    const [currentUser, setCurrentUser] = useState<User | null>();
-    const [users, setUsers] = useState<Users>({current_user: "", users: []});
-
-    useEffect(() => {
-        async function load() {
-            if (props.users) {
-                setUsers(props.users);
-
-                for (const user of props.users.users) {
-                    if (user.id === props.users.current_user) {
-                        const path = user.path;
-                        const response = await fetch(path);
-                        const data = await response.json() as User;
-                        setCurrentUser(data);
-                        return;
-                    }
-                }
-            }
-        }
-
-        load();
-    }, [props.users, users.current_user]);
 
     function content() {
         if (open) {

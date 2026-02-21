@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    z-index: 100;
 
     #searchbar-input {
         background: none;
@@ -42,14 +43,16 @@
 
     #searchbar-results {
         position: absolute;
-        width: 100%;
+        width: 60%;
         background: var(--bg);
 
-        border: 2px solid var(--border);
+        border: 2px solid var(--border-highlight);
         border-radius: 8px;
 
-        top: 100%;
-        max-height: 50vh;
+        top: 180%;
+        left: 20%;
+
+        max-height: 70vh;
 
         box-sizing: border-box;
         gap: 1vh;

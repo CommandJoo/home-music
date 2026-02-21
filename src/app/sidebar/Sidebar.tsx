@@ -1,16 +1,26 @@
 import "./Sidebar.css"
 import SidebarEntry from "./SidebarEntry.tsx";
-import {useEffect, useState} from "react";
-import type {Artist, PlayItem, Users} from "../types.ts";
-import {FaHome} from "react-icons/fa";
+import {type CSSProperties, useEffect, useState} from "react";
+import type {Artist} from "../types.ts";
+import {FaDownload} from "react-icons/fa";
+import { BsFillCollectionFill } from "react-icons/bs";
 import UserSidebarEntry from "./UserSidebarEntry.tsx";
+import {useMusic} from "../../MusicProvider.tsx";
 
-type SidebarProps = {
-    select: (item: PlayItem | null) => void;
-    users?: Users;
+function stringToColor(str: string, seed: number = 0): string {
+    let hash = seed;
+    for (let i = 0; i < str.length; i++) {
+        hash ^= str.charCodeAt(i);
+        hash = Math.imul(hash, 0x9e3779b9); // golden ratio constant, good distribution
+        hash ^= hash >>> 16;
+    }
+    const hue = Math.abs(hash) % 360;
+    return `${hue}`;
 }
 
-export default function Sidebar(props: SidebarProps) {
+
+export default function Sidebar() {
+    const {changePage} = useMusic();
     const [artists, setArtists] = useState<Artist[]>([]);
 
     useEffect(() => {
@@ -23,28 +33,25 @@ export default function Sidebar(props: SidebarProps) {
         load();
     }, []);
 
-    async function select(artist: Artist | null) {
-        if (!artist) {
-            props.select(null);
-            return;
-        }
-        const response = await fetch(`/api/songs/${artist.path}`);
-        const songs = await response.json();
-
-        props.select({type: "collection", item: {type: "artist", songs: songs}});
-    }
-
     return <div id={"sidebar"}>
-        <UserSidebarEntry users={props.users}/>
+        <UserSidebarEntry/>
         <hr className={"sidebar-spacer"}/>
         <div id={"sidebar-scroll"}>
-            <SidebarEntry preview={<FaHome className={"icon"} size={"3.5vw"}/>} onClick={() => {
-                select(null);
+            {/*<SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("home", 3), "--hue-b": stringToColor("home", 4)} as CSSProperties} preview={<FaHome className={"icon"} size={"3vw"}/>} onClick={() => {*/}
+            {/*    select(null);*/}
+            {/*}}>*/}
+            {/*</SidebarEntry>*/}
+            <SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("download", 1), "--hue-b": stringToColor("downloads", 17)} as CSSProperties} preview={<FaDownload className={"icon"} size={"2.7vw"}/>} onClick={() => {
+                changePage({type:"downloads"})
             }}>
             </SidebarEntry>
-            {artists.map((artist) => {
-                return <SidebarEntry onClick={() => {
-                    select(artist);
+            <SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("library", 6), "--hue-b": stringToColor("collections", 15)} as CSSProperties} preview={<BsFillCollectionFill className={"icon"} size={"2.7vw"}/>} onClick={() => {
+                changePage({type:"library"})
+            }}>
+            </SidebarEntry>
+            {artists.map((artist,i) => {
+                return <SidebarEntry key={i} onClick={() => {
+                    changePage({type: "artist", artist: artist});
                 }} preview={<img src={artist.picture}/>} className={"artist"}>
                 </SidebarEntry>
             })}

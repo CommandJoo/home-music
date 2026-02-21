@@ -1,0 +1,18 @@
+Add Pages
+ / Downloads (searchbar spefically able to download and run) -> run button in searchbar + songs clickable
+ - Home (Personal layout (playlists, pinned songs, pinned artists) search only able to run) -> links to everything, no direct run button + songs clickable
+ / Library (Shows all playlists) -> no run button only links to playlists
+ / Artist Page (Shows all songs of artists) -> one run button
+ - Playlist Page (Shows all songs of playlist) -> one run button
+
+User
+- Display Playlists
+- Add Account Creating Panel
+
+Player
+- Safe Playing Song
+- Safe Volume
+- Add Queue
+
+Sidebar
+- Songs, Artists, Playlists Pinnable

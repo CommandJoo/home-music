@@ -1,13 +1,14 @@
 import "./Audio.css";
 import {type CSSProperties, useEffect, useRef, useState} from "react";
 
-import { MdSkipPrevious, MdSkipNext, MdPause, MdPlayArrow } from "react-icons/md"
-import { FaVolumeHigh, FaVolumeXmark } from "react-icons/fa6";
-import type {Song} from "../types.ts";
-
-type AudioProps = {
-    song: Song | null;
-};
+import {FaVolumeHigh, FaVolumeXmark} from "react-icons/fa6";
+import {
+    TbPlayerPlayFilled,
+    TbPlayerPauseFilled,
+    TbPlayerSkipForwardFilled,
+    TbPlayerSkipBackFilled
+} from "react-icons/tb";
+import {useMusic} from "../../MusicProvider.tsx";
 
 function toMinutes(seconds: number): string {
     let minutes = 0;
@@ -19,8 +20,10 @@ function toMinutes(seconds: number): string {
     return (minutes < 10 ? "0" : "") + String(minutes) + ":" + (seconds < 10 ? "0" : "") + seconds;
 }
 
-export default function Audio(props: AudioProps) {
+export default function Audio() {
     const audio = useRef<HTMLAudioElement | null>(null);
+    const {player, page, db} = useMusic();
+
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
     const [paused, setPaused] = useState(false);
@@ -54,10 +57,25 @@ export default function Audio(props: AudioProps) {
             setVolume(el.volume);
         }
 
+        const onEnded = () => {
+            setPaused(true);
+
+            async function next() {
+                if (page && page.songs) {
+                    const song = page.songs[Math.round(Math.random() * page.songs.length)];
+                    player.play(song);
+                    return;
+                }
+                player.play(db[Math.round(Math.random() * db.length)]);
+            }
+            next();
+        }
+
         el.addEventListener("loadedmetadata", onLoadedMetadata);
         el.addEventListener("timeupdate", onTimeUpdate);
         el.addEventListener("durationchange", onDurationChange);
         el.addEventListener("volumechange", onVolumeChange);
+        el.addEventListener("ended", onEnded)
 
         onLoadedMetadata();
 
@@ -66,8 +84,9 @@ export default function Audio(props: AudioProps) {
             el.removeEventListener("timeupdate", onTimeUpdate);
             el.removeEventListener("durationchange", onDurationChange);
             el.removeEventListener("volumechange", onVolumeChange);
+            el.removeEventListener("ended", onEnded);
         };
-    }, [props.song?.url.track]);
+    }, [db, page, player]);
 
     function changeTime(value: number) {
         const el = audio.current;
@@ -77,14 +96,14 @@ export default function Audio(props: AudioProps) {
     }
 
     function changeVolume(value: number) {
-        if(!audio.current) return;
+        if (!audio.current) return;
         audio.current.volume = value;
     }
 
     function toggle() {
         const el = audio.current;
         if (!el) return;
-        if(el.paused) {
+        if (el.paused) {
             el.play();
             setPaused(false);
         } else {
@@ -94,30 +113,31 @@ export default function Audio(props: AudioProps) {
     }
 
     function toggleMute() {
-        if(!audio.current) return;
+        if (!audio.current) return;
         audio.current.muted = !audio.current.muted;
         setMuted(audio.current.muted);
     }
 
-    return props.song ? <div id="audio-controller">
+    return <div id="audio-controller" className={!player.isPlaying() ? "no-song" : ""}>
         <div id={"audio-left"}>
             <div id={"cover"}>
-                <img src={props.song?.url.cover} alt={props.song?.title}/>
+                <img src={player.song()?.url.cover} alt={player.song()?.title}/>
             </div>
             <div id={"info"}>
-                <h3>{props.song.title}</h3>
-                <h5>{props.song.artist.name}</h5>
+                <h3>{player.song()?.title}</h3>
+                <h5>{player.song()?.artist.name}</h5>
             </div>
         </div>
         <div id={"audio-middle"}>
-            <audio ref={audio} controls src={props.song.url.track}/>
+            <audio ref={audio} controls src={player.song()?.url.track}/>
             <div id="controls">
                 <div id={"top"}>
-                    <div id={"prev"}><MdSkipPrevious className={"icon"} size={"4vh"}/></div>
+                    <div id={"prev"}><TbPlayerSkipBackFilled className={"icon"} size={"3vh"}/></div>
                     <div id={"play"} onClick={() => {
-                        toggle();
-                    }}>{!paused ? <MdPause className={"icon"}  size={"3vh"}/> : <MdPlayArrow className={"icon"}  size={"4vh"}/>}</div>
-                    <div id={"next"}><MdSkipNext className={"icon"}  size={"4vh"}/></div>
+                        if(player.song()) toggle();
+                    }}>{!paused ? <TbPlayerPauseFilled className={"icon"} size={"3vh"}/> :
+                        <TbPlayerPlayFilled className={"icon"} size={"3vh"}/>}</div>
+                    <div id={"next"}><TbPlayerSkipForwardFilled className={"icon"} size={"3vh"}/></div>
                 </div>
                 <div id={"bottom"}>
                     <a>{String(toMinutes(Math.round(currentTime)))}</a>
@@ -126,7 +146,7 @@ export default function Audio(props: AudioProps) {
                         onChange={(e) => {
                             changeTime(Number(e.target.value))
                         }}
-                        style={{"--progress": `${currentTime/duration * 100}%`} as CSSProperties}
+                        style={{"--progress": `${currentTime / duration * 100}%`} as CSSProperties}
                         value={currentTime}
                         min={0}
                         max={duration || 0}
@@ -142,12 +162,15 @@ export default function Audio(props: AudioProps) {
             }}>
                 <FaVolumeXmark size={"3vh"}/>
             </div>
-            <input type={"range"} value={volume} min={0} max={1} step={0.01} style={{"--volume": (muted ? 0 : volume), "--progress": `${muted ? 0 : volume*100}%`} as CSSProperties} onChange={(e) => {
+            <input type={"range"} value={volume} min={0} max={1} step={0.01} style={{
+                "--volume": (muted ? 0 : volume),
+                "--progress": `${muted ? 0 : volume * 100}%`
+            } as CSSProperties} onChange={(e) => {
                 changeVolume(Number(e.target.value));
             }}/>
             <div id={"louder"}>
                 <FaVolumeHigh size={"3vh"}/>
             </div>
         </div>
-    </div> : "";
+    </div>;
 }

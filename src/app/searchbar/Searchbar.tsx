@@ -3,30 +3,38 @@ import {useEffect, useRef, useState} from "react";
 import {FaDownload} from "react-icons/fa6";
 import {FaTimes} from "react-icons/fa";
 import type {Recording} from "../types.ts";
+import {useMusic} from "../../MusicProvider.tsx";
 
 type SearchbarProps = {
-    updateDb: () => void;
     check: (recording: Recording) => boolean;
+    setSearching: (searching: boolean) => void;
 }
 
 type SongEntryProps = {
     recording: Recording
     check: (recording: Recording) => boolean;
-    updateDb: () => void;
 }
 
 export function SongEntry(props: SongEntryProps) {
     const [downloading, setDownloading] = useState(false)
+    const {reloadSongs} = useMusic();
 
     useEffect(() => {
         async function load() {
-            if(props.check(props.recording)) setDownloading(true);
+            if (props.check(props.recording)) setDownloading(true);
         }
         load();
     }, [props]);
 
+    function reload() {
+        const timeout = setTimeout(() => {
+            reloadSongs();
+        }, 15000)
+        return clearTimeout(timeout);
+    }
+
     async function downloadTrack(track: string, artist: string, image: string, isrc: string, artist_picture: string) {
-        props.updateDb();
+        reload();
         await fetch(`/api/download?track=${track}&artist=${artist}&cover=${image}&isrc=${isrc}&artist_picture=${btoa(encodeURIComponent(artist_picture))}`, {method: "POST"});
     }
 
@@ -65,8 +73,10 @@ export default function Searchbar(props: SearchbarProps) {
         const timeout = setTimeout(async () => {
             if (search.length < 3) {
                 setResults([]);
+                props.setSearching(false);
                 return;
             }
+
             try {
                 const resp = await fetch(
                     `/api/search?q=${encodeURIComponent(search)}`,
@@ -74,8 +84,8 @@ export default function Searchbar(props: SearchbarProps) {
                 );
 
                 const result = (await resp.json());
-                console.log(result);
                 setResults(result as Recording[]);
+                props.setSearching(true);
             } catch (e) {
                 console.error(e);
             }
@@ -89,7 +99,7 @@ export default function Searchbar(props: SearchbarProps) {
     }, [search]);
 
     return <div id={"searchbar"} onKeyDown={(e) => {
-        if(e.key === "Escape") {
+        if (e.key === "Escape") {
             setResults([]);
             setSearch("");
             if (inputRef.current) {
@@ -110,7 +120,7 @@ export default function Searchbar(props: SearchbarProps) {
         </div>
         {(results && results.length > 0) && <ul id={"searchbar-results"}>
             {results.map((r: Recording) => {
-                return <SongEntry key={r.isrc} check={props.check} updateDb={props.updateDb} recording={r}/>
+                return <SongEntry key={r.isrc} check={props.check} recording={r}/>
             })}
         </ul>}
     </div>

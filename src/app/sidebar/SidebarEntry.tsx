@@ -7,6 +7,7 @@ type SidebarEntryProps = {
     className?: string
     onClick?: () => void
     style?: CSSProperties
+    key?: number
 }
 
 export default function SidebarEntry(props: SidebarEntryProps) {
