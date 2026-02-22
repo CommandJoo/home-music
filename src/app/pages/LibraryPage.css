@@ -1,0 +1,16 @@
+#library-page {
+    #page {
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+
+        padding: 1vh;
+        gap: 1vh;
+
+        #playlists {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1vh;
+        }
+    }
+}

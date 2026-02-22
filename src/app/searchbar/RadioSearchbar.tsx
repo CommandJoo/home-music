@@ -1,70 +1,75 @@
 import "./Searchbar.css"
 import {useEffect, useRef, useState} from "react";
-import {FaDownload} from "react-icons/fa6";
+import {FaRegHeart, FaHeart, FaRadio} from "react-icons/fa6";
 import {FaTimes} from "react-icons/fa";
-import type {Recording} from "../types.ts";
+import type {Radio} from "../types.ts";
 import {useMusic} from "../../MusicProvider.tsx";
 
 type SearchbarProps = {
-    check: (recording: Recording) => boolean;
+    check: (radio: Radio) => boolean;
     setSearching: (searching: boolean) => void;
 }
 
-type SongEntryProps = {
-    recording: Recording
-    check: (recording: Recording) => boolean;
+type RadioEntryProps = {
+    radio: Radio
+    check: (radio: Radio) => boolean;
 }
 
-export function SongEntry(props: SongEntryProps) {
-    const [downloading, setDownloading] = useState(false)
-    const {reloadSongs} = useMusic();
+export function RadioEntry(props: RadioEntryProps) {
+    const [downloading, setDownloading] = useState(false);
+    const {refreshCurrentUser, currentUser} = useMusic();
 
     useEffect(() => {
         async function load() {
-            if (props.check(props.recording)) setDownloading(true);
+            if (props.check(props.radio)) setDownloading(true);
         }
         load();
     }, [props]);
 
     function reload() {
         const timeout = setTimeout(() => {
-            reloadSongs();
+            refreshCurrentUser();
         }, 15000)
         return clearTimeout(timeout);
     }
 
-    async function downloadTrack(track: string, artist: string, image: string, isrc: string, artist_picture: string) {
-        reload();
-        await fetch(`/api/download?track=${track}&artist=${artist}&cover=${image}&isrc=${isrc}&artist_picture=${btoa(encodeURIComponent(artist_picture))}`, {method: "POST"});
+    function favorite() {
+        async function load() {
+            if(!currentUser) return;
+            const response = await fetch(`/api/users/${currentUser.id}/radio/follow?uuid=${props.radio.uuid}`);
+            const data = await response.json() as {success: boolean};
+            if(data.success) {
+                reload();
+            }
+        }
+        load();
     }
 
-    function key() {
-        return props.recording.title.toLowerCase().replace(" ", "-") + "." + props.recording.artist.name.toLowerCase().replace(" ", "-");
-    }
-
-    return <div className={"song"} key={key()}>
+    return <div className={"song"} key={props.radio.uuid}>
         <div id={"song-left"}>
-            <img id={"cover"} src={props.recording.cover}/>
+            <div id={"cover-wrapper"}>
+                {props.radio.url.cover.length > 0 ? <img id={"cover"} src={props.radio.url.cover}/> : <FaRadio size={"4vh"}/>}
+            </div>
             <div id={"info"}>
-                <h3>{props.recording.title}</h3>
-                <h4>{props.recording.artist.name}</h4>
+                <h3>{props.radio.title}</h3>
+                <h4>{props.radio.title}</h4>
             </div>
         </div>
         <div id={"song-right"} onClick={() => {
             if (!downloading) {
                 setDownloading(true);
-                downloadTrack(props.recording.title, props.recording.artist.name, props.recording.cover, props.recording.isrc, props.recording.artist.picture);
+                favorite();
             }
         }}>
-            <FaDownload className={"download " + (downloading ? "downloading" : "")} size={"2.5vh"}></FaDownload>
+            {downloading ? <FaHeart size={"2.5vh"} className={"download " + (downloading ? "downloading" : "")} /> : <FaRegHeart className={"download " + (downloading ? "downloading" : "")} size={"2.5vh"}/>}
         </div>
     </div>
 }
 
-export default function Searchbar(props: SearchbarProps) {
+export default function RadioSearchbar(props: SearchbarProps) {
     const inputRef = useRef<HTMLInputElement | null>(null);
 
-    const [results, setResults] = useState<Recording[]>([])
+    const [results, setResults] = useState<Radio[]>([])
     const [search, setSearch] = useState("")
 
     useEffect(() => {
@@ -79,12 +84,12 @@ export default function Searchbar(props: SearchbarProps) {
 
             try {
                 const resp = await fetch(
-                    `/api/search?q=${encodeURIComponent(search)}`,
+                    `/api/radio?name=${encodeURIComponent(search)}`,
                     {signal: controller.signal}
                 );
 
                 const result = (await resp.json());
-                setResults(result as Recording[]);
+                setResults(result as Radio[]);
                 props.setSearching(true);
             } catch (e) {
                 console.error(e);
@@ -119,8 +124,8 @@ export default function Searchbar(props: SearchbarProps) {
             <FaTimes className={"close"} size={"2.5vh"}/>
         </div>
         {(results && results.length > 0) && <ul id={"searchbar-results"}>
-            {results.map((r: Recording) => {
-                return <SongEntry key={r.isrc} check={props.check} recording={r}/>
+            {results.map((r: Radio, i) => {
+                return <RadioEntry key={i} check={props.check} radio={r}/>
             })}
         </ul>}
     </div>

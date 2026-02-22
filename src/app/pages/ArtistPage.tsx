@@ -1,36 +1,34 @@
 import "./ArtistPage.css"
 import "./Page.css"
 import {useMusic} from "../../MusicProvider.tsx";
+import {TbPlayerPlayFilled} from "react-icons/tb";
+import {SongEntry} from "./entry/Entry.tsx";
 
 export default function ArtistPage() {
-    const {db, page, player} = useMusic();
+    const {db, page} = useMusic();
 
 
     function display() {
         return db.filter((s) => {
             return s.artist.name === page?.artist?.name;
         }).map(song => {
-            return <div className={"song"} key={song.title + song.artist} onClick={() => {
-                player.play(song);
-            }}>
-                <img id={"cover"} src={song.url.cover} alt={song.title}/>
-                <h2>{song.title}</h2>
-                <div id={"artist"}>
-                    <img src={song.artist.picture} alt={song.artist.name}/>
-                    <h4>{song.artist.name}</h4>
-                </div>
-            </div>;
+            return <SongEntry song={song}/>
         })
     }
 
     return <div id={"artist-page"} className={"page"}>
         <div id={"search"}>
-            Hello World
+            {`Search for ${page?.artist?.name}s songs`}
         </div>
         <div id={"page"}>
-            <h1>{page?.artist?.name}</h1>
-            <h1>Songs</h1>
-            <div id={"songs"}>{display()}</div>
+            <div id={"songs"}>
+                <div id={"artist-profile"} className={"entry"}>
+                    <h1>{page?.artist?.name}</h1>
+                    <button id={"play-button"}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>
+                </div>
+                <h1>Songs</h1>
+                {display()}
+            </div>
         </div>
     </div>
 }

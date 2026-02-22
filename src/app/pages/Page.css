@@ -14,6 +14,9 @@
 
         border: 2px solid var(--border);
         border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     #page {
@@ -25,5 +28,9 @@
 
         border: 2px solid var(--border);
         border-radius: 8px;
+
+        h1 {
+            font-weight: 600;
+        }
     }
 }

@@ -18,11 +18,10 @@ function picture(user: User) {
     if (user.picture.length > 0) {
         return <img style={{"--color": stringToColor(user.name.length > 0 ? stringToColor(user.name) : "#333")} as CSSProperties} src={user.picture}/>
     }
-    console.log(stringToColor(user.name))
     return <h1 style={{"--color": stringToColor(user.name)} as CSSProperties}>{user.name.charAt(0).toUpperCase()}</h1>;
 }
 
-function Account({user, close}: { user: { id: string, path: string }, close: () => void }) {
+function Account({user, close, key}: {key: number, user: { id: string, path: string }, close: () => void }) {
     const {changeUser} = useMusic();
     const [userInfo, setUserInfo] = useState<User | null>(null);
 
@@ -36,7 +35,7 @@ function Account({user, close}: { user: { id: string, path: string }, close: () 
         load();
     }, [user]);
 
-    return <div id={"account-entry"} onClick={() => {
+    return <div id={"account-entry"} key={key} onClick={() => {
         changeUser(user.id);
         close();
     }}>
@@ -54,8 +53,8 @@ export default function UserSidebarEntry() {
     function content() {
         if (open) {
             return <>
-                {users.users.map((user) => {
-                    return <Account close={() => {
+                {users.users.map((user, i) => {
+                    return <Account key={i} close={() => {
                         setOpen(false)
                     }} user={user}></Account>
                 })}

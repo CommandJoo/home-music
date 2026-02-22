@@ -6,6 +6,7 @@ import {useEffect} from "react";
 import DownloadPage from "./app/pages/DownloadPage.tsx";
 import LibraryPage from "./app/pages/LibraryPage.tsx";
 import ArtistPage from "./app/pages/ArtistPage.tsx";
+import RadioPage from "./app/pages/RadioPage.tsx";
 
 
 function Basis() {
@@ -15,7 +16,7 @@ function Basis() {
 }
 
 function App() {
-    const {reloadSongs, refreshUsers, page} = useMusic();
+    const {reloadSongs, refreshUsers, page, player} = useMusic();
 
     useEffect(() => {
         async function load() {
@@ -23,9 +24,7 @@ function App() {
             refreshUsers();
         }
 
-        load().then(() => {
-            console.log("Reloaded songs");
-        });
+        load();
     }, [refreshUsers, reloadSongs]);
 
     function showingPage() {
@@ -35,12 +34,21 @@ function App() {
         if(page?.type === "artist" && page.artist) {
             return <ArtistPage/>
         }
-
+        if(page?.type === "radio") {
+            return <RadioPage/>
+        }
         return <DownloadPage/>;
     }
 
     return (
         <div id={"root"}>
+            {player.queue.length > 0 && <div id={"queue"}>
+                {player.queue.map((item, i) => {
+                    return <div key={i}>
+                        {item.title}
+                    </div>;
+                })}
+            </div>}
             <div id={"left"}>
                 <Sidebar/>
             </div>

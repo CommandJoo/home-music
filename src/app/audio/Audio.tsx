@@ -1,14 +1,13 @@
 import "./Audio.css";
 import {type CSSProperties, useEffect, useRef, useState} from "react";
-
-import {FaVolumeHigh, FaVolumeXmark} from "react-icons/fa6";
+import {FaVolumeHigh, FaVolumeXmark, FaRadio} from "react-icons/fa6";
 import {
     TbPlayerPlayFilled,
     TbPlayerPauseFilled,
     TbPlayerSkipForwardFilled,
     TbPlayerSkipBackFilled
 } from "react-icons/tb";
-import {useMusic} from "../../MusicProvider.tsx";
+import {useMusic, useNowPlaying} from "../../MusicProvider.tsx";
 
 function toMinutes(seconds: number): string {
     let minutes = 0;
@@ -20,9 +19,55 @@ function toMinutes(seconds: number): string {
     return (minutes < 10 ? "0" : "") + String(minutes) + ":" + (seconds < 10 ? "0" : "") + seconds;
 }
 
+function SineWave() {
+    const containerRef = useRef(null);
+    const [width, setWidth] = useState(0);
+
+    const height = 80;
+    const amplitude = 15;
+    const periods = 22;
+    const points = 300;
+
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+        const ro = new ResizeObserver(([entry]) => {
+            setWidth(entry.contentRect.width);
+        });
+        ro.observe(el);
+        return () => ro.disconnect();
+    }, []);
+
+    function generatePath(w: number) {
+        const pts = [];
+        const totalWidth = w * 2;
+        for (let i = 0; i <= points; i++) {
+            const x = (i / points) * totalWidth;
+            const y = height / 2 + (amplitude) * Math.sin((i / points) * periods * 2 * Math.PI);
+            pts.push(`${i === 0 ? 'M' : 'L'}${x.toFixed(2)},${y.toFixed(2)}`);
+        }
+        return pts.join(' ');
+    }
+
+    return (
+        <div ref={containerRef} id={"sine"} style={{overflow: 'hidden', position: 'relative'}}>
+            {width > 0 && (
+                <svg
+                    viewBox={`0 0 ${width * 2} ${height}`}
+                    preserveAspectRatio="none"
+                >
+                    <path
+                          d={generatePath(width)}/>
+                </svg>
+            )}
+        </div>
+    );
+}
+
 export default function Audio() {
     const audio = useRef<HTMLAudioElement | null>(null);
     const {player, page, db} = useMusic();
+    const nowPlaying = useNowPlaying(player.isRadio() ? player.asRadio()?.url.track : undefined);
 
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
@@ -39,7 +84,6 @@ export default function Audio() {
             setDuration(Math.round(d));
             setPaused(el.paused);
             setVolume(el.volume);
-            el.play();
         };
 
         const onTimeUpdate = () => {
@@ -68,6 +112,7 @@ export default function Audio() {
                 }
                 player.play(db[Math.round(Math.random() * db.length)]);
             }
+
             next();
         }
 
@@ -86,7 +131,7 @@ export default function Audio() {
             el.removeEventListener("volumechange", onVolumeChange);
             el.removeEventListener("ended", onEnded);
         };
-    }, [db, page, player]);
+    }, [player, player.playing]);
 
     function changeTime(value: number) {
         const el = audio.current;
@@ -118,30 +163,36 @@ export default function Audio() {
         setMuted(audio.current.muted);
     }
 
-    return <div id="audio-controller" className={!player.isPlaying() ? "no-song" : ""}>
+    return <div id="audio-controller" className={!player.playing ? "no-song" : ""}>
         <div id={"audio-left"}>
             <div id={"cover"}>
-                <img src={player.song()?.url.cover} alt={player.song()?.title}/>
+                {player.playing ? (player.isSong() ?
+                    <img src={player.playing?.url.cover} alt={player.playing?.title}/> :
+                    (player.asRadio().url.cover.length > 0 ?  <img src={player.asRadio().url.cover} alt={player.playing?.title}/> : <FaRadio className={"icon"} size={"6vh"}/>)) : ""}
             </div>
             <div id={"info"}>
-                <h3>{player.song()?.title}</h3>
-                <h5>{player.song()?.artist.name}</h5>
+                <h3>{player.playing ? (nowPlaying ? nowPlaying : player.playing?.title) : ""}</h3>
+                <h5>{player.playing ? (player.isSong() ? player.asSong()?.artist.name : player.asRadio()?.title) : ""}</h5>
             </div>
         </div>
         <div id={"audio-middle"}>
-            <audio ref={audio} controls src={player.song()?.url.track}/>
+            <audio ref={audio} controls src={player.playing?.url.track}/>
             <div id="controls">
                 <div id={"top"}>
-                    <div id={"prev"}><TbPlayerSkipBackFilled className={"icon"} size={"3vh"}/></div>
+                    <div id={"prev"} onClick={() => {
+                        player.back();
+                    }}><TbPlayerSkipBackFilled className={"icon"} size={"3vh"}/></div>
                     <div id={"play"} onClick={() => {
-                        if(player.song()) toggle();
+                        if (player.playing) toggle();
                     }}>{!paused ? <TbPlayerPauseFilled className={"icon"} size={"3vh"}/> :
                         <TbPlayerPlayFilled className={"icon"} size={"3vh"}/>}</div>
-                    <div id={"next"}><TbPlayerSkipForwardFilled className={"icon"} size={"3vh"}/></div>
+                    <div id={"next"}><TbPlayerSkipForwardFilled className={"icon"} size={"3vh"} onClick={() => {
+                        player.forward();
+                    }}/></div>
                 </div>
                 <div id={"bottom"}>
                     <a>{String(toMinutes(Math.round(currentTime)))}</a>
-                    <input
+                    {player.isRadio() ? <SineWave/> : <input
                         type={"range"}
                         onChange={(e) => {
                             changeTime(Number(e.target.value))
@@ -151,7 +202,7 @@ export default function Audio() {
                         min={0}
                         max={duration || 0}
                         step={0.1}
-                    />
+                    />}
                     <a>{String(toMinutes(Math.round(duration)))}</a>
                 </div>
             </div>

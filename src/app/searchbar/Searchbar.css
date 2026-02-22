@@ -60,7 +60,7 @@
         overflow-y: scroll;
 
         .song {
-            height: 8vh;
+            min-height: 8vh;
             background: var(--bg-light);
             margin: 1vh;
 
@@ -75,14 +75,36 @@
             gap: 1vh;
 
             #song-left {
+                width: 100%;
                 display: flex;
                 gap: 1vh;
                 box-sizing: border-box;
-                #cover {
+                #cover-wrapper {
                     width: 7vh;
+                    height: 7vh;
+                    border-radius: 4px;
+                    overflow: hidden;
+
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    background: color-mix(in hsl, var(--bg-light), white 10%);
+
+                    #cover {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 4px;
+
+                        outline: none;
+                        border: none;
+
+                        object-fit: cover;
+                    }
                 }
 
                 #info {
+                    width: 100%;
                     h4 {
                         color: var(--text-muted);
                         font-weight: normal;
@@ -92,6 +114,7 @@
 
             #song-right {
                 display: flex;
+                overflow: hidden;
 
                 align-items: center;
                 vertical-align: center;

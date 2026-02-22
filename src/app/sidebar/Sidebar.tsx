@@ -2,7 +2,7 @@ import "./Sidebar.css"
 import SidebarEntry from "./SidebarEntry.tsx";
 import {type CSSProperties, useEffect, useState} from "react";
 import type {Artist} from "../types.ts";
-import {FaDownload} from "react-icons/fa";
+import {FaDownload, FaRadio} from "react-icons/fa6";
 import { BsFillCollectionFill } from "react-icons/bs";
 import UserSidebarEntry from "./UserSidebarEntry.tsx";
 import {useMusic} from "../../MusicProvider.tsx";
@@ -47,6 +47,10 @@ export default function Sidebar() {
             </SidebarEntry>
             <SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("library", 6), "--hue-b": stringToColor("collections", 15)} as CSSProperties} preview={<BsFillCollectionFill className={"icon"} size={"2.7vw"}/>} onClick={() => {
                 changePage({type:"library"})
+            }}>
+            </SidebarEntry>
+            <SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("radio", 12), "--hue-b": stringToColor("radio", 15)} as CSSProperties} preview={<FaRadio className={"icon"} size={"2.7vw"}/>} onClick={() => {
+                changePage({type:"radio"})
             }}>
             </SidebarEntry>
             {artists.map((artist,i) => {

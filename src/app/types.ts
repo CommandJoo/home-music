@@ -4,17 +4,28 @@ export type Artist = {
     path: string;
 }
 
-export type Song = {
+export type Playable = {
+    kind: string;
     title: string;
+    url: {
+        track: string;
+        cover: string;
+    }
+}
+
+export type Song = Playable & {
+    readonly kind: "song",
     artist: Artist;
     metadata: {
         duration: number;
         isrc: string;
     }
-    url: {
-        track: string;
-        cover: string;
-    }
+}
+
+export type Radio = Playable & {
+    readonly kind: "radio",
+    uuid: string;
+    tags: string[];
 }
 
 export type Recording = {
@@ -33,10 +44,11 @@ export type Playlist = {
 }
 
 export type Page = {
-    type: "downloads"|"library"|"artist"|"playlist"
+    type: "downloads"|"library"|"artist"|"playlist"|"radio";
     artist?: Artist
     songs?: Song[];
     playlists?: Playlist[];
+    radio?: Radio[];
 }
 
 export type Users = {
@@ -52,4 +64,5 @@ export type User = {
     name: string;
     picture: string;
     playlists: string[];
+    radio: Radio[]
 }

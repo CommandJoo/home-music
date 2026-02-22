@@ -2,8 +2,9 @@ import "./LibraryPage.css"
 import "./Page.css"
 import {useMusic} from "../../MusicProvider.tsx";
 import {useEffect, useState} from "react";
+import {PlaylistEntry} from "./entry/Entry.tsx";
 
-type Playlist = {
+export type Playlist = {
     id: string;
     title: string;
     cover: string;
@@ -31,19 +32,17 @@ export default function LibraryPage() {
 
     function display() {
         return playlists.map((playlist: Playlist) => {
-            return <div id={"playlist"}>
-                <h1>{playlist.title}</h1>
-            </div>
+            return <PlaylistEntry playlist={playlist}/>
         })
     }
 
     return <div id={"library-page"} className={"page"}>
         <div id={"search"}>
-            Hello World
+            <h1>Library</h1>
         </div>
         <div id={"page"}>
             <h1>Playlists</h1>
-            <div id={"songs"}>{display()}</div>
+            <div id={"playlists"}>{display()}</div>
         </div>
     </div>
 }

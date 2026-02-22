@@ -42,6 +42,19 @@
     max-height: 100vh;
 }
 
+#queue {
+    position: absolute;
+    z-index: 1000000;
+    right: 2vh;
+    top: 2vh;
+    background: var(--bg-light);
+    min-width: 10vw;
+    padding: 1vh;
+    box-sizing: border-box;
+    border: 1px solid var(--border-highlight);
+    border-radius: 8px;
+}
+
 #left {
     box-sizing: border-box;
     align-self: center;

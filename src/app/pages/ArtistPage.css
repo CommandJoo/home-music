@@ -9,50 +9,19 @@
 
             box-sizing: border-box;
             gap: 1vh;
-
-            .song {
-                background-color: var(--bg-light);
-                padding: 0.5vh;
-                box-sizing: border-box;
-                border-radius: 8px;
-
-                border: 1px solid var(--border);
-                overflow: hidden;
-
-                h2 {
-                    width: 100%;
-                    font-weight: 600;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-
-                #artist {
-                    display: flex;
-                    height: 4vh;
-                    vertical-align: center;
-                    align-items: center;
-                    gap: 0.5vh;
-
-                    h4 {
-                        color: var(--text-muted);
-                        font-weight: 400;
-                    }
-
-                    img {
-                        border: 1px solid var(--border);
-                        border-radius: 8px;
-                        height: 100%;
-                        aspect-ratio: 1/1;
-                    }
-                }
-
-                #cover {
-                    width: 100%;
-                    border-radius: 4px;
-                }
-
-            }
         }
+
+        h1 {
+            grid-column: 1/-1;
+        }
+
+        #artist-profile {
+            min-height: 8vh;
+            grid-column: 1/-1;
+            padding: 1vh;
+
+            position: relative;
+        }
+
     }
 }

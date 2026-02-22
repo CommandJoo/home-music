@@ -3,8 +3,97 @@ const mp3Duration = require("mp3-duration");
 const fs = require('fs');
 const path = require("path");
 const ytDlp = require("yt-dlp-exec");
+const icy = require('icy');
+const http = require('http');
+const net = require('net');
+const url = require('url');
 
 const apiKey = "AIzaSyD2fxT9NeLHVlrOHnEd1nr5QyfLDybWois";
+
+
+function icyConnect(streamUrl, onMetadata, onError) {
+    const parsed = new URL(streamUrl);
+    const host = parsed.hostname;
+    const port = parsed.port || 80;
+    const path = parsed.pathname + parsed.search;
+
+    const socket = net.createConnection(port, host, () => {
+        socket.write(
+            `GET ${path} HTTP/1.0\r\n` +
+            `Host: ${host}\r\n` +
+            `Icy-Metadata: 1\r\n` +
+            `Connection: close\r\n` +
+            `\r\n`
+        );
+    });
+
+    let metaint = null;
+    let headersParsed = false;
+    let buffer = Buffer.alloc(0);
+    let bytesUntilMeta = null;
+
+    socket.on('data', (chunk) => {
+        buffer = Buffer.concat([buffer, chunk]);
+
+        if (!headersParsed) {
+            // search for \r\n\r\n or \n\n as raw bytes
+            let headerEnd = -1;
+            let headerSkip = 2;
+
+            const rn = buffer.indexOf(Buffer.from([0x0d, 0x0a, 0x0d, 0x0a])); // \r\n\r\n
+            const n  = buffer.indexOf(Buffer.from([0x0a, 0x0a]));              // \n\n
+
+            if (rn !== -1) { headerEnd = rn; headerSkip = 4; }
+            else if (n !== -1) { headerEnd = n; headerSkip = 2; }
+
+            if (headerEnd === -1) return;
+
+            const headers = buffer.slice(0, headerEnd).toString('utf8');
+            buffer = buffer.slice(headerEnd + headerSkip);
+            headersParsed = true;
+
+            const metaintMatch = headers.match(/icy-metaint:\s*(\d+)/i);
+            if (metaintMatch) {
+                metaint = parseInt(metaintMatch[1]);
+                bytesUntilMeta = metaint;
+            } else {
+                console.log(`${streamUrl} does not support icy`)
+            }
+        }
+
+        if (metaint === null) return; // no metadata support
+
+        // parse ICY metadata chunks out of the stream
+        while (buffer.length > 0) {
+            if (bytesUntilMeta > 0) {
+                const consume = Math.min(bytesUntilMeta, buffer.length);
+                bytesUntilMeta -= consume;
+                buffer = buffer.slice(consume);
+            } else {
+                // next byte is metadata length
+                if (buffer.length < 1) break;
+                const metaLen = buffer[0] * 16;
+                buffer = buffer.slice(1);
+
+                if (metaLen === 0) {
+                    bytesUntilMeta = metaint;
+                    continue;
+                }
+
+                if (buffer.length < metaLen) break;
+                const metaBlock = buffer.slice(0, metaLen).toString('utf8').replace(/\0/g, '');
+                buffer = buffer.slice(metaLen);
+                bytesUntilMeta = metaint;
+
+                const match = metaBlock.match(/StreamTitle='([^']*)'/);
+                if (match) onMetadata(match[1]);
+            }
+        }
+    });
+
+    socket.on('error', onError);
+    return socket;
+}
 
 function toSafeFilename(str) {
     return str
@@ -21,6 +110,17 @@ function setup(baseDir) {
     }
 }
 
+async function resolveRedirects(url, maxRedirects = 5) {
+    if (maxRedirects === 0) return url;
+    try {
+        const res = await fetch(url, { method: 'HEAD', redirect: 'manual' });
+        if (res.status === 301 || res.status === 302) {
+            return resolveRedirects(res.headers.get('location'), maxRedirects - 1);
+        }
+    } catch (e) {}
+    return url;
+}
+
 async function deezerToMusic(response) {
     return (await response.json()).data.map((complex) => {
         return {
@@ -35,6 +135,22 @@ async function deezerToMusic(response) {
     });
 }
 
+async function radioReformed(response) {
+    const data = await response.json();
+    return Promise.all(data.map(async (complex) => {
+        const resolvedUrl = await resolveRedirects(complex.url_resolved);
+        return {
+            uuid: complex.stationuuid,
+            title: complex.name,
+            url: {
+                track: resolvedUrl,
+                cover: complex.favicon,
+            },
+            tags: complex.tags,
+        };
+    }));
+}
+
 function search(app, baseDir) {
     setup(baseDir);
 
@@ -46,6 +162,32 @@ function search(app, baseDir) {
         );
         console.log(`Searching https://api.deezer.com/search?q=${encodeURIComponent(q)}&limit=20`)
         res.json(await deezerToMusic(response));
+    });
+
+    app.get("/api/radio", async (req, res) => {
+        const q = req.query.name;
+        const response = await fetch(`https://all.api.radio-browser.info/json/stations/search?name=${q}`);
+        console.log(`Searching radio browser for ${q}`);
+        res.json(await radioReformed(response));
+    })
+
+    app.get('/api/radio/nowplaying', (req, res) => {
+        const streamUrl = req.query.url;
+
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.flushHeaders();
+
+        const socket = icyConnect(
+            streamUrl,
+            (title) => {
+                res.write(`data: ${JSON.stringify({ title })}\n\n`);
+            },
+            (err) => console.error('ICY error:', err)
+        );
+
+        req.on('close', () => socket.destroy());
     });
 
     app.post("/api/download", async (req, res) => {
