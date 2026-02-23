@@ -23,6 +23,7 @@ export function RadioEntry({radio}: RadioEntryProps) {
     return <div id={"radio-entry"} className={"radio entry"} key={radio.uuid}>
         <div id={"cover-wrapper"}>
             {radio.url.cover.length > 0 ? <img id={"cover"} src={radio.url.cover} alt={radio.title}></img> : <FaRadio className={"icon"} size={"15vh"}/>}
+            <div id={"overlay"}></div>
             <button id={"play-button"} onClick={() => {
                 player.play(radio);
             }}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>
@@ -53,6 +54,7 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
     return <div id={"playlist-entry"} className={"playlist entry"} key={props.playlist.id}>
         <div id={"cover-wrapper"}>
             <img id={"cover"} src={props.playlist.cover} alt={props.playlist.title}></img>
+            <div id={"overlay"}></div>
             <button id={"play-button"} onClick={() => {
                 player.play(songs[0]);
                 player.addQueue(songs.slice(1, songs.length));
@@ -71,6 +73,7 @@ export function SongEntry({song}: SongEntryProps) {
     return <div id={"song-entry"} className={"song entry"} key={song.title + song.artist}>
         <div id={"cover-wrapper"}>
             <img id={"cover"} src={song.url.cover} alt={song.title}></img>
+            <div id={"overlay"}></div>
             <button id={"play-button"} onClick={() => {
                 player.play(song);
             }}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>

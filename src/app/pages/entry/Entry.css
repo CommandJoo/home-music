@@ -72,45 +72,6 @@
     border-radius: 8px;
     box-sizing: border-box;
 
-    #play-button {
-        transition: opacity .2s ease, bottom .2s ease;
-        opacity: 0;
-        position: absolute;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        border: none;
-        outline: none;
-
-        background-color: var(--primary);
-
-        right: 0.5vh;
-        bottom: 0.5vh;
-
-        height: 6vh;
-        width: 6vh;
-        aspect-ratio: 1/1;
-
-        border-radius: 50%;
-
-        box-sizing: border-box;
-        padding: 0.5vh;
-
-        .icon {
-            fill: var(--bg-light);
-        }
-    }
-
-    #play-button:hover {
-        filter: brightness(0.85);
-    }
-
-    &:hover #play-button {
-        bottom: 1vh;
-        opacity: 1;
-    }
-
     #cover-wrapper {
         position: relative;
         width: 100%;
@@ -124,6 +85,61 @@
         background: color-mix(in hsl, var(--bg-light), white 10%);
 
         margin-bottom: 1vh;
+
+        #play-button:hover {
+            filter: brightness(0.85);
+        }
+
+        #play-button {
+            transition: opacity .2s ease, bottom .2s ease;
+            opacity: 0;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            border: none;
+            outline: none;
+
+            background-color: var(--primary);
+
+            right: 0.5vh;
+            bottom: -1vh;
+
+            height: 6vh;
+            width: 6vh;
+            aspect-ratio: 1/1;
+
+            border-radius: 50%;
+
+            box-sizing: border-box;
+            padding: 0.5vh;
+
+            .icon {
+                fill: var(--bg-light);
+            }
+        }
+
+        #overlay {
+            transition: opacity .3s ease;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, var(--bg-dark), transparent);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+        }
+    }
+
+    &:hover #cover-wrapper {
+        #play-button {
+            bottom: 1vh;
+            opacity: 1;
+        }
+
+        #overlay {
+            opacity: 0.8;
+        }
     }
 
     #cover {
