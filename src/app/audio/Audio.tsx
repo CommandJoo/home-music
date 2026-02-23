@@ -11,7 +11,7 @@ import {useMusic, useNowPlaying} from "../../MusicProvider.tsx";
 
 function toMinutes(seconds: number): string {
     let minutes = 0;
-    while (seconds > 60) {
+    while (seconds >= 60) {
         minutes++;
         seconds -= 60;
     }

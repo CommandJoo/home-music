@@ -130,16 +130,25 @@
                 }
 
                 .downloading {
-                    fill: #5A5;
+                    fill: var(--primary);
                 }
 
+                .downloaded {
+                    fill: var(--primary);
+                }
             }
             #song-right:hover .download {
                 fill: lightgray;
             }
 
+            #song-right:hover .downloaded {
+                fill: var(--primary);
+                filter: brightness(0.8);
+            }
+
             #song-right:hover .downloading {
-                fill: #5A5;
+                fill: var(--primary);
+                filter: brightness(0.8);
             }
         }
 

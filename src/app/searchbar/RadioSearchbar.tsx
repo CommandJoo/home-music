@@ -1,30 +1,39 @@
 import "./Searchbar.css"
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
+import {TbPlayerPlayFilled} from "react-icons/tb";
 import {FaRegHeart, FaHeart, FaRadio} from "react-icons/fa6";
 import {FaTimes} from "react-icons/fa";
 import type {Radio} from "../types.ts";
 import {useMusic} from "../../MusicProvider.tsx";
 
 type SearchbarProps = {
-    check: (radio: Radio) => boolean;
     setSearching: (searching: boolean) => void;
 }
 
 type RadioEntryProps = {
     radio: Radio
-    check: (radio: Radio) => boolean;
 }
 
 export function RadioEntry(props: RadioEntryProps) {
+    const {refreshCurrentUser, currentUser, player} = useMusic();
+
     const [downloading, setDownloading] = useState(false);
-    const {refreshCurrentUser, currentUser} = useMusic();
+    const [downloaded, setDownloaded] = useState(false);
+
+    const check = useCallback(() => {
+        if(!currentUser) return false;
+        return currentUser.radio.some((r) => r.uuid === props.radio.uuid);
+    }, [currentUser, props.radio.uuid]);
 
     useEffect(() => {
         async function load() {
-            if (props.check(props.radio)) setDownloading(true);
+            if (check()) {
+                setDownloading(true);
+                setDownloaded(true);
+            }
         }
         load();
-    }, [props]);
+    }, [check, props]);
 
     function reload() {
         const timeout = setTimeout(() => {
@@ -48,7 +57,7 @@ export function RadioEntry(props: RadioEntryProps) {
     return <div className={"song"} key={props.radio.uuid}>
         <div id={"song-left"}>
             <div id={"cover-wrapper"}>
-                {props.radio.url.cover.length > 0 ? <img id={"cover"} src={props.radio.url.cover}/> : <FaRadio size={"4vh"}/>}
+                {props.radio.url.cover.length > 0 ? <img id={"cover"} src={props.radio.url.cover} alt={props.radio.title}/> : <FaRadio size={"4vh"}/>}
             </div>
             <div id={"info"}>
                 <h3>{props.radio.title}</h3>
@@ -61,7 +70,9 @@ export function RadioEntry(props: RadioEntryProps) {
                 favorite();
             }
         }}>
-            {downloading ? <FaHeart size={"2.5vh"} className={"download " + (downloading ? "downloading" : "")} /> : <FaRegHeart className={"download " + (downloading ? "downloading" : "")} size={"2.5vh"}/>}
+            {downloading ? (downloaded ?<TbPlayerPlayFilled size={"2.5vh"} className={"download " + (downloading ? "downloaded" : "")} onClick={() => {
+                player.play(props.radio)
+            }}/> :  <FaHeart size={"2.5vh"} className={"download " + (downloading ? "downloading" : "")} />) : <FaRegHeart className={"download " + (downloading ? "downloading" : "")} size={"2.5vh"}/>}
         </div>
     </div>
 }
@@ -85,7 +96,6 @@ export default function RadioSearchbar(props: SearchbarProps) {
             try {
                 const resp = await fetch(
                     `/api/radio?name=${encodeURIComponent(search)}`,
-                    {signal: controller.signal}
                 );
 
                 const result = (await resp.json());
@@ -101,7 +111,7 @@ export default function RadioSearchbar(props: SearchbarProps) {
             controller.abort();
         };
 
-    }, [search]);
+    }, [props, search]);
 
     return <div id={"searchbar"} onKeyDown={(e) => {
         if (e.key === "Escape") {
@@ -125,7 +135,7 @@ export default function RadioSearchbar(props: SearchbarProps) {
         </div>
         {(results && results.length > 0) && <ul id={"searchbar-results"}>
             {results.map((r: Radio, i) => {
-                return <RadioEntry key={i} check={props.check} radio={r}/>
+                return <RadioEntry key={i} radio={r}/>
             })}
         </ul>}
     </div>

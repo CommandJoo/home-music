@@ -36,7 +36,6 @@ function icyConnect(streamUrl, onMetadata, onError) {
         buffer = Buffer.concat([buffer, chunk]);
 
         if (!headersParsed) {
-            // search for \r\n\r\n or \n\n as raw bytes
             let headerEnd = -1;
             let headerSkip = 2;
 
@@ -61,9 +60,8 @@ function icyConnect(streamUrl, onMetadata, onError) {
             }
         }
 
-        if (metaint === null) return; // no metadata support
+        if (metaint === null) return;
 
-        // parse ICY metadata chunks out of the stream
         while (buffer.length > 0) {
             if (bytesUntilMeta > 0) {
                 const consume = Math.min(bytesUntilMeta, buffer.length);
@@ -110,17 +108,6 @@ function setup(baseDir) {
     }
 }
 
-async function resolveRedirects(url, maxRedirects = 5) {
-    if (maxRedirects === 0) return url;
-    try {
-        const res = await fetch(url, { method: 'HEAD', redirect: 'manual' });
-        if (res.status === 301 || res.status === 302) {
-            return resolveRedirects(res.headers.get('location'), maxRedirects - 1);
-        }
-    } catch (e) {}
-    return url;
-}
-
 async function deezerToMusic(response) {
     return (await response.json()).data.map((complex) => {
         return {
@@ -138,12 +125,11 @@ async function deezerToMusic(response) {
 async function radioReformed(response) {
     const data = await response.json();
     return Promise.all(data.map(async (complex) => {
-        const resolvedUrl = await resolveRedirects(complex.url_resolved);
         return {
             uuid: complex.stationuuid,
             title: complex.name,
             url: {
-                track: resolvedUrl,
+                track: complex.url_resolved,
                 cover: complex.favicon,
             },
             tags: complex.tags,

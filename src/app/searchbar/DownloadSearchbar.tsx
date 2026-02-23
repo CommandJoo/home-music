@@ -1,30 +1,45 @@
 import "./Searchbar.css"
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
+import {TbPlayerPlayFilled} from "react-icons/tb";
 import {FaDownload} from "react-icons/fa6";
 import {FaTimes} from "react-icons/fa";
 import type {Recording} from "../types.ts";
 import {useMusic} from "../../MusicProvider.tsx";
 
 type SearchbarProps = {
-    check: (recording: Recording) => boolean;
     setSearching: (searching: boolean) => void;
 }
 
 type SongEntryProps = {
     recording: Recording
-    check: (recording: Recording) => boolean;
 }
 
 export function SongEntry(props: SongEntryProps) {
-    const [downloading, setDownloading] = useState(false)
+    const {db, player} = useMusic();
+    const [downloading, setDownloading] = useState(false);
+    const [downloaded, setDownloaded] = useState(false);
     const {reloadSongs} = useMusic();
+
+    const checkPresence = useCallback(() => {
+        return db.some(item => item.metadata.isrc == props.recording.isrc);
+    }, [props, db]);
+    const installed = useCallback(() => {
+        const filtered = db.filter((s) => props.recording.isrc === s.metadata.isrc);
+        if(filtered.length > 0){
+            return filtered;
+        }
+        return undefined;
+    }, [db, props.recording.isrc])
 
     useEffect(() => {
         async function load() {
-            if (props.check(props.recording)) setDownloading(true);
+            if (checkPresence()) {
+                setDownloading(true);
+                setDownloaded(true);
+            }
         }
         load();
-    }, [props]);
+    }, [checkPresence, props]);
 
     function reload() {
         const timeout = setTimeout(() => {
@@ -45,7 +60,7 @@ export function SongEntry(props: SongEntryProps) {
     return <div className={"song"} key={key()}>
         <div id={"song-left"}>
             <div id={"cover-wrapper"}>
-                <img id={"cover"} src={props.recording.cover}/>
+                <img id={"cover"} src={props.recording.cover} alt={props.recording.title}/>
             </div>
             <div id={"info"}>
                 <h3>{props.recording.title}</h3>
@@ -58,7 +73,10 @@ export function SongEntry(props: SongEntryProps) {
                 downloadTrack(props.recording.title, props.recording.artist.name, props.recording.cover, props.recording.isrc, props.recording.artist.picture);
             }
         }}>
-            <FaDownload className={"download " + (downloading ? "downloading" : "")} size={"2.5vh"}></FaDownload>
+            {downloaded ? <TbPlayerPlayFilled className={"download downloaded"} size={"2.5vh"} onClick={() => {
+                const inst = installed();
+                if(inst) player.play(inst[0]);
+            }}/> : <FaDownload className={"download " + (downloading ? "downloading" : "")} size={"2.5vh"}></FaDownload>}
         </div>
     </div>
 }
@@ -98,7 +116,7 @@ export default function DownloadSearchbar(props: SearchbarProps) {
             controller.abort();
         };
 
-    }, [search]);
+    }, [props, search]);
 
     return <div id={"searchbar"} onKeyDown={(e) => {
         if (e.key === "Escape") {
@@ -122,7 +140,7 @@ export default function DownloadSearchbar(props: SearchbarProps) {
         </div>
         {(results && results.length > 0) && <ul id={"searchbar-results"}>
             {results.map((r: Recording) => {
-                return <SongEntry key={r.isrc} check={props.check} recording={r}/>
+                return <SongEntry key={r.isrc} recording={r}/>
             })}
         </ul>}
     </div>

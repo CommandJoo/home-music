@@ -28,12 +28,7 @@ export default function RadioPage() {
 
     return <div id={"radio-page"} className={"page"}>
         <div id={"search"}>
-            <RadioSearchbar setSearching={setSearching} check={(radio: Radio) => {
-                if(!currentUser) return false;
-                return currentUser.radio.some((userRadio) => {
-                    return userRadio.uuid === radio.uuid;
-                });
-            }}/>
+            <RadioSearchbar setSearching={setSearching}/>
         </div>
         <div id={"page"}>
             <h1>Radios</h1>

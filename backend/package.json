@@ -15,6 +15,7 @@
     "express": "^5.2.1",
     "icy": "^2.1.0",
     "mp3-duration": "^1.1.0",
+    "multer": "^2.0.2",
     "yt-dlp-exec": "^1.0.2"
   }
 }

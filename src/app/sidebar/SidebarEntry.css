@@ -15,23 +15,25 @@
     flex-shrink: 0;
 
     &.generic {
+        filter: brightness(1.1);
         transition: --hue-a 0.2s, --hue-b 0.2s;
         background: linear-gradient(to bottom right, hsl(var(--hue-a) 65% 50%), hsl(var(--hue-b) 65% 50%));
     }
 
     &.generic:hover {
+        filter: brightness(1.4);
         background: linear-gradient(to top right, hsl(var(--hue-b) 65% 50%), hsl(var(--hue-a) 65% 50%));
     }
 
     #entry-preview {
         align-self: flex-start;
         height: 100%;
+        width: 100%;
         aspect-ratio: 1/1;
 
         border-radius: 4px;
 
         outline: none;
-        flex-shrink: 0;
 
         display: flex;
         justify-content: center;
@@ -40,6 +42,8 @@
         img {
             width: 100%;
             height: 100%;
+            border-radius: 4px;
+            object-fit: cover;
         }
 
         .icon {

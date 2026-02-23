@@ -4,15 +4,17 @@
 }
 
 #audio-controller {
+    position: relative;
     display: flex;
     height: 100%;
     justify-content: space-between;
 
     #audio-left {
+        background: linear-gradient(to left, var(--bg), var(--bg-light));
         display: flex;
         box-sizing: border-box;
         padding: 0.5vh;
-        width: 33%;
+        width: 40%;
 
         gap: 0.5vh;
 
@@ -54,6 +56,8 @@
     }
 
     #audio-middle {
+        position: absolute;
+        left: 25%;
         width: 50%;
         height: 100%;
         display: flex;
@@ -212,7 +216,8 @@
     }
 
     #audio-right {
-        width: 33%;
+        background: linear-gradient(to right, var(--bg), var(--bg-light));
+        width: 40%;
         display: flex;
         justify-content: flex-end;
         align-items: center;

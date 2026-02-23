@@ -7,16 +7,15 @@ import { BsFillCollectionFill } from "react-icons/bs";
 import UserSidebarEntry from "./UserSidebarEntry.tsx";
 import {useMusic} from "../../MusicProvider.tsx";
 
-function stringToColor(str: string, seed: number = 0): string {
-    let hash = seed;
+function stringToColor(str: string, mult: number): string {
+    let hash = 0;
     for (let i = 0; i < str.length; i++) {
-        hash ^= str.charCodeAt(i);
-        hash = Math.imul(hash, 0x9e3779b9); // golden ratio constant, good distribution
-        hash ^= hash >>> 16;
+        hash = (str.charCodeAt(i)*mult) + ((hash << 5) - hash);
     }
     const hue = Math.abs(hash) % 360;
-    return `${hue}`;
+    return ""+hue;
 }
+
 
 
 export default function Sidebar() {
@@ -41,15 +40,15 @@ export default function Sidebar() {
             {/*    select(null);*/}
             {/*}}>*/}
             {/*</SidebarEntry>*/}
-            <SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("download", 1), "--hue-b": stringToColor("downloads", 17)} as CSSProperties} preview={<FaDownload className={"icon"} size={"2.7vw"}/>} onClick={() => {
+            <SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("downloads", 10), "--hue-b": stringToColor("downloads", 4)} as CSSProperties} preview={<FaDownload className={"icon"} size={"2.7vw"}/>} onClick={() => {
                 changePage({type:"downloads"})
             }}>
             </SidebarEntry>
-            <SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("library", 6), "--hue-b": stringToColor("collections", 15)} as CSSProperties} preview={<BsFillCollectionFill className={"icon"} size={"2.7vw"}/>} onClick={() => {
+            <SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("library", 5), "--hue-b": stringToColor("collections", 1)} as CSSProperties} preview={<BsFillCollectionFill className={"icon"} size={"2.7vw"}/>} onClick={() => {
                 changePage({type:"library"})
             }}>
             </SidebarEntry>
-            <SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("radio", 12), "--hue-b": stringToColor("radio", 15)} as CSSProperties} preview={<FaRadio className={"icon"} size={"2.7vw"}/>} onClick={() => {
+            <SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("radio", 3), "--hue-b": stringToColor("radio", 3.8)} as CSSProperties} preview={<FaRadio className={"icon"} size={"2.7vw"}/>} onClick={() => {
                 changePage({type:"radio"})
             }}>
             </SidebarEntry>

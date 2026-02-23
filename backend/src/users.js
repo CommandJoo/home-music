@@ -1,5 +1,7 @@
 const fs = require("fs");
 const path = require("path");
+const multer = require("multer");
+const upload = multer({ storage: multer.memoryStorage() });
 
 function users(app, baseDir, musicDir) {
     function userDir(userId) {
@@ -110,13 +112,17 @@ function users(app, baseDir, musicDir) {
     app.get("/api/users/default_cover", (req, res) => {
         res.sendFile(path.resolve(`${baseDir}/cover.png`));
     });
-    app.get("/api/users/register", async (req, res) => {
+    app.post("/api/users/register", upload.single("image"), async (req, res) => {
         const name = req.query.name;
         const id = toSafeFilename(name);
         const path = `/api/users/${id}`;
 
         if (!fs.existsSync(`${baseDir}/accounts/${id}`)) {
             fs.mkdirSync(`${baseDir}/accounts/${id}`, {recursive: true});
+
+            if (req.file) {
+                fs.writeFileSync(`${baseDir}/accounts/${id}/picture.png`, req.file.buffer);
+            }
 
             const pictureExists = fs.existsSync(`${baseDir}/accounts/${id}/picture.png`);
 
@@ -262,7 +268,11 @@ function users(app, baseDir, musicDir) {
         });
     })
     app.get("/api/users/:userId/picture", async (req, res) => {
-
+        const user = req.params.userId;
+        const userdata = readUser(user);
+        if(userdata.picture && fs.existsSync(path.join(userDir(user), "picture.png"))) {
+            res.sendFile(path.resolve(path.join(userDir(user), "picture.png")));
+        }
     });
 }
 
