@@ -267,6 +267,7 @@ function search(app, baseDir) {
         }
         if (!fs.existsSync(`${artistDir}/metadata.json`)) {
             const metaData = {
+                id: toSafeFilename(artist),
                 name: artist,
                 picture: artist_picture,
             }

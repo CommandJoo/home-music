@@ -7,15 +7,20 @@ import DownloadPage from "./app/pages/DownloadPage.tsx";
 import LibraryPage from "./app/pages/LibraryPage.tsx";
 import ArtistPage from "./app/pages/ArtistPage.tsx";
 import RadioPage from "./app/pages/RadioPage.tsx";
+import {BrowserRouter, useNavigate} from "react-router-dom";
 
 
 function Basis() {
     return <MusicProvider>
-        <App/>
+        <BrowserRouter>
+            <App/>
+        </BrowserRouter>
     </MusicProvider>
 }
 
+
 function App() {
+    const navigate = useNavigate();
     const {reloadSongs, refreshUsers, page, player} = useMusic();
 
     useEffect(() => {
@@ -26,6 +31,14 @@ function App() {
 
         load();
     }, [refreshUsers, reloadSongs]);
+
+    useEffect(() => {
+        if (page.type === "artist") {
+            navigate(page.type + "?id=" + page.artist?.id);
+        } else {
+            navigate(page.type);
+        }
+    }, [navigate, page]);
 
     function showingPage() {
         if(page?.type === "library") {

@@ -57,10 +57,13 @@ function music(app, baseDir) {
         for (const artistDir of dir) {
             if (!fs.existsSync(`${baseDir}/${artistDir}/metadata.json`)) continue;
             const artistMetaData = JSON.parse(fs.readFileSync(`${baseDir}/${artistDir}/metadata.json`));
+            // artistMetaData.id = artistDir;
+            // fs.writeFileSync(`${baseDir}/${artistDir}/metadata.json`, JSON.stringify(artistMetaData));
             artists.push({
+                id: artistMetaData.id,
                 name: artistMetaData.name,
                 picture: artistMetaData.picture,
-                path: artistDir
+                path: `/api/songs/${artistDir}`
             })
         }
         res.json(artists);

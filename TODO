@@ -1,6 +1,8 @@
 Add Pages
  - Home (Personal layout (playlists, pinned songs, pinned artists) search only able to run) -> links to everything, no direct run button + songs clickable
  - Playlist Page (Shows all songs of playlist) -> one run button
+   - button for creating playlists + modal for adding details like name, description and cover
+   - context menu when clicking on song entry to add it to playlist and other information
 
 Player
 - Safe Playing Song
