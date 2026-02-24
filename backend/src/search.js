@@ -1,12 +1,8 @@
 const mp3Duration = require("mp3-duration");
 
 const fs = require('fs');
-const path = require("path");
 const ytDlp = require("yt-dlp-exec");
-const icy = require('icy');
-const http = require('http');
 const net = require('net');
-const url = require('url');
 
 const apiKey = "AIzaSyD2fxT9NeLHVlrOHnEd1nr5QyfLDybWois";
 
@@ -250,7 +246,8 @@ function search(app, baseDir) {
         }
 
         const result = await searchYoutube(artist, track)
-        downloadVideo(artist, track, cover, isrc, artist_picture, `https://www.youtube.com/watch?v=${result.id.videoId}`);
+        res.json({success: true});
+        await downloadVideo(artist, track, cover, isrc, artist_picture, `https://www.youtube.com/watch?v=${result.id.videoId}`);
     })
 
     async function downloadVideo(artist, track, cover, isrc, artist_picture, url) {
@@ -318,8 +315,8 @@ function search(app, baseDir) {
                 fs.writeFileSync(`${songDir}/metadata.json`, JSON.stringify(metaData));
             }
 
-            writeMetaData();
             console.log(`[6/6] Song Metadata not found, creating...`);
+            await writeMetaData();
         }else {
             console.log(`[6/6] Song Metadata already present, skipped...`);
         }

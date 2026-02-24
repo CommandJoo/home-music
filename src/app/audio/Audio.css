@@ -4,6 +4,9 @@
 }
 
 #audio-controller {
+    --volume: 0%;
+    --progress: 0%;
+
     position: relative;
     display: flex;
     height: 100%;
