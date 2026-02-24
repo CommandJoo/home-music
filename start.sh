@@ -1,8 +1,7 @@
 #!/bin/sh
 
-node ./backend/index.js &
-
-npm run dev -- --host 0.0.0.0 --port 5173 &
+npm run build
+cd backend && node index.js &
 
 wait
 exit $?

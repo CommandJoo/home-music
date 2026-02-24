@@ -1,6 +1,7 @@
-import type {Song, Users, User, Page, Playable, Radio} from "./app/types.ts";
+import type {Page, Playable, Radio, Song, User, Users} from "./app/types.ts";
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useNowPlaying(streamUrl?: string) {
     const [title, setTitle] = useState<string>('');
 
@@ -19,20 +20,46 @@ export function useNowPlaying(streamUrl?: string) {
     return title;
 }
 
-export type PlayerType = { play: (song?: Playable) => void, back: () => void, forward: () => void, addQueue: (songs: Playable|Playable[])=>void, playing?: Playable, queue: Song[], history: Playable[], isSong: () => boolean, isRadio: () => boolean, asRadio: () => Radio, asSong: () => Song}
+export type PlayerType = {
+    play: (song?: Playable) => void,
+    back: () => void,
+    forward: () => void,
+    addQueue: (songs: Playable | Playable[]) => void,
+
+    playing?: Playable,
+    queue: Song[],
+    history: Playable[],
+
+    isSong: () => boolean,
+    isRadio: () => boolean,
+    asRadio: () => Radio,
+    asSong: () => Song,
+
+    hasInteracted: boolean,
+    interact: () => void,
+}
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function usePlayer() {
+    const [hasInteracted, setHasInteracted] = useState(false);
+
     const [history, setHistory] = useState<Playable[]>([]);
     const [playing, setPlaying] = useState<Playable | undefined>();
     const [queue, setQueue] = useState<Playable[]>([]);
 
+    const interact = useCallback(() => {
+        setHasInteracted(true);
+    }, []);
+
     const play = useCallback((song?: Playable) => {
         setPlaying(prev => {
             if (prev) setHistory(h => [...h, prev]);
+            if (song) {
+                interact();
+            }
             return song;
         });
-    }, []);
+    }, [interact]);
 
     const back = useCallback(() => {
         setHistory(prev => {
@@ -43,6 +70,7 @@ export function usePlayer() {
                 if (current) setQueue(q => [current, ...q]);
                 return song;
             });
+            setHasInteracted(true);
             return next;
         });
     }, []);
@@ -50,27 +78,27 @@ export function usePlayer() {
     const forward = useCallback(() => {
         setQueue(prev => {
             if (prev.length === 0) return prev;
-            const next = [...prev];
-            const song = next.shift();
+            const [song, ...rest] = prev;
             setPlaying(current => {
                 if (current) setHistory(h => [...h, current]);
                 return song;
             });
-            return next;
+            setHasInteracted(true);
+            return rest;
         });
     }, []);
 
     const isRadio = useCallback(() => {
-        if(!playing) {
+        if (!playing) {
             return false;
         }
-        return playing && playing.kind==="radio";
+        return playing && playing.kind === "radio";
     }, [playing]);
     const isSong = useCallback(() => {
-        if(!playing) {
+        if (!playing) {
             return false;
         }
-        return playing && playing.kind==="song";
+        return playing && playing.kind === "song";
     }, [playing]);
     const asRadio = useCallback(() => {
         return playing as Radio;
@@ -79,13 +107,26 @@ export function usePlayer() {
         return playing as Song;
     }, [playing])
 
+
     const addQueue = useCallback((songs: Playable | Playable[]) => {
         setQueue(q => [...q, ...(Array.isArray(songs) ? songs : [songs])]);
     }, []);
 
     return useMemo(() => ({
-        play, back, forward, addQueue, playing, queue, history, isRadio, isSong, asRadio, asSong
-    } as PlayerType), [play, back, forward, addQueue, playing, queue, history, isRadio, isSong, asRadio, asSong]);
+        play,
+        back,
+        forward,
+        addQueue,
+        playing,
+        queue,
+        history,
+        isRadio,
+        isSong,
+        asRadio,
+        asSong,
+        hasInteracted,
+        interact
+    } as PlayerType), [play, back, forward, addQueue, playing, queue, history, isRadio, isSong, asRadio, asSong, hasInteracted, interact]);
 }
 
 type MusicContextType = {
@@ -115,7 +156,9 @@ export function MusicProvider({children}: { children: ReactNode }) {
     const reloadSongs = useCallback(async () => {
         const response = await fetch("/api/songs");
         const json = await response.json() as Song[];
-        setDb(json);
+        setDb(json.map((s) => {
+            return {...s, kind: "song"} as Song;
+        }));
     }, []);
     const changePage = useCallback((page: Page) => {
         setPage(page);
@@ -173,10 +216,20 @@ export function MusicProvider({children}: { children: ReactNode }) {
         }
     }, [refreshUsers]);
 
+
     return <MusicContext.Provider
         value={useMemo(() => ({
-        db, reloadSongs, page, changePage, player, users, refreshUsers, currentUser, refreshCurrentUser, changeUser
-    }), [db, reloadSongs, page, changePage, player, users, refreshUsers, currentUser, refreshCurrentUser, changeUser])}>
+            db,
+            reloadSongs,
+            page,
+            changePage,
+            player,
+            users,
+            refreshUsers,
+            currentUser,
+            refreshCurrentUser,
+            changeUser,
+        }), [db, reloadSongs, page, changePage, player, users, refreshUsers, currentUser, refreshCurrentUser, changeUser])}>
         {children}
     </MusicContext.Provider>
 }

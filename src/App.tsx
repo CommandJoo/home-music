@@ -58,7 +58,7 @@ function App() {
             {player.queue.length > 0 && <div id={"queue"}>
                 {player.queue.map((item, i) => {
                     return <div key={i}>
-                        {item.title}
+                        {item && item.title}
                     </div>;
                 })}
             </div>}

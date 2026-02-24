@@ -1,11 +1,11 @@
 import "./Audio.css";
 import {type CSSProperties, useEffect, useRef, useState} from "react";
-import {FaVolumeHigh, FaVolumeXmark, FaRadio} from "react-icons/fa6";
+import {FaRadio, FaVolumeHigh, FaVolumeXmark} from "react-icons/fa6";
 import {
-    TbPlayerPlayFilled,
     TbPlayerPauseFilled,
-    TbPlayerSkipForwardFilled,
-    TbPlayerSkipBackFilled
+    TbPlayerPlayFilled,
+    TbPlayerSkipBackFilled,
+    TbPlayerSkipForwardFilled
 } from "react-icons/tb";
 import {useMusic, useNowPlaying} from "../../MusicProvider.tsx";
 
@@ -77,6 +77,30 @@ export default function Audio() {
 
     useEffect(() => {
         const el = audio.current;
+        if (!el || !player.playing) return;
+
+        el.src = player.playing.url.track;
+        el.load();
+
+        function setTime() {
+            setCurrentTime(0);
+        }
+
+        setTime();
+
+        if (player.hasInteracted) {
+            el.play().catch(console.error);
+
+            function unpause() {
+                setPaused(false);
+            }
+
+            unpause();
+        }
+    }, [player.hasInteracted, player.playing]);
+
+    useEffect(() => {
+        const el = audio.current;
         if (!el) return;
 
         const onLoadedMetadata = () => {
@@ -104,16 +128,13 @@ export default function Audio() {
         const onEnded = () => {
             setPaused(true);
 
-            async function next() {
-                if (page && page.songs) {
-                    const song = page.songs[Math.round(Math.random() * page.songs.length)];
-                    player.play(song);
-                    return;
-                }
-                player.play(db[Math.round(Math.random() * db.length)]);
+            if (player.queue.length > 0) {
+                player.forward();
+            } else {
+                const pool = page?.songs ?? db;
+                const song = pool[Math.round(Math.random() * (pool.length - 1))];
+                player.play(song);
             }
-
-            next();
         }
 
         el.addEventListener("loadedmetadata", onLoadedMetadata);
@@ -131,7 +152,7 @@ export default function Audio() {
             el.removeEventListener("volumechange", onVolumeChange);
             el.removeEventListener("ended", onEnded);
         };
-    }, [player, player.playing]);
+    }, [db, page?.songs, player, player.playing]);
 
     function changeTime(value: number) {
         const el = audio.current;
@@ -148,6 +169,7 @@ export default function Audio() {
     function toggle() {
         const el = audio.current;
         if (!el) return;
+        player.interact();
         if (el.paused) {
             el.play();
             setPaused(false);
@@ -171,12 +193,12 @@ export default function Audio() {
                     (player.asRadio().url.cover.length > 0 ?  <img src={player.asRadio().url.cover} alt={player.playing?.title}/> : <FaRadio className={"icon"} size={"6vh"}/>)) : ""}
             </div>
             <div id={"info"}>
-                <h3>{player.playing ? (nowPlaying ? nowPlaying : player.playing?.title) : ""}</h3>
+                <h3>{player.playing ? (player.isSong() ? player.asSong().title : (nowPlaying ? nowPlaying : player.playing?.title)) : ""}</h3>
                 <h5>{player.playing ? (player.isSong() ? player.asSong()?.artist.name : player.asRadio()?.title) : ""}</h5>
             </div>
         </div>
         <div id={"audio-middle"}>
-            <audio ref={audio} controls src={player.playing?.url.track}/>
+            <audio ref={audio} controls/>
             <div id="controls">
                 <div id={"top"}>
                     <div id={"prev"} onClick={() => {

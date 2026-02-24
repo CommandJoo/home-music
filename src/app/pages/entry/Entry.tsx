@@ -68,7 +68,7 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
 }
 
 export function SongEntry({song}: SongEntryProps) {
-    const {player} = useMusic();
+    const {player, db} = useMusic();
 
     return <div id={"song-entry"} className={"song entry"} key={song.title + song.artist}>
         <div id={"cover-wrapper"}>
@@ -76,6 +76,7 @@ export function SongEntry({song}: SongEntryProps) {
             <div id={"overlay"}></div>
             <button id={"play-button"} onClick={() => {
                 player.play(song);
+                player.addQueue(db[Math.round(Math.random() * db.length)]);
             }}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>
         </div>
         <h2>{song.title}</h2>
