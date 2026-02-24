@@ -70,7 +70,10 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
 export function SongEntry({song}: SongEntryProps) {
     const {player, db} = useMusic();
 
-    return <div id={"song-entry"} className={"song entry"} key={song.title + song.artist}>
+    return <div id={"song-entry"} className={"song entry"} key={song.title + song.artist} onContextMenu={(e) => {
+        e.preventDefault();
+        console.log("right")
+    }}>
         <div id={"cover-wrapper"}>
             <img id={"cover"} src={song.url.cover} alt={song.title}></img>
             <div id={"overlay"}></div>

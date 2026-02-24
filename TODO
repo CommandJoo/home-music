@@ -1,3 +1,11 @@
+Sidebar
+- Songs, Artists, Playlists Pinnable
+
+Context Menu
+- Add To Queue
+- Pin
+- Add To Playlist
+
 Add Pages
  - Home (Personal layout (playlists, pinned songs, pinned artists) search only able to run) -> links to everything, no direct run button + songs clickable
  - Playlist Page (Shows all songs of playlist) -> one run button
@@ -7,7 +15,3 @@ Add Pages
 Player
 - Safe Playing Song
 - Safe Volume
-- Improve Audio.tsx to be controlled by player, not the other way around
-
-Sidebar
-- Songs, Artists, Playlists Pinnable

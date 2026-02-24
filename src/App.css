@@ -14,8 +14,8 @@
 
     --gradient: linear-gradient(0deg, oklch(.15 0.0043 163deg), oklch(.25 calc(0.0043 * .8) 163deg));
 
-    --primary: oklch(1 .5 163deg);
-    --secondary: oklch(1 .34 calc(360deg - 163deg));
+    --primary: oklch(1 .5 270deg);
+    --secondary: oklch(1 .34 300deg);
 
     --error: oklch(.8 max(min(calc(0.0043 * 2), .4), .2) 20deg);
     --warning: oklch(.8 max(min(calc(0.0043 * 2), .4), .2) 100deg);

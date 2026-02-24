@@ -11,7 +11,6 @@ export function useNowPlaying(streamUrl?: string) {
         const es = new EventSource(`/api/radio/nowplaying?url=${encodeURIComponent(streamUrl)}`);
         es.onmessage = (e) => {
             const data = JSON.parse(e.data);
-            console.log("Updated");
             setTitle(data.title);
         };
         return () => es.close();
