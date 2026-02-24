@@ -30,11 +30,13 @@ function music(app, baseDir) {
                     isrc: "0"
                 };
                 songs.push({
+                    uuid: track,
                     title: metaData.track,
                     artist: {
+                        id: artist,
                         name: artistMetaData.name,
                         picture: artistMetaData.picture,
-                        path: artist
+                        path: `/api/songs/${artistDir}`
                     },
                     metadata: {
                         duration: metaData.duration,

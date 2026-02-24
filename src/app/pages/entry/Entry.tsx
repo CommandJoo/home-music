@@ -5,6 +5,7 @@ import {TbPlayerPlayFilled} from "react-icons/tb";
 import {FaRadio} from "react-icons/fa6";
 import {type CSSProperties, useEffect, useState} from "react";
 import type {Playlist} from "../LibraryPage.tsx";
+import {useContextMenu} from "../../../ContextMenuProvider.tsx";
 
 type SongEntryProps = {
     song: Song;
@@ -67,12 +68,39 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
     </div>
 }
 
+function AddToPlayListButton({song}: { song: Song }) {
+    const {currentUser} = useMusic();
+    const [open, setOpen] = useState(false);
+
+    return <div>
+        <button onClick={() => setOpen(!open)}>Add to Playlist</button>
+        {open && <div className={"playlists"}>
+            {currentUser && currentUser.playlists.map((p) => {
+                return <button onClick={() => {
+                    async function load() {
+                        if (!currentUser) return;
+                        await fetch(`/api/users/${currentUser.id}/playlists/${p}/add?song=${song.uuid}&artist=${song.artist.id}`);
+                    }
+
+                    load();
+                    setOpen(false);
+                }}>{p}</button>;
+            })}
+        </div>}
+    </div>
+}
+
 export function SongEntry({song}: SongEntryProps) {
+    const {open} = useContextMenu();
     const {player, db} = useMusic();
 
     return <div id={"song-entry"} className={"song entry"} key={song.title + song.artist} onContextMenu={(e) => {
         e.preventDefault();
-        console.log("right")
+        open(e.pageX, e.pageY, (
+            <div>
+                <AddToPlayListButton song={song}/>
+            </div>
+        ));
     }}>
         <div id={"cover-wrapper"}>
             <img id={"cover"} src={song.url.cover} alt={song.title}></img>

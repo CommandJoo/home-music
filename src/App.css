@@ -95,3 +95,12 @@
         }
     }
 }
+
+#context-menu {
+    background: var(--bg-light);
+    box-sizing: border-box;
+
+    font-size: 1.4rem;
+    padding: 1vh;
+    border-radius: 8px;
+}

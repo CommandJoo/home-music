@@ -117,14 +117,29 @@ function users(app, baseDir, musicDir) {
         const id = toSafeFilename(name);
         const path = `/api/users/${id}`;
 
-        if (!fs.existsSync(`${baseDir}/accounts/${id}`)) {
-            fs.mkdirSync(`${baseDir}/accounts/${id}`, {recursive: true});
+        const directory = userDir(id);
 
-            if (req.file) {
-                fs.writeFileSync(`${baseDir}/accounts/${id}/picture.png`, req.file.buffer);
+        if (!fs.existsSync(directory)) {
+            fs.mkdirSync(directory, {recursive: true});
+
+            const playlistDir = `${directory}/playlists`;
+            if (!fs.existsSync(playlistDir)) {
+                fs.mkdirSync(playlistDir, {recursive: true});
+            }
+            if (fs.existsSync(`${playlistDir}/liked_songs.json`)) {
+                res.json({success: false, reason: "playlist id SOMEHOW already exists"});
+                return;
+            } else {
+                const playlist = {cover: "/api/users/default_cover", title: "Liked Songs", content: []};
+                fs.writeFileSync(`${playlistDir}/liked_songs.json`, JSON.stringify(playlist));
             }
 
-            const pictureExists = fs.existsSync(`${baseDir}/accounts/${id}/picture.png`);
+
+            if (req.file) {
+                fs.writeFileSync(`${directory}/picture.png`, req.file.buffer);
+            }
+
+            const pictureExists = fs.existsSync(`${directory}/picture.png`);
 
             const userdata = {
                 name,
@@ -198,7 +213,7 @@ function users(app, baseDir, musicDir) {
     })
     app.get("/api/users/:userId/playlists/create", async (req, res) => {
         const user = req.params.userId;
-        if (!fs.existsSync(`${baseDir}/accounts/${user}`)) {
+        if (!fs.existsSync(`${userDir(user)}`)) {
             res.json({success: false, reason: "account does not exist"});
             return;
         }
@@ -209,7 +224,7 @@ function users(app, baseDir, musicDir) {
 
         const id = genPlaylistId();
 
-        const playlistDir = `${baseDir}/accounts/${user}/playlists`;
+        const playlistDir = `${userDir(user)}/playlists`;
         if (!fs.existsSync(playlistDir)) {
             fs.mkdirSync(playlistDir, {recursive: true});
         }
@@ -218,7 +233,7 @@ function users(app, baseDir, musicDir) {
             return;
         }
         const playlist = {cover, title, content};
-        fs.writeFileSync(`${baseDir}/accounts/${user}/playlists/${id}.json`, JSON.stringify(playlist));
+        fs.writeFileSync(`${playlistDir}/${id}.json`, JSON.stringify(playlist));
 
         res.json({success: true, id});
     });
@@ -245,7 +260,6 @@ function users(app, baseDir, musicDir) {
             )
 
         }
-
         fs.writeFileSync(`${baseDir}/accounts/${user}/playlists/${playlist}.json`, JSON.stringify(data));
         res.json(data);
     })

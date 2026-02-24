@@ -10,13 +10,18 @@ import {
 import {useMusic, useNowPlaying} from "../../MusicProvider.tsx";
 
 function toMinutes(seconds: number): string {
+    let hours = 0;
     let minutes = 0;
     while (seconds >= 60) {
         minutes++;
         seconds -= 60;
     }
+    while (minutes >= 60) {
+        hours++;
+        minutes -= 60;
+    }
 
-    return (minutes < 10 ? "0" : "") + String(minutes) + ":" + (seconds < 10 ? "0" : "") + seconds;
+    return (hours > 0 ? (hours < 10 ? "0" : "") + String(hours) + ":" : "") + (minutes < 10 ? "0" : "") + String(minutes) + ":" + (seconds < 10 ? "0" : "") + seconds;
 }
 
 function SineWave() {

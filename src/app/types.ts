@@ -6,6 +6,7 @@ export type Artist = {
 }
 
 export type Playable = {
+    uuid: string;
     kind: string;
     title: string;
     url: {
@@ -25,7 +26,6 @@ export type Song = Playable & {
 
 export type Radio = Playable & {
     readonly kind: "radio",
-    uuid: string;
     tags: string[];
 }
 

@@ -8,13 +8,16 @@ import LibraryPage from "./app/pages/LibraryPage.tsx";
 import ArtistPage from "./app/pages/ArtistPage.tsx";
 import RadioPage from "./app/pages/RadioPage.tsx";
 import {BrowserRouter, useNavigate} from "react-router-dom";
+import {ContextMenuProvider} from "./ContextMenuProvider.tsx";
 
 
 function Basis() {
     return <MusicProvider>
-        <BrowserRouter>
-            <App/>
-        </BrowserRouter>
+        <ContextMenuProvider>
+            <BrowserRouter>
+                <App/>
+            </BrowserRouter>
+        </ContextMenuProvider>
     </MusicProvider>
 }
 
@@ -41,13 +44,13 @@ function App() {
     }, [navigate, page]);
 
     function showingPage() {
-        if(page?.type === "library") {
+        if (page?.type === "library") {
             return <LibraryPage/>
         }
-        if(page?.type === "artist" && page.artist) {
+        if (page?.type === "artist" && page.artist) {
             return <ArtistPage/>
         }
-        if(page?.type === "radio") {
+        if (page?.type === "radio") {
             return <RadioPage/>
         }
         return <DownloadPage/>;
