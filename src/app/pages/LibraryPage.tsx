@@ -10,15 +10,19 @@ export default function LibraryPage() {
     const [search, setSearch] = useState("");
 
     function displaySongs() {
-        return db && db.filter(s => s.title.startsWith(search)).map((song: Song) => {
+        return db && db.filter(s => matches(s.title)).map((song: Song) => {
             return <SongEntry song={song}/>
         })
     }
 
     function displayPlaylists() {
-        return currentUser && currentUser.playlists.filter(p => p.title.startsWith(search)).map((playlist: Playlist) => {
+        return currentUser && currentUser.playlists.filter(p => matches(p.title)).map((playlist: Playlist) => {
             return <PlaylistEntry playlist={playlist}/>
         })
+    }
+
+    function matches(a: string) {
+        return a.toLowerCase().startsWith(search.toLowerCase());
     }
 
     return <div id={"library-page"} className={"page"}>
@@ -30,11 +34,11 @@ export default function LibraryPage() {
             </div>
         </div>
         <div id={"page"}>
-            {(currentUser && currentUser.playlists.some(p => p.title.startsWith(search))) && <h1>Playlists</h1>}
-            {(currentUser && currentUser.playlists.some(p => p.title.startsWith(search))) &&
+            {(currentUser && currentUser.playlists.some(p => matches(p.title))) && <h1>Playlists</h1>}
+            {(currentUser && currentUser.playlists.some(p => matches(p.title))) &&
                 <div id={"playlists"}>{displayPlaylists()}</div>}
-            {(db.some(s => s.title.startsWith(search))) && <h1>Songs</h1>}
-            {(db.some(s => s.title.startsWith(search))) && <div id={"songs"}>{displaySongs()}</div>}
+            {(db.some(s => matches(s.title))) && <h1>Songs</h1>}
+            {(db.some(s => matches(s.title))) && <div id={"songs"}>{displaySongs()}</div>}
         </div>
     </div>
 }

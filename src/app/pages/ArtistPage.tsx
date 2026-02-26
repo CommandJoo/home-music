@@ -13,12 +13,16 @@ export default function ArtistPage() {
     function display() {
         return db.filter((s) => {
             if (search.length > 0) {
-                return s.artist.name === page.artist?.name && s.title.startsWith(search);
+                return s.artist.id === page.artist?.id && matches(s.title);
             }
-            return s.artist.name === page.artist?.name;
+            return s.artist.id === page.artist?.id;
         }).map(song => {
             return <SongEntry song={song}/>
         })
+    }
+
+    function matches(a: string) {
+        return a.toLowerCase().startsWith(search.toLowerCase());
     }
 
     return <div id={"artist-page"} className={"page"}>
@@ -36,8 +40,8 @@ export default function ArtistPage() {
                     <h1>{page?.artist?.name}</h1>
                     <button id={"play-button"}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>
                 </div>
-                <h1>Songs</h1>
-                {display()}
+                {(db.some(s => s.artist.id === page.artist?.id && matches(s.title))) && <h1>Songs</h1>}
+                {(db.some(s => s.artist.id === page.artist?.id && matches(s.title))) && display()}
             </div>
         </div>
     </div>
