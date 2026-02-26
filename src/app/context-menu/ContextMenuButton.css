@@ -1,13 +1,10 @@
 .context-menu-button {
     position: relative;
     box-sizing: border-box;
-    padding: 0.5vh;
+    padding: 0.1vh;
 
     font-size: 1.2rem;
     height: 4vh;
-
-    &.playlist {
-    }
 
     display: flex;
     align-items: center;
@@ -35,7 +32,7 @@
         border-bottom-right-radius: 6px;
     }
 
-    #playlists {
+    #list {
         display: flex;
 
         transition: max-height 0.5s ease;
@@ -47,7 +44,7 @@
         left: calc(100% + 0.3vh);
     }
 
-    #playlists.open {
+    #list.open {
         height: fit-content;
         max-height: 30vh;
 
@@ -65,8 +62,27 @@
         justify-content: flex-start;
         text-align: start;
         text-wrap: nowrap;
+
+        margin-left: 0.5vw;
     }
 
+    .icon {
+        height: 3.5vh;
+    }
+
+    .arrow-wrapper {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+
+        margin-left: 2vw;
+        justify-self: flex-end;
+
+        height: 3vh;
+        width: 3vh;
+    }
 }
 
 .context-menu-button:hover {

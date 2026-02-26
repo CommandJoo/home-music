@@ -6,7 +6,7 @@ import {FaRadio} from "react-icons/fa6";
 import {type CSSProperties, useEffect, useState} from "react";
 import type {Playlist} from "../LibraryPage.tsx";
 import {useContextMenu} from "../../../ContextMenuProvider.tsx";
-import ContextMenuButton, {ContextMenuAddToPlaylistButton} from "../../context-menu/ContextMenuButton.tsx";
+import ContextMenuButton, {ContextMenuAddToPlaylistButton,} from "../../context-menu/ContextMenuButton.tsx";
 
 type SongEntryProps = {
     song: Song;
