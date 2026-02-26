@@ -39,6 +39,14 @@ function users(app, baseDir, musicDir) {
         return fs.writeFileSync(userFile(userId), JSON.stringify(userData));
     }
 
+    function readList(userId, listId) {
+        const file = `${userDir(userId)}/playlists/${listId}`;
+        if (!fs.existsSync(file)) {
+            return;
+        }
+        return JSON.parse(fs.readFileSync(file));
+    }
+
 
     function resolveTrackPath(musicDir, artist, song) {
         if(!fs.existsSync(musicDir)) {
@@ -178,11 +186,10 @@ function users(app, baseDir, musicDir) {
         let playlists = [];
         if (fs.existsSync(`${baseDir}/accounts/${user}/playlists`)) {
             const lists = fs.readdirSync(`${baseDir}/accounts/${user}/playlists`);
-            playlists = lists.filter((s) => {
-                return s.endsWith(".json");
-            }).map((s) => {
-                return s.substring(0, s.indexOf(".json"));
-            })
+            for (let list of lists) {
+                const listData = {id: list.substring(0, list.indexOf(".json")), ...readList(user, list)};
+                if (listData) playlists.push(listData);
+            }
         }
         res.json({name: userdata.name, picture: userdata.picture, playlists, radio: userdata.radio});
     });

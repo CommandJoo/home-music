@@ -40,8 +40,10 @@ export type Recording = {
 }
 
 export type Playlist = {
+    id: string,
+    cover: string,
     title: string;
-    songs: Song[];
+    songs: string[];
 }
 
 export type Page = {
@@ -64,6 +66,6 @@ export type User = {
     id: string;
     name: string;
     picture: string;
-    playlists: string[];
+    playlists: Playlist[];
     radio: Radio[]
 }

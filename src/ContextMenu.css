@@ -1,0 +1,14 @@
+#context-menu {
+    position: relative;
+    background: var(--bg-light);
+    box-sizing: border-box;
+
+    border-radius: 8px;
+    padding: 0.3vh;
+
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid var(--border-highlight);
+
+}

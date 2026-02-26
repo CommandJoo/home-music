@@ -1,3 +1,5 @@
+import "./ContextMenu.css";
+
 import {createContext, type ReactNode, useContext, useEffect, useState} from "react";
 
 type ContextMenuState = {

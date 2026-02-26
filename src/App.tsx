@@ -7,7 +7,7 @@ import DownloadPage from "./app/pages/DownloadPage.tsx";
 import LibraryPage from "./app/pages/LibraryPage.tsx";
 import ArtistPage from "./app/pages/ArtistPage.tsx";
 import RadioPage from "./app/pages/RadioPage.tsx";
-import {BrowserRouter, useNavigate} from "react-router-dom";
+import {BrowserRouter, Route, Routes, useNavigate} from "react-router-dom";
 import {ContextMenuProvider} from "./ContextMenuProvider.tsx";
 
 
@@ -43,19 +43,6 @@ function App() {
         }
     }, [navigate, page]);
 
-    function showingPage() {
-        if (page?.type === "library") {
-            return <LibraryPage/>
-        }
-        if (page?.type === "artist" && page.artist) {
-            return <ArtistPage/>
-        }
-        if (page?.type === "radio") {
-            return <RadioPage/>
-        }
-        return <DownloadPage/>;
-    }
-
     return (
         <div id={"root"}>
             {player.queue.length > 0 && <div id={"queue"}>
@@ -69,7 +56,12 @@ function App() {
                 <Sidebar/>
             </div>
             <div id={"page-content"}>
-                {showingPage()}
+                <Routes>
+                    <Route path={"library"} element={<LibraryPage/>}/>
+                    <Route path={"artist"} element={<ArtistPage/>}/>
+                    <Route path={"radio"} element={<RadioPage/>}/>
+                    <Route path={"downloads"} element={<DownloadPage/>}/>
+                </Routes>
                 <div id={"bottom-bar"}>
                     <Audio/>
                 </div>
