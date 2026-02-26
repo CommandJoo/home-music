@@ -197,22 +197,26 @@ function users(app, baseDir, musicDir) {
         const user = req.params.userId;
         const station = req.query.uuid;
         const userdata = readUser(user);
-        const radios = userdata.radio;
+        let radios = userdata.radio;
 
-        const response = await fetch(`https://de1.api.radio-browser.info/json/stations/byuuid/${station}`)
-        const result = (await response.json());
-        const raw = result[0];
-        const resolvedUrl = await resolveRedirects(raw.url_resolved);
-        const data = {
-            uuid: raw.stationuuid,
-            title: raw.name,
-            url: {
-                track: resolvedUrl,
-                cover: raw.favicon,
-            },
-            tags: raw.tags,
+        if ("unfollow" in req.query && radios.some(r => r.uuid === station)) {
+            radios = radios.filter(r => r.uuid !== station);
+        } else {
+            const response = await fetch(`https://de1.api.radio-browser.info/json/stations/byuuid/${station}`)
+            const result = (await response.json());
+            const raw = result[0];
+            const resolvedUrl = await resolveRedirects(raw.url_resolved);
+            const data = {
+                uuid: raw.stationuuid,
+                title: raw.name,
+                url: {
+                    track: resolvedUrl,
+                    cover: raw.favicon,
+                },
+                tags: raw.tags,
+            }
+            radios.push(data);
         }
-        radios.push(data);
 
         userdata.radio = radios;
         writeUser(user, userdata);

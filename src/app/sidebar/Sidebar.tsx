@@ -52,6 +52,7 @@ export default function Sidebar() {
                 changePage({type:"radio"})
             }}>
             </SidebarEntry>
+            <hr className={"sidebar-spacer"}/>
             {artists.map((artist,i) => {
                 return <SidebarEntry key={i} onClick={() => {
                     changePage({type: "artist", artist: artist});

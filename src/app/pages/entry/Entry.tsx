@@ -1,7 +1,7 @@
 import "./Entry.css"
 import {useMusic} from "../../../providers/MusicProvider.tsx";
 import type {Playlist, Radio, Song} from "../../types.ts";
-import {TbPin, TbPlayerPlayFilled, TbPlaylist, TbPlaylistAdd} from "react-icons/tb";
+import {TbHeartOff, TbPin, TbPlayerPlayFilled, TbPlaylist, TbPlaylistAdd} from "react-icons/tb";
 import {FaRadio} from "react-icons/fa6";
 import {type CSSProperties, useEffect, useState} from "react";
 import {useContextMenu} from "../../../providers/ContextMenuProvider.tsx";
@@ -20,8 +20,8 @@ type RadioEntryProps = {
 }
 
 export function RadioEntry({radio}: RadioEntryProps) {
-    const {open} = useContextMenu();
-    const {player} = useMusic();
+    const {open, close} = useContextMenu();
+    const {player, currentUser} = useMusic();
     return <div id={"radio-entry"} className={"radio entry"} key={radio.uuid} onContextMenu={(e) => {
         e.preventDefault();
 
@@ -30,10 +30,19 @@ export function RadioEntry({radio}: RadioEntryProps) {
                 <>
                     <ContextMenuButton icon={<TbPlaylist className={"icon"}/>} onClick={() => {
                         player.addQueue(radio);
+                        close();
                     }}>
                         Add to queue
                     </ContextMenuButton>
-                    <ContextMenuButton icon={<TbPin className={"icon"}/>}>
+                    <ContextMenuButton icon={<TbHeartOff className={"icon"}/>} onClick={() => {
+                        if (currentUser) {
+                            fetch(`/api/users/${currentUser.id}/radio/follow?uuid=${radio.uuid}&unfollow`);
+                            close();
+                        }
+                    }}>
+                        Unfollow Station
+                    </ContextMenuButton>
+                    <ContextMenuButton onContextMenu={() => close()} icon={<TbPin className={"icon"}/>}>
                         Pin to Quickplay
                     </ContextMenuButton>
                 </>
@@ -43,7 +52,8 @@ export function RadioEntry({radio}: RadioEntryProps) {
         load();
     }}>
         <div id={"cover-wrapper"}>
-            {radio.url.cover.length > 0 ? <img id={"cover"} src={radio.url.cover} alt={radio.title}></img> : <FaRadio className={"icon"} size={"15vh"}/>}
+            {radio.url.cover.length > 0 ? <img id={"cover"} src={radio.url.cover} alt={radio.title}></img> :
+                <FaRadio className={"icon"} size={"15vh"}/>}
             <div id={"overlay"}></div>
             <button id={"play-button"} onClick={() => {
                 player.play(radio);
@@ -60,6 +70,7 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
 
     useEffect(() => {
         if (!props.playlist) return;
+
         async function load() {
             const loaded: Song[] = [];
             for (const url of props.playlist.content) {
@@ -69,6 +80,7 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
             }
             setSongs(loaded);
         }
+
         load();
     }, [props.playlist]);
 
@@ -105,7 +117,7 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
         </div>
         <h1>{props.playlist.title}</h1>
         {songs.slice(0, showEntries).map((song: Song, i) => {
-            return <h2 style={{"--i": (showEntries-i)/(showEntries)} as CSSProperties}>{song.title}</h2>
+            return <h2 style={{"--i": (showEntries - i) / (showEntries)} as CSSProperties}>{song.title}</h2>
         })}
     </div>
 }
