@@ -4,7 +4,7 @@ import {TbPlayerPlayFilled} from "react-icons/tb";
 import {FaDownload} from "react-icons/fa6";
 import {FaTimes} from "react-icons/fa";
 import type {Recording} from "../types.ts";
-import {useMusic} from "../../MusicProvider.tsx";
+import {useMusic} from "../../providers/MusicProvider.tsx";
 
 type SearchbarProps = {
     setSearching: (searching: boolean) => void;

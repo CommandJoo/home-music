@@ -1,6 +1,6 @@
 import "./ArtistPage.css"
 import "./Page.css"
-import {useMusic} from "../../MusicProvider.tsx";
+import {useMusic} from "../../providers/MusicProvider.tsx";
 import {TbPlayerPlayFilled} from "react-icons/tb";
 import {SongEntry} from "./entry/Entry.tsx";
 

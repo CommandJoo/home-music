@@ -3,9 +3,9 @@ import SidebarEntry from "./SidebarEntry.tsx";
 import {type CSSProperties, useEffect, useState} from "react";
 import type {Artist} from "../types.ts";
 import {FaDownload, FaRadio} from "react-icons/fa6";
-import { BsFillCollectionFill } from "react-icons/bs";
+import {BsFillCollectionFill} from "react-icons/bs";
 import UserSidebarEntry from "./UserSidebarEntry.tsx";
-import {useMusic} from "../../MusicProvider.tsx";
+import {useMusic} from "../../providers/MusicProvider.tsx";
 
 function stringToColor(str: string, mult: number): string {
     let hash = 0;

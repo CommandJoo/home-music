@@ -1,5 +1,5 @@
 import "./Entry.css"
-import {useMusic} from "../../../MusicProvider.tsx";
+import {useMusic} from "../../../providers/MusicProvider.tsx";
 import type {Playlist, Radio, Song} from "../../types.ts";
 import {TbPin, TbPlayerPlayFilled, TbPlaylist, TbPlaylistAdd} from "react-icons/tb";
 import {FaRadio} from "react-icons/fa6";
@@ -112,7 +112,7 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
 
 export function SongEntry({song}: SongEntryProps) {
     const {open} = useContextMenu();
-    const {player, db} = useMusic();
+    const {player} = useMusic();
 
     return <div id={"song-entry"} className={"song entry"} key={song.title + song.artist} onContextMenu={(e) => {
         e.preventDefault();
@@ -135,7 +135,6 @@ export function SongEntry({song}: SongEntryProps) {
             <div id={"overlay"}></div>
             <button id={"play-button"} onClick={() => {
                 player.play(song);
-                player.addQueue(db[Math.round(Math.random() * db.length)]);
             }}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>
         </div>
         <h2>{song.title}</h2>

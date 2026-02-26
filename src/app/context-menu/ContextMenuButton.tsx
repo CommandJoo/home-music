@@ -1,7 +1,7 @@
 import "./ContextMenuButton.css"
 import {type HTMLProps, type ReactNode, useState} from "react";
 import type {Song} from "../types.ts";
-import {useMusic} from "../../MusicProvider.tsx";
+import {useMusic} from "../../providers/MusicProvider.tsx";
 import {TbChevronRight} from "react-icons/tb";
 
 type ContextMenuButtonProps = HTMLProps<HTMLDivElement> & {

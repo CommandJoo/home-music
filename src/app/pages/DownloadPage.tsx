@@ -1,7 +1,7 @@
 import "./DownloadPage.css"
 import "./Page.css"
 import DownloadSearchbar from "../searchbar/DownloadSearchbar.tsx";
-import {useMusic} from "../../MusicProvider.tsx";
+import {useMusic} from "../../providers/MusicProvider.tsx";
 import {useState} from "react";
 import {SongEntry} from "./entry/Entry.tsx";
 

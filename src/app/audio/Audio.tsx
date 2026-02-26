@@ -7,7 +7,7 @@ import {
     TbPlayerSkipBackFilled,
     TbPlayerSkipForwardFilled
 } from "react-icons/tb";
-import {useMusic, useNowPlaying} from "../../MusicProvider.tsx";
+import {useMusic, useNowPlaying} from "../../providers/MusicProvider.tsx";
 
 function toMinutes(seconds: number): string {
     let hours = 0;
@@ -206,14 +206,20 @@ export default function Audio() {
             <audio ref={audio} controls/>
             <div id="controls">
                 <div id={"top"}>
-                    <div id={"prev"} onClick={() => {
+                    <div id={"prev"} className={player.history.length <= 0 ? "disabled" : "enabled"} onClick={() => {
                         player.back();
                     }}><TbPlayerSkipBackFilled className={"icon"} size={"3vh"}/></div>
-                    <div id={"play"} onClick={() => {
-                        if (player.playing) toggle();
+                    <div id={"play"} className={(!player.playing && player.queue.length <= 0) ? "disabled" : "enabled"}
+                         onClick={() => {
+                             if (player.playing) {
+                                 toggle();
+                             } else if (!player.playing && player.queue.length > 0) {
+                                 player.forward();
+                             }
                     }}>{!paused ? <TbPlayerPauseFilled className={"icon"} size={"3vh"}/> :
                         <TbPlayerPlayFilled className={"icon"} size={"3vh"}/>}</div>
-                    <div id={"next"}><TbPlayerSkipForwardFilled className={"icon"} size={"3vh"} onClick={() => {
+                    <div id={"next"} className={player.queue.length <= 0 ? "disabled" : "enabled"}>
+                        <TbPlayerSkipForwardFilled className={"icon"} size={"3vh"} onClick={() => {
                         player.forward();
                     }}/></div>
                 </div>

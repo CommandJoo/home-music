@@ -1,6 +1,6 @@
 import "./LibraryPage.css"
 import "./Page.css"
-import {useMusic} from "../../MusicProvider.tsx";
+import {useMusic} from "../../providers/MusicProvider.tsx";
 import {PlaylistEntry} from "./entry/Entry.tsx";
 import type {Playlist} from "../types.ts";
 

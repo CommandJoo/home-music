@@ -1,7 +1,7 @@
 import './App.css'
 import Audio from "./app/audio/Audio.tsx";
 import Sidebar from "./app/sidebar/Sidebar.tsx";
-import {MusicProvider, useMusic} from "./MusicProvider.tsx";
+import {MusicProvider, useMusic} from "./providers/MusicProvider.tsx";
 import {useEffect} from "react";
 import DownloadPage from "./app/pages/DownloadPage.tsx";
 import LibraryPage from "./app/pages/LibraryPage.tsx";

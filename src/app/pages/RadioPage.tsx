@@ -1,6 +1,6 @@
 import "./RadioPage.css"
 import "./Page.css"
-import {useMusic} from "../../MusicProvider.tsx";
+import {useMusic} from "../../providers/MusicProvider.tsx";
 import {useEffect, useState} from "react";
 import {RadioEntry} from "./entry/Entry.tsx";
 import type {Radio} from "../types.ts";

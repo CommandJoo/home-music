@@ -1,10 +1,10 @@
 import "./Searchbar.css"
 import {useCallback, useEffect, useRef, useState} from "react";
 import {TbPlayerPlayFilled} from "react-icons/tb";
-import {FaRegHeart, FaHeart, FaRadio} from "react-icons/fa6";
+import {FaHeart, FaRadio, FaRegHeart} from "react-icons/fa6";
 import {FaTimes} from "react-icons/fa";
 import type {Radio} from "../types.ts";
-import {useMusic} from "../../MusicProvider.tsx";
+import {useMusic} from "../../providers/MusicProvider.tsx";
 
 type SearchbarProps = {
     setSearching: (searching: boolean) => void;

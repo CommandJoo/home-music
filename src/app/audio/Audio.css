@@ -12,6 +12,12 @@
     height: 100%;
     justify-content: space-between;
 
+    &.no-song {
+        * {
+            color: var(--text-muted);
+        }
+    }
+
     #audio-left {
         background: linear-gradient(to left, var(--bg), var(--bg-light));
         display: flex;
@@ -98,6 +104,20 @@
                     align-items: center;
                 }
 
+                #prev.enabled, #next.enabled {
+                    .icon {
+                        color: var(--text) !important;
+                        fill: var(--text) !important;
+                    }
+                }
+
+                #prev.disabled, #next.disabled {
+                    .icon {
+                        color: var(--text-muted) !important;
+                        fill: var(--text-muted) !important;
+                    }
+                }
+
                 #play {
                     height: 4vh;
                     aspect-ratio: 1/1;
@@ -112,6 +132,10 @@
                     .icon {
                         fill: var(--bg)
                     }
+                }
+
+                #play.disabled {
+                    background: var(--text-muted);
                 }
             }
 
@@ -314,14 +338,4 @@
         }
 
     }
-
-    &.no-song {
-        * {
-            color: var(--text-muted);
-        }
-        #play {
-            background: var(--text-muted) !important;
-        }
-    }
-
 }
