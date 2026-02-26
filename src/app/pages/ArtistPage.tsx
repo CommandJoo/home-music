@@ -7,8 +7,7 @@ import {useState} from "react";
 
 export default function ArtistPage() {
     const {db, page} = useMusic();
-    const [search, setSearch] = useState("")
-
+    const [search, setSearch] = useState("");
 
     function display() {
         return db.filter((s) => {

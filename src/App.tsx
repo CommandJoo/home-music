@@ -7,7 +7,7 @@ import DownloadPage from "./app/pages/DownloadPage.tsx";
 import LibraryPage from "./app/pages/LibraryPage.tsx";
 import ArtistPage from "./app/pages/ArtistPage.tsx";
 import RadioPage from "./app/pages/RadioPage.tsx";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import {ContextMenuProvider} from "./providers/ContextMenuProvider.tsx";
 
 
@@ -34,6 +34,14 @@ function App() {
         load();
     }, [refreshUsers, reloadSongs]);
 
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            e.preventDefault();
+        };
+        document.addEventListener("contextmenu", handler);
+        return () => document.removeEventListener("contextmenu", handler);
+    }, []);
+
     return (
         <div id={"root"}>
             {player.queue.length > 0 && <div id={"queue"}>
@@ -48,10 +56,11 @@ function App() {
             </div>
             <div id={"page-content"}>
                 <Routes>
-                    <Route path={"library"} element={<LibraryPage/>}/>
-                    <Route path={"artist"} element={<ArtistPage/>}/>
-                    <Route path={"radio"} element={<RadioPage/>}/>
-                    <Route path={"downloads"} element={<DownloadPage/>}/>
+                    <Route path={"/"} element={<Navigate to={"/radio"} replace/>}/>
+                    <Route path={"/library"} element={<LibraryPage/>}/>
+                    <Route path={"/artist"} element={<ArtistPage/>}/>
+                    <Route path={"/radio"} element={<RadioPage/>}/>
+                    <Route path={"/downloads"} element={<DownloadPage/>}/>
                 </Routes>
                 <div id={"bottom-bar"}>
                     <Audio/>
