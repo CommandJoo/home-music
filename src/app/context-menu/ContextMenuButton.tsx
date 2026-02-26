@@ -16,7 +16,8 @@ export function ContextMenuAddToPlaylistButton(props: ContextMenuButtonProps & {
             async function load() {
                 if (!currentUser) return;
                 for (const songElement of props.songs) {
-                    await fetch(`/api/users/${currentUser.id}/playlists/${p}/add?song=${songElement.uuid}&artist=${songElement.artist.id}`);
+                    const res = await fetch(`/api/users/${currentUser.id}/playlists/${p.id}/add?song=${songElement.uuid}&artist=${songElement.artist.id}`);
+                    console.log(await res.json())
                 }
             }
 
@@ -45,9 +46,7 @@ export function ContextMenuListButton(props: ContextMenuButtonProps & { items?: 
                 return e;
             })}
         </div>
-        <div className={"arrow-wrapper"}>
-            <TbChevronRight className={"arrow"} size={"4vh"}/>
-        </div>
+        <TbChevronRight className={"arrow"} size={"4vh"}/>
     </div>
 }
 

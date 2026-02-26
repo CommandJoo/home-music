@@ -43,7 +43,7 @@ export type Playlist = {
     id: string,
     cover: string,
     title: string;
-    songs: string[];
+    content: string[];
 }
 
 export type Page = {

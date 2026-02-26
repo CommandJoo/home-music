@@ -1,10 +1,9 @@
 import "./Entry.css"
 import {useMusic} from "../../../MusicProvider.tsx";
-import type {Radio, Song} from "../../types.ts";
+import type {Playlist, Radio, Song} from "../../types.ts";
 import {TbPin, TbPlayerPlayFilled, TbPlaylist, TbPlaylistAdd} from "react-icons/tb";
 import {FaRadio} from "react-icons/fa6";
 import {type CSSProperties, useEffect, useState} from "react";
-import type {Playlist} from "../LibraryPage.tsx";
 import {useContextMenu} from "../../../ContextMenuProvider.tsx";
 import ContextMenuButton, {ContextMenuAddToPlaylistButton,} from "../../context-menu/ContextMenuButton.tsx";
 
@@ -21,8 +20,28 @@ type RadioEntryProps = {
 }
 
 export function RadioEntry({radio}: RadioEntryProps) {
+    const {open} = useContextMenu();
     const {player} = useMusic();
-    return <div id={"radio-entry"} className={"radio entry"} key={radio.uuid}>
+    return <div id={"radio-entry"} className={"radio entry"} key={radio.uuid} onContextMenu={(e) => {
+        e.preventDefault();
+
+        async function load() {
+            open(e.pageX, e.pageY, (
+                <>
+                    <ContextMenuButton icon={<TbPlaylist className={"icon"}/>} onClick={() => {
+                        player.addQueue(radio);
+                    }}>
+                        Add to queue
+                    </ContextMenuButton>
+                    <ContextMenuButton icon={<TbPin className={"icon"}/>}>
+                        Pin to Quickplay
+                    </ContextMenuButton>
+                </>
+            ));
+        }
+
+        load();
+    }}>
         <div id={"cover-wrapper"}>
             {radio.url.cover.length > 0 ? <img id={"cover"} src={radio.url.cover} alt={radio.title}></img> : <FaRadio className={"icon"} size={"15vh"}/>}
             <div id={"overlay"}></div>
@@ -35,10 +54,12 @@ export function RadioEntry({radio}: RadioEntryProps) {
 }
 
 export function PlaylistEntry(props: PlaylistEntryProps) {
+    const {open} = useContextMenu();
     const [songs, setSongs] = useState<Song[]>([]);
     const {player} = useMusic();
 
     useEffect(() => {
+        if (!props.playlist) return;
         async function load() {
             const loaded: Song[] = [];
             for (const url of props.playlist.content) {
@@ -49,11 +70,31 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
             setSongs(loaded);
         }
         load();
-    }, [props.playlist.content]);
+    }, [props.playlist]);
 
     const showEntries = 4;
 
-    return <div id={"playlist-entry"} className={"playlist entry"} key={props.playlist.id}>
+    return <div id={"playlist-entry"} className={"playlist entry"} key={props.playlist.id} onContextMenu={(e) => {
+        e.preventDefault();
+
+        async function load() {
+            open(e.pageX, e.pageY, (
+                <>
+                    <ContextMenuButton icon={<TbPlaylist className={"icon"}/>} onClick={() => {
+                        player.addQueue(songs);
+                    }}>
+                        Add to queue
+                    </ContextMenuButton>
+                    <ContextMenuAddToPlaylistButton icon={<TbPlaylistAdd className={"icon"}/>} songs={songs}/>
+                    <ContextMenuButton icon={<TbPin className={"icon"}/>}>
+                        Pin to Quickplay
+                    </ContextMenuButton>
+                </>
+            ));
+        }
+
+        load();
+    }}>
         <div id={"cover-wrapper"}>
             <img id={"cover"} src={props.playlist.cover} alt={props.playlist.title}></img>
             <div id={"overlay"}></div>

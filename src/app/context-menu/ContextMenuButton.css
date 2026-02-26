@@ -57,6 +57,11 @@
         border-bottom-right-radius: 8px;
     }
 
+    .icon {
+        height: 3.5vh;
+        stroke: var(--text-muted)
+    }
+
     .description {
         display: flex;
         justify-content: flex-start;
@@ -64,13 +69,11 @@
         text-wrap: nowrap;
 
         margin-left: 0.5vw;
+
+        color: var(--text-muted);
     }
 
-    .icon {
-        height: 3.5vh;
-    }
-
-    .arrow-wrapper {
+    .arrow {
         position: relative;
         display: flex;
         justify-content: center;
@@ -82,9 +85,23 @@
 
         height: 3vh;
         width: 3vh;
+
+        stroke: var(--text-muted);
     }
 }
 
 .context-menu-button:hover {
     background: #FFFFFF22;
+
+    .icon {
+        stroke: var(--text);
+    }
+
+    .description {
+        color: var(--text);
+    }
+
+    .arrow {
+        stroke: var(--text);
+    }
 }

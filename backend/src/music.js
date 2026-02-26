@@ -127,8 +127,10 @@ function music(app, baseDir) {
         let metaData = JSON.parse(fs.readFileSync(metaDataFile));
 
         res.json({
+            uuid: track,
             title: metaData.track,
             artist: {
+                id: artistMetaData.id,
                 name: artistMetaData.name,
                 picture: artistMetaData.picture,
                 path: artist
