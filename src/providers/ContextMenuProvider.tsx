@@ -1,4 +1,4 @@
-import "./providers/ContextMenu.css";
+import "./ContextMenu.css";
 
 import {createContext, type ReactNode, useContext, useEffect, useState} from "react";
 

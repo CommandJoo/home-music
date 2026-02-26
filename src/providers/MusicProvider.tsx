@@ -1,6 +1,7 @@
 import type {Page, Song, User, Users} from "../app/types.ts";
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {type PlayerType, usePlayer} from "./Player.tsx";
+import {useNavigate} from "react-router-dom";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useNowPlaying(streamUrl?: string) {
@@ -38,6 +39,7 @@ type MusicContextType = {
 const MusicContext = createContext<MusicContextType | null>(null);
 
 export function MusicProvider({children}: { children: ReactNode }) {
+    const navigate = useNavigate();
     const [db, setDb] = useState<Song[]>([]);
     const [page, setPage] = useState<Page>({type: "downloads"});
     const player = usePlayer();
@@ -53,7 +55,12 @@ export function MusicProvider({children}: { children: ReactNode }) {
     }, []);
     const changePage = useCallback((page: Page) => {
         setPage(page);
-    }, [])
+        if (page.type == "downloads" || page.type == "library" || page.type == "radio") {
+            navigate(`/${page.type}`);
+        } else if (page.type == "artist") {
+            navigate(`/${page.type}?id=${page.artist?.id}`);
+        }
+    }, [navigate])
 
     const refreshUsers = useCallback(async () => {
         const response = await fetch("/api/users");

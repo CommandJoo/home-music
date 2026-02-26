@@ -1,4 +1,8 @@
 #library-page {
+    #search {
+        display: block;
+    }
+
     #page {
         display: flex;
         flex-direction: column;
@@ -10,6 +14,13 @@
         #playlists {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
+            gap: 1vh;
+            margin-bottom: 5vh;
+        }
+
+        #songs {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
             gap: 1vh;
         }
     }

@@ -3,14 +3,19 @@ import "./Page.css"
 import {useMusic} from "../../providers/MusicProvider.tsx";
 import {TbPlayerPlayFilled} from "react-icons/tb";
 import {SongEntry} from "./entry/Entry.tsx";
+import {useState} from "react";
 
 export default function ArtistPage() {
     const {db, page} = useMusic();
+    const [search, setSearch] = useState("")
 
 
     function display() {
         return db.filter((s) => {
-            return s.artist.name === page?.artist?.name;
+            if (search.length > 0) {
+                return s.artist.name === page.artist?.name && s.title.startsWith(search);
+            }
+            return s.artist.name === page.artist?.name;
         }).map(song => {
             return <SongEntry song={song}/>
         })
@@ -18,7 +23,12 @@ export default function ArtistPage() {
 
     return <div id={"artist-page"} className={"page"}>
         <div id={"search"}>
-            {`Search for ${page?.artist?.name}s songs`}
+            <div id={"searchbar"}>
+                <input type={"text"} id={"searchbar-input"} placeholder={`Search for ${page?.artist?.name}s songs`}
+                       onChange={(e) => {
+                           setSearch(e.target.value)
+                       }} value={search}/>
+            </div>
         </div>
         <div id={"page"}>
             <div id={"songs"}>

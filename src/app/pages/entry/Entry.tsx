@@ -4,7 +4,7 @@ import type {Playlist, Radio, Song} from "../../types.ts";
 import {TbPin, TbPlayerPlayFilled, TbPlaylist, TbPlaylistAdd} from "react-icons/tb";
 import {FaRadio} from "react-icons/fa6";
 import {type CSSProperties, useEffect, useState} from "react";
-import {useContextMenu} from "../../../ContextMenuProvider.tsx";
+import {useContextMenu} from "../../../providers/ContextMenuProvider.tsx";
 import ContextMenuButton, {ContextMenuAddToPlaylistButton,} from "../../context-menu/ContextMenuButton.tsx";
 
 type SongEntryProps = {

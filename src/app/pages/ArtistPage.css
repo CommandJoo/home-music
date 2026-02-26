@@ -1,4 +1,8 @@
 #artist-page {
+    #search {
+        display: block;
+    }
+
     #page {
         padding: 1vh;
         #songs {

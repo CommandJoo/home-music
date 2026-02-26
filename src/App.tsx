@@ -7,24 +7,23 @@ import DownloadPage from "./app/pages/DownloadPage.tsx";
 import LibraryPage from "./app/pages/LibraryPage.tsx";
 import ArtistPage from "./app/pages/ArtistPage.tsx";
 import RadioPage from "./app/pages/RadioPage.tsx";
-import {BrowserRouter, Route, Routes, useNavigate} from "react-router-dom";
-import {ContextMenuProvider} from "./ContextMenuProvider.tsx";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {ContextMenuProvider} from "./providers/ContextMenuProvider.tsx";
 
 
 function Basis() {
-    return <MusicProvider>
-        <ContextMenuProvider>
-            <BrowserRouter>
+    return <BrowserRouter>
+        <MusicProvider>
+            <ContextMenuProvider>
                 <App/>
-            </BrowserRouter>
-        </ContextMenuProvider>
-    </MusicProvider>
+            </ContextMenuProvider>
+        </MusicProvider>
+    </BrowserRouter>
 }
 
 
 function App() {
-    const navigate = useNavigate();
-    const {reloadSongs, refreshUsers, page, player} = useMusic();
+    const {reloadSongs, refreshUsers, player} = useMusic();
 
     useEffect(() => {
         async function load() {
@@ -34,14 +33,6 @@ function App() {
 
         load();
     }, [refreshUsers, reloadSongs]);
-
-    useEffect(() => {
-        if (page.type === "artist") {
-            navigate(page.type + "?id=" + page.artist?.id);
-        } else {
-            navigate(page.type);
-        }
-    }, [navigate, page]);
 
     return (
         <div id={"root"}>
