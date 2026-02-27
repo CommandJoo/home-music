@@ -5,15 +5,8 @@
     }
 
     #page {
-        #songs {
-            width: 100%;
+        .grid {
 
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-
-            box-sizing: border-box;
-            padding: 1vh;
-            gap: 1vh;
         }
         #overlay.searching {
             position: absolute;

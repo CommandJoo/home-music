@@ -40,15 +40,24 @@ export default function Sidebar() {
             {/*    select(null);*/}
             {/*}}>*/}
             {/*</SidebarEntry>*/}
-            <SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("downloads", 10), "--hue-b": stringToColor("downloads", 4)} as CSSProperties} preview={<FaDownload className={"icon"} size={"2.7vw"}/>} onClick={() => {
+            <SidebarEntry className={"generic"} style={{
+                "--hue-a": stringToColor("downloads", 10),
+                "--hue-b": stringToColor("downloads", 4)
+            } as CSSProperties} preview={<FaDownload className={"icon"}/>} onClick={() => {
                 changePage({type:"downloads"})
             }}>
             </SidebarEntry>
-            <SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("library", 5), "--hue-b": stringToColor("collections", 1)} as CSSProperties} preview={<BsFillCollectionFill className={"icon"} size={"2.7vw"}/>} onClick={() => {
+            <SidebarEntry className={"generic"} style={{
+                "--hue-a": stringToColor("library", 5),
+                "--hue-b": stringToColor("collections", 1)
+            } as CSSProperties} preview={<BsFillCollectionFill className={"icon"}/>} onClick={() => {
                 changePage({type:"library"})
             }}>
             </SidebarEntry>
-            <SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("radio", 3), "--hue-b": stringToColor("radio", 3.8)} as CSSProperties} preview={<FaRadio className={"icon"} size={"2.7vw"}/>} onClick={() => {
+            <SidebarEntry className={"generic"} style={{
+                "--hue-a": stringToColor("radio", 3),
+                "--hue-b": stringToColor("radio", 3.8)
+            } as CSSProperties} preview={<FaRadio className={"icon"}/>} onClick={() => {
                 changePage({type:"radio"})
             }}>
             </SidebarEntry>

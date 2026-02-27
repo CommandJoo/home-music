@@ -1,7 +1,6 @@
 #sidebar-user-wrapper {
-    width: 4.5vw;
-    height: 4.5vw;
-    flex-shrink: 0;
+    width: 100%;
+    aspect-ratio: 1/1;
 }
 
 #sidebar-user-wrapper #user-content {
@@ -46,7 +45,6 @@
         }
 
         #entry-content {
-
         }
     }
 }
@@ -207,6 +205,22 @@
         &.add {
             .icon {
                 fill: var(--border-highlight);
+            }
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    #sidebar-user-wrapper.opened {
+        #user-content {
+            width: 93vw;
+
+            #account-entry {
+                height: 8vh;
+
+                &.add.open {
+                    height: 30vh;
+                }
             }
         }
     }

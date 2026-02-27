@@ -38,7 +38,7 @@ export default function RadioPage() {
         </div>
         <div id={"page"}>
             <h1>Radios</h1>
-            <div id={"radios"}>{display()}</div>
+            <div className={"grid"}>{display()}</div>
             <div id={"overlay"} className={searching ? "searching" : ""}></div>
         </div>
     </div>

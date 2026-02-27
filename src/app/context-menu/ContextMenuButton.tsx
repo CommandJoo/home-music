@@ -3,12 +3,14 @@ import {type HTMLProps, type ReactNode, useState} from "react";
 import type {Song} from "../types.ts";
 import {useMusic} from "../../providers/MusicProvider.tsx";
 import {TbChevronRight} from "react-icons/tb";
+import {useContextMenu} from "../../providers/ContextMenuProvider.tsx";
 
 type ContextMenuButtonProps = HTMLProps<HTMLDivElement> & {
     icon?: ReactNode;
 }
 
 export function ContextMenuAddToPlaylistButton(props: ContextMenuButtonProps & { songs: Song[] }) {
+    const {close} = useContextMenu();
     const {currentUser} = useMusic();
 
     return <ContextMenuListButton icon={props.icon} items={currentUser && currentUser.playlists.map((p) => {
@@ -17,7 +19,7 @@ export function ContextMenuAddToPlaylistButton(props: ContextMenuButtonProps & {
                 if (!currentUser) return;
                 for (const songElement of props.songs) {
                     const res = await fetch(`/api/users/${currentUser.id}/playlists/${p.id}/add?song=${songElement.uuid}&artist=${songElement.artist.id}`);
-                    console.log(await res.json())
+                    await res.json().then(() => close())
                 }
             }
 

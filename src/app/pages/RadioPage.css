@@ -10,12 +10,6 @@
 
         padding: 1vh;
         gap: 1vh;
-
-        #radios {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 1vh;
-        }
     }
 
     #overlay.searching {

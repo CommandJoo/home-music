@@ -36,9 +36,9 @@ export default function LibraryPage() {
         <div id={"page"}>
             {(currentUser && currentUser.playlists.some(p => matches(p.title))) && <h1>Playlists</h1>}
             {(currentUser && currentUser.playlists.some(p => matches(p.title))) &&
-                <div id={"playlists"}>{displayPlaylists()}</div>}
+                <div id={"playlists"} className={"grid"}>{displayPlaylists()}</div>}
             {(db.some(s => matches(s.title))) && <h1>Songs</h1>}
-            {(db.some(s => matches(s.title))) && <div id={"songs"}>{displaySongs()}</div>}
+            {(db.some(s => matches(s.title))) && <div id={"songs"} className={"grid"}>{displaySongs()}</div>}
         </div>
     </div>
 }

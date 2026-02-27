@@ -54,15 +54,17 @@ function App() {
             <div id={"left"}>
                 <Sidebar/>
             </div>
-            <div id={"page-content"}>
-                <Routes>
-                    <Route path={"/"} element={<Navigate to={"/radio"} replace/>}/>
-                    <Route path={"/library"} element={<LibraryPage/>}/>
-                    <Route path={"/artist"} element={<ArtistPage/>}/>
-                    <Route path={"/radio"} element={<RadioPage/>}/>
-                    <Route path={"/downloads"} element={<DownloadPage/>}/>
-                </Routes>
-                <div id={"bottom-bar"}>
+            <div id={"right"}>
+                <div id={"page-top"}>
+                    <Routes>
+                        <Route path={"/"} element={<Navigate to={"/radio"} replace/>}/>
+                        <Route path={"/library"} element={<LibraryPage/>}/>
+                        <Route path={"/artist"} element={<ArtistPage/>}/>
+                        <Route path={"/radio"} element={<RadioPage/>}/>
+                        <Route path={"/downloads"} element={<DownloadPage/>}/>
+                    </Routes>
+                </div>
+                <div id={"page-bottom"}>
                     <Audio/>
                 </div>
             </div>

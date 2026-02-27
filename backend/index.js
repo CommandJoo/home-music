@@ -16,6 +16,21 @@ app.use(cors());
 const baseDir = "home-music";
 const musicDir = path.join(baseDir, "songs");
 const userDir = path.join(baseDir, "users");
+const os = require("os");
+
+function getLocalIP() {
+    const nets = os.networkInterfaces();
+
+    for (const name of Object.keys(nets)) {
+        for (const net of nets[name]) {
+            if (net.family === "IPv4" && !net.internal) {
+                return net.address; // ← This is your LAN IP
+            }
+        }
+    }
+    return "0.0.0.0";
+}
+
 search(app, musicDir);
 music(app, musicDir);
 users(app, userDir, musicDir);
@@ -35,5 +50,5 @@ app.listen(port, () => {
         console.log(`Base directory ${baseDir} does not exist, creating...`);
         fs.mkdirSync(baseDir);
     }
-    console.log(`Home Music backend listening on port ${port}`)
+    console.log(`Home Music backend listening at ${getLocalIP()}:${port}`)
 })

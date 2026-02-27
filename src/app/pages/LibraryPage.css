@@ -11,17 +11,12 @@
         padding: 1vh;
         gap: 1vh;
 
-        #playlists {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1vh;
-            margin-bottom: 5vh;
+        #playlists.grid {
+            --columns: 5;
         }
 
-        #songs {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 1vh;
+        #songs.grid {
+            --columns: 6;
         }
     }
 }

@@ -12,7 +12,7 @@
 
         width: 100%;
 
-        border: 2px solid var(--border);
+        border: 1px solid var(--border);
         border-radius: 8px;
         display: flex;
         justify-content: center;
@@ -21,16 +21,38 @@
 
     #page {
         position: relative;
-        height: 78vh;
+        height: 82vh;
+
         overflow-y: scroll;
         background-color: var(--bg);
         box-sizing: border-box;
 
-        border: 2px solid var(--border);
+        border: 1px solid var(--border);
         border-radius: 8px;
 
         h1 {
             font-weight: 600;
+        }
+
+        .grid {
+            --columns: 6;
+            display: grid;
+            grid-template-columns: repeat(var(--columns), 1fr);
+            gap: 1vh;
+            box-sizing: border-box;
+        }
+    }
+}
+
+
+@media (max-width: 1024px) {
+    .page {
+        #page {
+            height: 80vh;
+
+            .grid {
+                --columns: 1 !important;
+            }
         }
     }
 }

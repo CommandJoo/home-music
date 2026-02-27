@@ -1,15 +1,17 @@
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({storage: multer.memoryStorage()});
 
 function users(app, baseDir, musicDir) {
     function userDir(userId) {
         return path.join(baseDir, `accounts/${userId}`);
     }
+
     function userFile(userId) {
         return path.join(userDir(userId), `userdata.json`);
     }
+
     function toSafeFilename(str) {
         return str
             .toLowerCase()
@@ -24,9 +26,11 @@ function users(app, baseDir, musicDir) {
         }
         return JSON.parse(fs.readFileSync(`${baseDir}/users.json`));
     }
+
     function writeUsers(users) {
         return fs.writeFileSync(`${baseDir}/users.json`, JSON.stringify(users));
     }
+
     function readUser(userId) {
         const file = userFile(userId);
         if (!fs.existsSync(file)) {
@@ -35,6 +39,7 @@ function users(app, baseDir, musicDir) {
 
         return JSON.parse(fs.readFileSync(file));
     }
+
     function writeUser(userId, userData) {
         return fs.writeFileSync(userFile(userId), JSON.stringify(userData));
     }
@@ -49,13 +54,13 @@ function users(app, baseDir, musicDir) {
 
 
     function resolveTrackPath(musicDir, artist, song) {
-        if(!fs.existsSync(musicDir)) {
+        if (!fs.existsSync(musicDir)) {
             return "";
         }
-        if(!fs.existsSync(`${musicDir}/${artist}`)) {
+        if (!fs.existsSync(`${musicDir}/${artist}`)) {
             return "";
         }
-        if(!fs.existsSync(`${musicDir}/${artist}/${song}`)) {
+        if (!fs.existsSync(`${musicDir}/${artist}/${song}`)) {
             return "";
         }
         return `/api/songs/${artist}/${song}`;
@@ -103,11 +108,12 @@ function users(app, baseDir, musicDir) {
     async function resolveRedirects(url, maxRedirects = 5) {
         if (maxRedirects === 0) return url;
         try {
-            const res = await fetch(url, { method: 'HEAD', redirect: 'manual' });
+            const res = await fetch(url, {method: 'HEAD', redirect: 'manual'});
             if (res.status === 301 || res.status === 302) {
                 return resolveRedirects(res.headers.get('location'), maxRedirects - 1);
             }
-        } catch (e) {}
+        } catch (e) {
+        }
         return url;
     }
 
@@ -201,7 +207,7 @@ function users(app, baseDir, musicDir) {
 
         if ("unfollow" in req.query && radios.some(r => r.uuid === station)) {
             radios = radios.filter(r => r.uuid !== station);
-        } else {
+        } else if (!radios.some(r => r.uuid === station)) {
             const response = await fetch(`https://de1.api.radio-browser.info/json/stations/byuuid/${station}`)
             const result = (await response.json());
             const raw = result[0];
@@ -255,7 +261,7 @@ function users(app, baseDir, musicDir) {
             return;
         }
         const playlist = req.params.playlistId;
-        if(!fs.existsSync(`${baseDir}/accounts/${user}/playlists/${playlist}.json`)) {
+        if (!fs.existsSync(`${baseDir}/accounts/${user}/playlists/${playlist}.json`)) {
             res.json({success: false, reason: "playlist does not exist"});
             return;
         }
@@ -265,7 +271,7 @@ function users(app, baseDir, musicDir) {
         const artist = req.query.artist;
 
         const trackDir = resolveTrackPath(musicDir, artist, song);
-        if(trackDir.length > 0) {
+        if (trackDir.length > 0) {
             data.content.push(
                 trackDir
             )
@@ -284,7 +290,7 @@ function users(app, baseDir, musicDir) {
         }
 
         const playlistDir = `${baseDir}/accounts/${user}/playlists`;
-        const playlistData = JSON.parse(fs.readFileSync(path.join(playlistDir, playlist+".json")));
+        const playlistData = JSON.parse(fs.readFileSync(path.join(playlistDir, playlist + ".json")));
         res.json({
             id: playlist,
             title: playlistData.title,
@@ -295,7 +301,7 @@ function users(app, baseDir, musicDir) {
     app.get("/api/users/:userId/picture", async (req, res) => {
         const user = req.params.userId;
         const userdata = readUser(user);
-        if(userdata.picture && fs.existsSync(path.join(userDir(user), "picture.png"))) {
+        if (userdata.picture && fs.existsSync(path.join(userDir(user), "picture.png"))) {
             res.sendFile(path.resolve(path.join(userDir(user), "picture.png")));
         }
     });
