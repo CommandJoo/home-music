@@ -4,16 +4,16 @@
     }
 
     #page {
-        padding: 1vh;
+        padding: 1dvh;
 
         h1 {
             grid-column: 1/-1;
         }
 
         #artist-profile {
-            min-height: 8vh;
+            min-height: 8dvh;
             grid-column: 1/-1;
-            padding: 1vh;
+            padding: 1dvh;
 
             position: relative;
         }

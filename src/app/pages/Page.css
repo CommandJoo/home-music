@@ -2,12 +2,12 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 1vh;
+    gap: 1dvh;
 
     #search {
         align-self: center;
         background-color: var(--bg);
-        height: 6vh;
+        height: 6dvh;
         box-sizing: border-box;
 
         width: 100%;
@@ -21,7 +21,7 @@
 
     #page {
         position: relative;
-        height: 82vh;
+        height: 82dvh;
 
         overflow-y: scroll;
         background-color: var(--bg);
@@ -38,7 +38,7 @@
             --columns: 6;
             display: grid;
             grid-template-columns: repeat(var(--columns), 1fr);
-            gap: 1vh;
+            gap: 1dvh;
             box-sizing: border-box;
         }
     }
@@ -48,7 +48,7 @@
 @media (max-width: 1024px) {
     .page {
         #page {
-            height: 80vh;
+            height: 77dvh;
 
             .grid {
                 --columns: 1 !important;

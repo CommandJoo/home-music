@@ -1,5 +1,5 @@
 #song-entry {
-    padding: 0.5vh;
+    padding: 0.5dvh;
     box-sizing: border-box;
 
     overflow: hidden;
@@ -14,10 +14,10 @@
 
     #artist {
         display: flex;
-        height: 4vh;
+        height: 4dvh;
         vertical-align: center;
         align-items: center;
-        gap: 0.5vh;
+        gap: 0.5dvh;
 
         h4 {
             color: var(--text-muted);
@@ -34,7 +34,7 @@
 }
 
 #radio-entry {
-    padding: 0.5vh;
+    padding: 0.5dvh;
     box-sizing: border-box;
 
     overflow: hidden;
@@ -49,7 +49,7 @@
 }
 
 #playlist-entry {
-    padding: 0.5vh;
+    padding: 0.5dvh;
     box-sizing: border-box;
 
     overflow: hidden;
@@ -84,7 +84,7 @@
         border-radius: 4px;
         background: color-mix(in hsl, var(--bg-light), white 10%);
 
-        margin-bottom: 1vh;
+        margin-bottom: 1dvh;
 
         #play-button:hover {
             filter: brightness(0.85);
@@ -103,17 +103,17 @@
 
             background-color: var(--primary);
 
-            right: 0.5vh;
-            bottom: -1vh;
+            right: 0.5dvh;
+            bottom: -1dvh;
 
-            height: 6vh;
-            width: 6vh;
+            height: 6dvh;
+            width: 6dvh;
             aspect-ratio: 1/1;
 
             border-radius: 50%;
 
             box-sizing: border-box;
-            padding: 0.5vh;
+            padding: 0.5dvh;
 
             .icon {
                 fill: var(--bg-light);
@@ -135,7 +135,7 @@
 
     &:hover #cover-wrapper {
         #play-button {
-            bottom: 1vh;
+            bottom: 1dvh;
             opacity: 1;
         }
 

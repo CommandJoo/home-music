@@ -1,10 +1,10 @@
 .context-menu-button {
     position: relative;
     box-sizing: border-box;
-    padding: 0.1vh;
+    padding: 0.1dvh;
 
     font-size: 1.2rem;
-    height: 4vh;
+    height: 4dvh;
 
     display: flex;
     align-items: center;
@@ -41,12 +41,12 @@
 
         position: absolute;
         top: -1px;
-        left: calc(100% + 0.3vh);
+        left: calc(100% + 0.3dvh);
     }
 
     #list.open {
         height: fit-content;
-        max-height: 30vh;
+        max-height: 30dvh;
 
         overflow: scroll;
 
@@ -58,7 +58,7 @@
     }
 
     .icon {
-        height: 3.5vh;
+        height: 3.5dvh;
         stroke: var(--text-muted)
     }
 
@@ -68,7 +68,7 @@
         text-align: start;
         text-wrap: nowrap;
 
-        margin-left: 0.5vw;
+        margin-left: 0.5dvw;
 
         color: var(--text-muted);
     }
@@ -80,11 +80,11 @@
         align-items: center;
         overflow: hidden;
 
-        margin-left: 2vw;
+        margin-left: 2dvw;
         justify-self: flex-end;
 
-        height: 3vh;
-        width: 3vh;
+        height: 3dvh;
+        width: 3dvh;
 
         stroke: var(--text-muted);
     }

@@ -53,7 +53,7 @@
 #sidebar-user-wrapper.opened #user-content {
     z-index: 100000;
     position: absolute;
-    width: 20vw;
+    width: 20dvw;
     height: fit-content;
     flex-direction: column;
 
@@ -61,18 +61,18 @@
     border: 1px solid var(--border-highlight);
     border-radius: 8px;
 
-    gap: 0.3vh;
-    padding: 0.5vh;
+    gap: 0.3dvh;
+    padding: 0.5dvh;
 
     #account-entry {
-        height: 4.5vw;
+        height: 4.5dvw;
         display: flex;
 
         background: var(--bg);
 
         box-sizing: border-box;
-        padding: 0.5vh;
-        gap: 1vh;
+        padding: 0.5dvh;
+        gap: 1dvh;
 
         border-radius: 8px;
         overflow: hidden;
@@ -129,7 +129,7 @@
 
 
             &.open {
-                height: 25vh;
+                height: 25dvh;
 
                 #form {
                     position: relative;
@@ -142,15 +142,15 @@
                     h3 {
                         font-size: 1.4rem;
                         display: flex;
-                        gap: 0.3vw;
+                        gap: 0.3dvw;
                         vertical-align: center;
                     }
 
                     button {
                         transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
                         position: absolute;
-                        bottom: 0.5vh;
-                        right: 0.5vh;
+                        bottom: 0.5dvh;
+                        right: 0.5dvh;
                         width: 30%;
                         height: 20%;
 
@@ -170,13 +170,13 @@
 
                         height: 16%;
                         box-sizing: border-box;
-                        padding: 0.2vh;
+                        padding: 0.2dvh;
                         font-size: 1.1rem;
 
                         background: var(--bg-light);
                         border: 1px solid var(--border);
                         border-radius: 4px;
-                        margin-bottom: 2vh;
+                        margin-bottom: 2dvh;
                     }
 
                     input[type=file] {
@@ -186,7 +186,7 @@
                     }
                     input[type=file]::file-selector-button {
                         box-sizing: border-box;
-                        padding: 0.2vh;
+                        padding: 0.2dvh;
                         font-size: 1.1rem;
 
                         color: var(--text);
@@ -213,13 +213,13 @@
 @media (max-width: 1024px) {
     #sidebar-user-wrapper.opened {
         #user-content {
-            width: 93vw;
+            width: 93dvw;
 
             #account-entry {
-                height: 8vh;
+                height: 8dvh;
 
                 &.add.open {
-                    height: 30vh;
+                    height: 30dvh;
                 }
             }
         }

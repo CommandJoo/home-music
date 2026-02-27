@@ -208,7 +208,7 @@ export default function Audio() {
                 <div id={"top"}>
                     <div id={"prev"} className={player.history.length <= 0 ? "disabled" : "enabled"} onClick={() => {
                         player.back();
-                    }}><TbPlayerSkipBackFilled className={"icon"} size={"3vh"}/></div>
+                    }}><TbPlayerSkipBackFilled className={"icon"}/></div>
                     <div id={"play"} className={(!player.playing && player.queue.length <= 0) ? "disabled" : "enabled"}
                          onClick={() => {
                              if (player.playing) {
@@ -216,10 +216,10 @@ export default function Audio() {
                              } else if (!player.playing && player.queue.length > 0) {
                                  player.forward();
                              }
-                    }}>{!paused ? <TbPlayerPauseFilled className={"icon"} size={"3vh"}/> :
-                        <TbPlayerPlayFilled className={"icon"} size={"3vh"}/>}</div>
+                         }}>{!paused ? <TbPlayerPauseFilled className={"icon"}/> :
+                        <TbPlayerPlayFilled className={"icon"}/>}</div>
                     <div id={"next"} className={player.queue.length <= 0 ? "disabled" : "enabled"}>
-                        <TbPlayerSkipForwardFilled className={"icon"} size={"3vh"} onClick={() => {
+                        <TbPlayerSkipForwardFilled className={"icon"} onClick={() => {
                         player.forward();
                     }}/></div>
                 </div>
@@ -241,20 +241,23 @@ export default function Audio() {
             </div>
         </div>
         <div id={"audio-right"}>
-            <div id={"mute"} onClick={() => {
-                toggleMute();
-            }}>
-                <FaVolumeXmark size={"3vh"}/>
+            <div id={"volume"}>
+                <div id={"mute"} onClick={() => {
+                    toggleMute();
+                }}>
+                    <FaVolumeXmark size={"3vh"}/>
+                </div>
+                <input type={"range"} value={volume} min={0} max={1} step={0.01} style={{
+                    "--volume": (muted ? 0 : volume),
+                    "--progress": `${muted ? 0 : volume * 100}%`
+                } as CSSProperties} onChange={(e) => {
+                    changeVolume(Number(e.target.value));
+                }}/>
+                <div id={"louder"}>
+                    <FaVolumeHigh size={"3vh"}/>
+                </div>
             </div>
-            <input type={"range"} value={volume} min={0} max={1} step={0.01} style={{
-                "--volume": (muted ? 0 : volume),
-                "--progress": `${muted ? 0 : volume * 100}%`
-            } as CSSProperties} onChange={(e) => {
-                changeVolume(Number(e.target.value));
-            }}/>
-            <div id={"louder"}>
-                <FaVolumeHigh size={"3vh"}/>
-            </div>
+
         </div>
     </div>;
 }

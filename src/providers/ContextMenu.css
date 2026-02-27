@@ -4,7 +4,7 @@
     box-sizing: border-box;
 
     border-radius: 8px;
-    padding: 0.3vh;
+    padding: 0.3dvh;
 
     display: flex;
     flex-direction: column;
@@ -14,7 +14,6 @@
     hr {
         width: 100px;
         height: 2px;
-        background: red;
     }
 
 }
