@@ -673,7 +673,7 @@ the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
 
-Copyright (C) 2006 Johannes Hans
+Copyright (C) 2026 Johannes Hans
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License...

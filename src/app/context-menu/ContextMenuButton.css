@@ -55,6 +55,10 @@
         border: 1px solid var(--border-highlight);
         border-top-right-radius: 8px;
         border-bottom-right-radius: 8px;
+
+        .context-menu-button {
+            padding-right: 1dvh;
+        }
     }
 
     .icon {

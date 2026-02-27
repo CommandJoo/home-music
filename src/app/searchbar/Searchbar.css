@@ -46,7 +46,9 @@
         width: 60%;
         background: var(--bg);
 
-        border: 2px solid var(--border-highlight);
+        border: 1px solid var(--secondary);
+        scrollbar-width: none;
+
         border-radius: 8px;
 
         top: 180%;
