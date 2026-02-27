@@ -36,9 +36,11 @@ export default function RadioPage() {
         <div id={"search"}>
             <RadioSearchbar setSearching={setSearching}/>
         </div>
-        <div id={"page"}>
-            <h1>Radios</h1>
-            <div className={"grid"}>{display()}</div>
+        <div id={"page-wrapper"}>
+            <div id={"page"}>
+                <h1>Radios</h1>
+                <div className={"grid"}>{display()}</div>
+            </div>
             <div id={"overlay"} className={searching ? "searching" : ""}></div>
         </div>
     </div>

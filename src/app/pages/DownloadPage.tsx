@@ -17,8 +17,12 @@ export default function DownloadPage() {
 
     return <div id={"download-page"} className={"page"}>
         <div id={"search"}><DownloadSearchbar setSearching={setSearching}/></div>
-        <div id={"page"}>
-            <div className={"grid"}>{display()}</div>
+        <div id={"page-wrapper"}>
+            <div id={"page"}>
+                <div id={"x"}>
+                    <div className={"grid"}>{display()}</div>
+                </div>
+            </div>
             <div id={"overlay"} className={searching ? "searching" : ""}></div>
         </div>
     </div>

@@ -5,6 +5,7 @@
     gap: 1dvh;
 
     #search {
+        transition: border-color 0.2s ease;
         align-self: center;
         background-color: var(--bg);
         height: 6dvh;
@@ -17,6 +18,10 @@
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+    #search:hover {
+        border-color: var(--secondary);
     }
 
     #page {

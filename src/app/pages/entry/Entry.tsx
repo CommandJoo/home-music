@@ -53,7 +53,7 @@ export function RadioEntry({radio}: RadioEntryProps) {
     }}>
         <div id={"cover-wrapper"}>
             {radio.url.cover.length > 0 ? <img id={"cover"} src={radio.url.cover} alt={radio.title}></img> :
-                <FaRadio className={"icon"} size={"15vh"}/>}
+                <FaRadio className={"cover-icon"} size={"15vh"}/>}
             <div id={"overlay"}></div>
             <button id={"play-button"} onClick={() => {
                 player.play(radio);

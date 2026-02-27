@@ -1,6 +1,6 @@
 #sidebar {
+    transition: border-color 0.2s ease;
     position: relative;
-    transition: .1s ease;
     z-index: 1000;
 
     #sidebar-scroll {
@@ -48,6 +48,10 @@
         border: none;
         border-radius: 1px;
     }
+}
+
+#sidebar:hover {
+    border-color: color-mix(in hsl, var(--secondary), black 40%);
 }
 
 @media (max-width: 1024px) {

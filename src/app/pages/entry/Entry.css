@@ -82,7 +82,7 @@
         align-items: center;
 
         border-radius: 4px;
-        background: color-mix(in hsl, var(--bg-light), white 10%);
+        background: color-mix(in hsl, var(--bg-light), black 30%);
 
         margin-bottom: 1dvh;
 
@@ -156,9 +156,15 @@
         align-items: center;
         text-align: center;
         font-size: 2rem;
+        color: var(--text-muted);
+    }
+
+    .cover-icon {
+        color: var(--text-muted);
+        fill: var(--text-muted);
     }
 }
 
 .entry:hover {
-    border-color: var(--border-highlight)
+    border-color: var(--secondary)
 }

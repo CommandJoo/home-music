@@ -29,8 +29,8 @@ function SineWave() {
     const [width, setWidth] = useState(0);
 
     const height = 80;
-    const amplitude = 15;
-    const periods = 22;
+    const amplitude = 20;
+    const periods = 24;
     const points = 300;
 
     useEffect(() => {
