@@ -89,11 +89,9 @@
                     justify-content: center;
                     align-items: center;
 
-                    background: color-mix(in hsl, var(--bg-light), white 10%);
-
                     #cover {
                         width: 100%;
-                        height: 100%;
+                        aspect-ratio: 1/1;
                         border-radius: 4px;
 
                         outline: none;
@@ -127,6 +125,8 @@
 
                 .download {
                     fill: gray;
+                    width: 80%;
+                    height: 80%;
                 }
 
                 .downloading {
@@ -158,4 +158,47 @@
 
     }
     
+}
+
+@media (max-width: 1024px) {
+    #searchbar {
+        #searchbar-results {
+            left: 0;
+            width: 100%;
+
+            .song {
+                #song-left {
+                    width: 90%;
+                    text-wrap: wrap;
+                    text-overflow: ellipsis;
+
+                    #cover-wrapper {
+                        width: 30%;
+                        justify-content: center;
+                        align-items: center;
+                        vertical-align: center;
+                        height: 100%;
+
+                        #cover {
+                            width: 100%;
+                            aspect-ratio: 1/1;
+                        }
+                    }
+
+                    #info {
+                        width: 70%;
+                    }
+                }
+
+                #song-right {
+                    width: 10%;
+
+                    .download {
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+            }
+        }
+    }
 }
