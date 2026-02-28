@@ -155,10 +155,17 @@ function users(app, baseDir, musicDir) {
 
             const pictureExists = fs.existsSync(`${directory}/picture.png`);
 
+
             const userdata = {
                 name,
                 picture: pictureExists ? `/api/users/${id}/picture` : "",
-                radio: []
+                radio: [],
+                pins: {
+                    radios: [],
+                    songs: [],
+                    playlists: [],
+                    artists: [],
+                }
             }
             writeUser(id, userdata)
 
@@ -197,8 +204,53 @@ function users(app, baseDir, musicDir) {
                 if (listData) playlists.push(listData);
             }
         }
-        res.json({name: userdata.name, picture: userdata.picture, playlists, radio: userdata.radio});
+        // if(!("pins" in userdata)) {
+        //     userdata.pins = {
+        //         radios: [],
+        //         songs: [],
+        //         playlists: [],
+        //         artists: [],
+        //     }
+        //     writeUser(user, userdata);
+        // }
+
+        res.json({
+            name: userdata.name,
+            picture: userdata.picture,
+            playlists,
+            radio: userdata.radio,
+            pins: userdata.pins
+        });
     });
+    app.get("/api/users/:userId/pin", async (req, res) => {
+        const user = req.params.userId;
+        const category = req.query.category;
+        const id = req.query.id;
+        const userData = readUser(user);
+
+        switch (category) {
+            case "radio": {
+                userData.pins.radios.push(id);
+                break;
+            }
+            case "song": {
+                userData.pins.songs.push(id);
+                break;
+            }
+            case "playlist": {
+                userData.pins.playlists.push(id);
+                break;
+            }
+            case "artists": {
+                userData.pins.artists.push(id);
+                break;
+            }
+            default:
+                res.json({success: false, reason: "category does not exist"});
+        }
+        writeUser(user, userData);
+        res.json(userData);
+    })
     app.get("/api/users/:userId/radio/follow", async (req, res) => {
         const user = req.params.userId;
         const station = req.query.uuid;

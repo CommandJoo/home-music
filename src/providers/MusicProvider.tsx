@@ -63,6 +63,7 @@ export function MusicProvider({children}: { children: ReactNode }) {
     }, [navigate])
 
     const refreshUsers = useCallback(async () => {
+        // console.trace("refreshUsers called");
         const response = await fetch("/api/users");
         const data = await response.json() as Users;
         setUsers(data);
@@ -79,6 +80,7 @@ export function MusicProvider({children}: { children: ReactNode }) {
                         picture: currentData.picture,
                         playlists: currentData.playlists,
                         radio: currentData.radio,
+                        pins: currentData.pins,
                     });
                     break;
                 }
@@ -99,6 +101,7 @@ export function MusicProvider({children}: { children: ReactNode }) {
                         picture: currentData.picture,
                         playlists: currentData.playlists,
                         radio: currentData.radio,
+                        pins: currentData.pins,
                     });
                     break;
                 }
@@ -113,7 +116,6 @@ export function MusicProvider({children}: { children: ReactNode }) {
             await refreshUsers();
         }
     }, [refreshUsers]);
-
 
     return <MusicContext.Provider
         value={useMemo(() => ({

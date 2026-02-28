@@ -157,7 +157,7 @@ export default function Audio() {
             el.removeEventListener("volumechange", onVolumeChange);
             el.removeEventListener("ended", onEnded);
         };
-    }, [db, page?.songs, player, player.playing]);
+    }, [db, page?.songs, player.play, player.forward, player.queue.length, player.playing, player]);
 
     function changeTime(value: number) {
         const el = audio.current;

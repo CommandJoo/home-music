@@ -7,18 +7,16 @@ import DownloadPage from "./app/pages/DownloadPage.tsx";
 import LibraryPage from "./app/pages/LibraryPage.tsx";
 import ArtistPage from "./app/pages/ArtistPage.tsx";
 import RadioPage from "./app/pages/RadioPage.tsx";
-import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 import {ContextMenuProvider} from "./providers/ContextMenuProvider.tsx";
 
 
 function Basis() {
-    return <BrowserRouter>
-        <MusicProvider>
-            <ContextMenuProvider>
-                <App/>
-            </ContextMenuProvider>
-        </MusicProvider>
-    </BrowserRouter>
+    return <MusicProvider>
+        <ContextMenuProvider>
+            <App/>
+        </ContextMenuProvider>
+    </MusicProvider>
 }
 
 
@@ -42,6 +40,7 @@ function App() {
         document.addEventListener("contextmenu", handler);
         return () => document.removeEventListener("contextmenu", handler);
     }, []);
+
 
     return (
         <div id={"root"}>

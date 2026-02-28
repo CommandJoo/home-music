@@ -67,5 +67,18 @@ export type User = {
     name: string;
     picture: string;
     playlists: Playlist[];
-    radio: Radio[]
+    radio: Radio[];
+    pins: {
+        radios: string[];
+        songs: string[];
+        playlists: string[];
+        artists: string[];
+    }
+}
+
+export type LoadedPins = {
+    radios: Radio[];
+    songs: Song[];
+    playlists: Playlist[];
+    artists: Artist[];
 }

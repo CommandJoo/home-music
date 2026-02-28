@@ -18,13 +18,15 @@ export default function RadioPage() {
             }));
         }
 
+        load();
+    }, [currentUser]);
+
+    useEffect(() => {
         async function refresh() {
             refreshCurrentUser();
-            load();
         }
-        load();
         refresh();
-    }, [currentUser, refreshCurrentUser]);
+    }, [refreshCurrentUser]);
 
     function display() {
         return radio.map((radio: Radio, i) => {

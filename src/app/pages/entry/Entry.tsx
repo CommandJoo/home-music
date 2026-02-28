@@ -6,6 +6,7 @@ import {FaRadio} from "react-icons/fa6";
 import {type CSSProperties, useEffect, useState} from "react";
 import {useContextMenu} from "../../../providers/ContextMenuProvider.tsx";
 import ContextMenuButton, {ContextMenuAddToPlaylistButton,} from "../../context-menu/ContextMenuButton.tsx";
+import {pin} from "../../util.ts";
 
 type SongEntryProps = {
     song: Song;
@@ -22,6 +23,7 @@ type RadioEntryProps = {
 export function RadioEntry({radio}: RadioEntryProps) {
     const {open, close} = useContextMenu();
     const {player, currentUser} = useMusic();
+
     return <div id={"radio-entry"} className={"radio entry"} key={radio.uuid} onContextMenu={(e) => {
         e.preventDefault();
 
@@ -42,7 +44,10 @@ export function RadioEntry({radio}: RadioEntryProps) {
                     }}>
                         Unfollow Station
                     </ContextMenuButton>
-                    <ContextMenuButton onContextMenu={() => close()} icon={<TbPin className={"icon"}/>}>
+                    <ContextMenuButton onClick={() => {
+                        if (currentUser) pin(currentUser?.id, "radio", radio.uuid);
+                        close()
+                    }} icon={<TbPin className={"icon"}/>}>
                         Pin to Quickplay
                     </ContextMenuButton>
                 </>
