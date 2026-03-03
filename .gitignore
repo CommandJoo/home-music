@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 backend/config.json
 backend/home-music
+
+qodana.yaml

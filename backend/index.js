@@ -41,6 +41,15 @@ search(app, config, musicDir);
 music(app, config, musicDir);
 users(app, config, userDir, musicDir);
 
+const defaultColor = {r: 220, g: 100, b: 0};
+const color = (rgb) => {
+    return `\u001b[38;2;${rgb.r};${rgb.g};${rgb.b}m`;
+}
+const background = (rgb) => {
+    return `\u001b[48;2;${rgb.r};${rgb.g};${rgb.b}m`;
+}
+const reset = "\u001b[0m";
+
 if (args.length > 2 && args[2] === "--host") {
     app.use(express.static(path.join(__dirname, "../dist")));
 
@@ -48,22 +57,22 @@ if (args.length > 2 && args[2] === "--host") {
         res.sendFile(path.join(__dirname, "../dist/index.html"));
     });
 } else {
-    console.log("Use option --host to also host the frontend");
+    console.log(`Use option ${color(defaultColor)}--host${reset} to also host the frontend`);
 }
 
 app.listen(port, async () => {
     const matrix = await QRCode.create(`http://${getLocalIP()}:${args.length <= 2 ? 5173 : port}`, {errorCorrectionLevel: 'M'});
-
+    console.log("");
     const size = matrix.modules.size;
-    const outlineColor = "\u001b[43m"
-    const outline = outlineColor + (" ".repeat((size + 2) * 2)) + "\u001b[49m";
+    const outlineColor = `${background(defaultColor)}`
+    const outline = outlineColor + (" ".repeat((size + 2) * 2)) + reset;
     console.log(outline);
     for (let i = 0; i < size; i++) {
         let line = `${outlineColor}  `;
         for (let j = 0; j < size; j++) {
-            line += matrix.modules.get(i, j) === 1 ? "\u001b[107m  " : "\u001b[49m  ";
+            line += matrix.modules.get(i, j) === 1 ? "\u001b[107m  " : `${reset}  `;
         }
-        console.log(line + `${outlineColor}  \u001b[49m`);
+        console.log(line + `${outlineColor}  ${reset}`);
     }
     console.log(outline);
     console.log("\u001b[49m");
@@ -71,5 +80,5 @@ app.listen(port, async () => {
         console.log(`Base directory ${baseDir} does not exist, creating...`);
         fs.mkdirSync(baseDir);
     }
-    console.log(`Home Music backend listening at ${getLocalIP()}:${args.length <= 2 ? 5173 : port}`)
+    console.log(`Home Music backend listening at ${color(defaultColor)}${getLocalIP()}:${args.length <= 2 ? 5173 : port}`)
 })

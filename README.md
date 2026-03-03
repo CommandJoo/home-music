@@ -12,6 +12,7 @@ Home Music is a simple self-hosted Music streaming and archiving service
 ### Prerequisites
 - **Git**
 - **Node.js**
+- **yt-dlp**
 
 ### Configuration
 
@@ -38,6 +39,30 @@ cd home-music
 
 This will build and host the project. <br/>
 The App will be available at `http://localhost:3300/`
+
+## Todo
+
+### Homepage
+
+- [ ] Home (Personal layout (playlists, pinned songs, pinned artists) search only able to run) -> links to everything,
+  no direct run button + songs clickable
+- [ ] Account Settings
+
+### Playlist Page
+
+- [ ] Playlist Page (Shows all songs of playlist) -> one run button
+- [ ] button for creating playlists + modal for adding details like name, description and cover
+
+### Utility
+
+- [ ] Make things like covers abstract
+- [ ] Better utility functions (WIP)
+
+### Player
+
+- [ ] Safe Playing Song
+- [ ] Safe Volume
+- [ ] Add media api for mobile control
 
 ## License
 Distributed under the **GNU GPL v3** License. See [`LICENSE`](./LICENSE.md) for more information.
