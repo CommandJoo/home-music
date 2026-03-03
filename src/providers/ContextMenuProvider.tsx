@@ -10,6 +10,7 @@ type ContextMenuState = {
 
 type ContextMenuContextType = {
     open: (x: number, y: number, content: ReactNode) => void;
+    change: (content: ReactNode) => void;
     close: () => void;
 };
 
@@ -21,6 +22,11 @@ export function ContextMenuProvider({children}: { children: ReactNode }) {
     const open = (x: number, y: number, content: ReactNode) => {
         setMenu({x, y, content});
     };
+    const change = (content: ReactNode) => {
+        setMenu(prev => {
+            return {x: prev.x, y: prev.y, content}
+        });
+    }
 
     const close = () => setMenu({x: 0, y: 0, content: null});
 
@@ -37,7 +43,7 @@ export function ContextMenuProvider({children}: { children: ReactNode }) {
     }, []);
 
     return (
-        <ContextMenuContext.Provider value={{open, close}}>
+        <ContextMenuContext.Provider value={{open, close, change}}>
             {children}
             {menu.content && (
                 <div

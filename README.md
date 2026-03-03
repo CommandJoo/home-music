@@ -9,14 +9,26 @@ Home Music is a simple self-hosted Music streaming and archiving service
 - **Playlists** - Create and manage playlists of your favorite songs
 
 ## 🚀 Usage
-
 ### Prerequisites
-
 - **Git**
 - **Node.js**
 
-### Running
+### Configuration
 
+The backend needs to be configured to use the project <br/>
+In order to do that you will need to create a config.json file  <br/>
+in the root directory of backend. <br/>
+You will need to provide an api key for the "youtube data api" and specify a port <br/>
+The json file needs to look like this
+
+```json
+{
+  "port": 3300,
+  "youtube-api-key": "some-api-key"
+}
+```
+
+### Running
 To start home-music clone the project and run the the `start.sh` script in the root directory
 ```sh
 git clone https://github.com/you/home-music

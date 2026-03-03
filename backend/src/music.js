@@ -8,7 +8,7 @@ function setup(baseDir) {
     }
 }
 
-function music(app, baseDir) {
+function music(app, config, baseDir) {
     setup(baseDir);
 
 

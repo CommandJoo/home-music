@@ -3,7 +3,7 @@ const path = require("path");
 const multer = require("multer");
 const upload = multer({storage: multer.memoryStorage()});
 
-function users(app, baseDir, musicDir) {
+function users(app, config, baseDir, musicDir) {
     function userDir(userId) {
         return path.join(baseDir, `accounts/${userId}`);
     }
@@ -228,25 +228,48 @@ function users(app, baseDir, musicDir) {
         const id = req.query.id;
         const userData = readUser(user);
 
-        switch (category) {
-            case "radio": {
-                userData.pins.radios.push(id);
-                break;
+        if ("unpin" in req.query) {
+            switch (category) {
+                case "radio": {
+                    if (userData.pins.radios.some(s => s === id)) userData.pins.radios = userData.pins.radios.filter(s => s !== id);
+                    break;
+                }
+                case "song": {
+                    if (userData.pins.songs.some(s => s === id)) userData.pins.songs = userData.pins.songs.filter(s => s !== id);
+                    break;
+                }
+                case "playlist": {
+                    if (userData.pins.playlists.some(s => s === id)) userData.pins.playlists = userData.pins.playlists.filter(s => s !== id);
+                    break;
+                }
+                case "artists": {
+                    if (userData.pins.artists.some(s => s === id)) userData.pins.artists = userData.pins.artists.filter(s => s !== id);
+                    break;
+                }
+                default:
+                    res.json({success: false, reason: "category does not exist"});
             }
-            case "song": {
-                userData.pins.songs.push(id);
-                break;
+        } else {
+            switch (category) {
+                case "radio": {
+                    if (!userData.pins.radios.some(s => s === id)) userData.pins.radios.push(id);
+                    break;
+                }
+                case "song": {
+                    if (!userData.pins.songs.some(s => s === id)) userData.pins.songs.push(id);
+                    break;
+                }
+                case "playlist": {
+                    if (!userData.pins.playlists.some(s => s === id)) userData.pins.playlists.push(id);
+                    break;
+                }
+                case "artists": {
+                    if (!userData.pins.artists.some(s => s === id)) userData.pins.artists.push(id);
+                    break;
+                }
+                default:
+                    res.json({success: false, reason: "category does not exist"});
             }
-            case "playlist": {
-                userData.pins.playlists.push(id);
-                break;
-            }
-            case "artists": {
-                userData.pins.artists.push(id);
-                break;
-            }
-            default:
-                res.json({success: false, reason: "category does not exist"});
         }
         writeUser(user, userData);
         res.json(userData);

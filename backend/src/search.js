@@ -4,9 +4,6 @@ const fs = require('fs');
 const ytDlp = require("yt-dlp-exec");
 const net = require('net');
 
-const apiKey = "AIzaSyD2fxT9NeLHVlrOHnEd1nr5QyfLDybWois";
-
-
 function icyConnect(streamUrl, onMetadata, onError) {
     const parsed = new URL(streamUrl);
     const host = parsed.hostname;
@@ -133,7 +130,7 @@ async function radioReformed(response) {
     }));
 }
 
-function search(app, baseDir) {
+function search(app, config, baseDir) {
     setup(baseDir);
 
 
@@ -187,7 +184,7 @@ function search(app, baseDir) {
                 "&videoCategoryId=10" +
                 "&type=video" +
                 "&q=" + encodeURIComponent(artist + " " + track) +
-                "&key=" + apiKey;
+                "&key=" + config["youtube-api-key"];
 
             async function load() {
                 function normalize(s) {

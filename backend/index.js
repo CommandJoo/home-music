@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express()
-const port = 3300
 
 const cors = require('cors');
 const fs = require('fs');
@@ -32,9 +31,15 @@ function getLocalIP() {
     return "0.0.0.0";
 }
 
-search(app, musicDir);
-music(app, musicDir);
-users(app, userDir, musicDir);
+if (!fs.existsSync("config.json")) {
+    console.log("Error config does not exist");
+}
+const config = JSON.parse(fs.readFileSync("config.json"));
+const port = config["port"] || 3300;
+
+search(app, config, musicDir);
+music(app, config, musicDir);
+users(app, config, userDir, musicDir);
 
 if (args.length > 2 && args[2] === "--host") {
     app.use(express.static(path.join(__dirname, "../dist")));

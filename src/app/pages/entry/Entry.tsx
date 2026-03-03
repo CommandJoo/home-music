@@ -6,7 +6,7 @@ import {FaRadio} from "react-icons/fa6";
 import {type CSSProperties, useEffect, useState} from "react";
 import {useContextMenu} from "../../../providers/ContextMenuProvider.tsx";
 import ContextMenuButton, {ContextMenuAddToPlaylistButton,} from "../../context-menu/ContextMenuButton.tsx";
-import {pin} from "../../util.ts";
+import {loadPlaylist, pin, unpin} from "../../util.ts";
 
 type SongEntryProps = {
     song: Song;
@@ -71,23 +71,21 @@ export function RadioEntry({radio}: RadioEntryProps) {
 export function PlaylistEntry(props: PlaylistEntryProps) {
     const {open} = useContextMenu();
     const [songs, setSongs] = useState<Song[]>([]);
-    const {player} = useMusic();
+    const {player, currentUser, pins} = useMusic();
+    const [pinned, setPinned] = useState(false)
 
     useEffect(() => {
         if (!props.playlist) return;
-
+        loadPlaylist(props.playlist).then((loaded) => {
+            setSongs(loaded)
+        })
         async function load() {
-            const loaded: Song[] = [];
-            for (const url of props.playlist.content) {
-                const response = await fetch(url);
-                const data = await response.json() as Song;
-                loaded.push({...data, kind: "song"});
+            if (pins.playlists.some(p => p.id === props.playlist.id)) {
+                setPinned(true);
             }
-            setSongs(loaded);
         }
-
         load();
-    }, [props.playlist]);
+    }, [pins.playlists, props.playlist]);
 
     const showEntries = 4;
 
@@ -103,8 +101,16 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
                         Add to queue
                     </ContextMenuButton>
                     <ContextMenuAddToPlaylistButton icon={<TbPlaylistAdd className={"icon"}/>} songs={songs}/>
-                    <ContextMenuButton icon={<TbPin className={"icon"}/>}>
-                        Pin to Quickplay
+                    <ContextMenuButton icon={<TbPin className={"icon"}/>} onClick={() => {
+                        if (currentUser && !pinned) {
+                            pin(currentUser.id, "playlist", props.playlist.id);
+                            setPinned(true);
+                        } else if (currentUser && pinned) {
+                            unpin(currentUser.id, "playlist", props.playlist.id);
+                            setPinned(false);
+                        }
+                    }}>
+                        {!pinned ? "Pin to Quickplay" : "Unpin from Quickplay"}
                     </ContextMenuButton>
                 </>
             ));

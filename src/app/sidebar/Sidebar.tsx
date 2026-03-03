@@ -5,7 +5,7 @@ import {FaDownload, FaRadio} from "react-icons/fa6";
 import {BsFillCollectionFill} from "react-icons/bs";
 import UserSidebarEntry from "./UserSidebarEntry.tsx";
 import {useMusic} from "../../providers/MusicProvider.tsx";
-import type {Song} from "../types.ts";
+import {loadPlaylist} from "../util.ts";
 
 function stringToColor(str: string, mult: number): string {
     let hash = 0;
@@ -65,12 +65,7 @@ export default function Sidebar() {
                     {pins.playlists.map((p, i) => {
                         return <SidebarEntry key={i} onClick={() => {
                             async function load() {
-                                const loaded: Song[] = [];
-                                for (const url of p.content) {
-                                    const response = await fetch(url);
-                                    const data = await response.json() as Song;
-                                    loaded.push({...data, kind: "song"});
-                                }
+                                const loaded = await loadPlaylist(p);
                                 player.play(loaded[0]);
                                 player.addQueue(loaded.slice(1, loaded.length))
                             }
