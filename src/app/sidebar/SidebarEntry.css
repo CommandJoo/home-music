@@ -1,5 +1,5 @@
 #sidebar-entry {
-    background: #222;
+    background: var(--bg-light);
     border: 1px solid var(--border);
     border-radius: 6px;
 

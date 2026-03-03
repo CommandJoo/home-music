@@ -95,7 +95,7 @@
 }
 
 .context-menu-button:hover {
-    background: #FFFFFF22;
+    background: var(--bg);
 
     .icon {
         stroke: var(--text);

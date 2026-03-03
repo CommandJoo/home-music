@@ -13,9 +13,7 @@ import {ContextMenuProvider} from "./providers/ContextMenuProvider.tsx";
 
 function Basis() {
     return <MusicProvider>
-        <ContextMenuProvider>
             <App/>
-        </ContextMenuProvider>
     </MusicProvider>
 }
 
@@ -44,30 +42,32 @@ function App() {
 
     return (
         <div id={"root"} className={"light"}>
-            {player.queue.length > 0 && <div id={"queue"}>
-                {player.queue.map((item, i) => {
-                    return <div key={i}>
-                        {item && item.title}
-                    </div>;
-                })}
-            </div>}
-            <div id={"left"}>
-                <Sidebar/>
-            </div>
-            <div id={"right"}>
-                <div id={"page-top"}>
-                    <Routes>
-                        <Route path={"/"} element={<Navigate to={"/radio"} replace/>}/>
-                        <Route path={"/library"} element={<LibraryPage/>}/>
-                        <Route path={"/artist"} element={<ArtistPage/>}/>
-                        <Route path={"/radio"} element={<RadioPage/>}/>
-                        <Route path={"/downloads"} element={<DownloadPage/>}/>
-                    </Routes>
+            <ContextMenuProvider>
+                {player.queue.length > 0 && <div id={"queue"}>
+                    {player.queue.map((item, i) => {
+                        return <div key={i}>
+                            {item && item.title}
+                        </div>;
+                    })}
+                </div>}
+                <div id={"left"}>
+                    <Sidebar/>
                 </div>
-                <div id={"page-bottom"}>
-                    <Audio/>
+                <div id={"right"}>
+                    <div id={"page-top"}>
+                        <Routes>
+                            <Route path={"/"} element={<Navigate to={"/radio"} replace/>}/>
+                            <Route path={"/library"} element={<LibraryPage/>}/>
+                            <Route path={"/artist"} element={<ArtistPage/>}/>
+                            <Route path={"/radio"} element={<RadioPage/>}/>
+                            <Route path={"/downloads"} element={<DownloadPage/>}/>
+                        </Routes>
+                    </div>
+                    <div id={"page-bottom"}>
+                        <Audio/>
+                    </div>
                 </div>
-            </div>
+            </ContextMenuProvider>
         </div>
     )
 }
