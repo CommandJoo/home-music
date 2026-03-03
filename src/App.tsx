@@ -43,7 +43,7 @@ function App() {
 
 
     return (
-        <div id={"root"}>
+        <div id={"root"} className={"light"}>
             {player.queue.length > 0 && <div id={"queue"}>
                 {player.queue.map((item, i) => {
                     return <div key={i}>
