@@ -81,7 +81,7 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
             for (const url of props.playlist.content) {
                 const response = await fetch(url);
                 const data = await response.json() as Song;
-                loaded.push(data);
+                loaded.push({...data, kind: "song"});
             }
             setSongs(loaded);
         }

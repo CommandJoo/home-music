@@ -8,9 +8,10 @@ Add Pages
    - context menu when clicking on song entry to add it to playlist and other information
 - Account Settings
 
+Abstraction
+- Make things like covers abstract
+- Better utility functions
+
 Player
 - Safe Playing Song
 - Safe Volume
-
-Theme
-- Update Light theme to also show in context menu

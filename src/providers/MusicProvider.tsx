@@ -1,7 +1,8 @@
-import type {Page, Song, User, Users} from "../app/types.ts";
+import type {LoadedPins, Page, Song, User, Users} from "../app/types.ts";
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {type PlayerType, usePlayer} from "./Player.tsx";
 import {useNavigate} from "react-router-dom";
+import {loadPins} from "../app/util.ts";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useNowPlaying(streamUrl?: string) {
@@ -34,6 +35,8 @@ type MusicContextType = {
     currentUser?: User;
     refreshCurrentUser: () => void;
     changeUser: (user: string) => void;
+
+    pins: LoadedPins;
 }
 
 const MusicContext = createContext<MusicContextType | null>(null);
@@ -45,6 +48,7 @@ export function MusicProvider({children}: { children: ReactNode }) {
     const player = usePlayer();
     const [users, setUsers] = useState<Users>({current_user: "", users: []});
     const [currentUser, setCurrentUser] = useState<User>();
+    const [pins, setPins] = useState<LoadedPins>({radios: [], playlists: [], artists: [], songs: []});
 
     const reloadSongs = useCallback(async () => {
         const response = await fetch("/api/songs");
@@ -63,7 +67,6 @@ export function MusicProvider({children}: { children: ReactNode }) {
     }, [navigate])
 
     const refreshUsers = useCallback(async () => {
-        // console.trace("refreshUsers called");
         const response = await fetch("/api/users");
         const data = await response.json() as Users;
         setUsers(data);
@@ -74,14 +77,16 @@ export function MusicProvider({children}: { children: ReactNode }) {
                 if (user.id === currentId) {
                     const currentResponse = await fetch(user.path);
                     const currentData = await currentResponse.json();
-                    setCurrentUser({
+
+                    const rawNewUser = {
                         id: currentId,
                         name: currentData.name,
                         picture: currentData.picture,
                         playlists: currentData.playlists,
                         radio: currentData.radio,
                         pins: currentData.pins,
-                    });
+                    }
+                    setCurrentUser(rawNewUser);
                     break;
                 }
             }
@@ -95,19 +100,21 @@ export function MusicProvider({children}: { children: ReactNode }) {
                 if (user.id === currentId) {
                     const currentResponse = await fetch(user.path);
                     const currentData = await currentResponse.json();
-                    setCurrentUser({
+
+                    const rawNewUser = {
                         id: currentId,
                         name: currentData.name,
                         picture: currentData.picture,
                         playlists: currentData.playlists,
                         radio: currentData.radio,
                         pins: currentData.pins,
-                    });
+                    }
+                    setCurrentUser(rawNewUser);
                     break;
                 }
             }
         }
-    }, [users])
+    }, [users.current_user, users.users])
 
     const changeUser = useCallback(async (user: string) => {
         const response = await fetch(`/api/users/switch?id=${user}`);
@@ -116,6 +123,17 @@ export function MusicProvider({children}: { children: ReactNode }) {
             await refreshUsers();
         }
     }, [refreshUsers]);
+
+    const loadUnloadedPins = useCallback(async () => {
+        setPins(await loadPins(currentUser, db));
+    }, [currentUser, db]);
+
+    useEffect(() => {
+        if (currentUser && db.length > 0) {
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            loadUnloadedPins();
+        }
+    }, [currentUser, db, loadUnloadedPins]);
 
     return <MusicContext.Provider
         value={useMemo(() => ({
@@ -129,7 +147,8 @@ export function MusicProvider({children}: { children: ReactNode }) {
             currentUser,
             refreshCurrentUser,
             changeUser,
-        }), [db, reloadSongs, page, changePage, player, users, refreshUsers, currentUser, refreshCurrentUser, changeUser])}>
+            pins,
+        }), [db, reloadSongs, page, changePage, player, users, refreshUsers, currentUser, refreshCurrentUser, changeUser, pins])}>
         {children}
     </MusicContext.Provider>
 }

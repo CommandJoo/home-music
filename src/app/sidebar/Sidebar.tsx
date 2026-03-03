@@ -1,12 +1,11 @@
 import "./Sidebar.css"
 import SidebarEntry from "./SidebarEntry.tsx";
-import {type CSSProperties, useEffect, useState} from "react";
-import type {LoadedPins} from "../types.ts";
+import {type CSSProperties} from "react";
 import {FaDownload, FaRadio} from "react-icons/fa6";
 import {BsFillCollectionFill} from "react-icons/bs";
 import UserSidebarEntry from "./UserSidebarEntry.tsx";
 import {useMusic} from "../../providers/MusicProvider.tsx";
-import {loadPins} from "../util.ts";
+import type {Song} from "../types.ts";
 
 function stringToColor(str: string, mult: number): string {
     let hash = 0;
@@ -19,21 +18,7 @@ function stringToColor(str: string, mult: number): string {
 
 
 export default function Sidebar() {
-    const {changePage, currentUser, db, player} = useMusic();
-    const [loadedPins, setLoadedPins] = useState<LoadedPins>();
-
-    useEffect(() => {
-        async function load() {
-            if (currentUser) {
-                const pins = await loadPins(currentUser, db);
-                if (pins) {
-                    setLoadedPins(pins);
-                }
-            }
-        }
-
-        load();
-    }, [db, currentUser]);
+    const {changePage, pins, player} = useMusic();
 
     return <div id={"sidebar"}>
         <UserSidebarEntry/>
@@ -64,9 +49,9 @@ export default function Sidebar() {
                 changePage({type: "radio"})
             }}>
             </SidebarEntry>
-            {loadedPins && <>
+            {pins && <>
                 <hr className={"sidebar-spacer"}/>
-                {loadedPins.radios.map((r, i) => {
+                {pins.radios.map((r, i) => {
                     return <SidebarEntry key={i} onClick={() => {
                         player.play(r);
                     }} preview={r.url.cover.length > 0 ? <img src={r.url.cover} alt={r.title}/> : <h3>{r.title}</h3>}>
@@ -74,12 +59,23 @@ export default function Sidebar() {
                 })}
             </>
             }
-            {loadedPins &&
+            {pins &&
                 <>
                     <hr className={"sidebar-spacer"}/>
-                    {loadedPins.playlists.map((p, i) => {
+                    {pins.playlists.map((p, i) => {
                         return <SidebarEntry key={i} onClick={() => {
-                            changePage({type: "library"})
+                            async function load() {
+                                const loaded: Song[] = [];
+                                for (const url of p.content) {
+                                    const response = await fetch(url);
+                                    const data = await response.json() as Song;
+                                    loaded.push({...data, kind: "song"});
+                                }
+                                player.play(loaded[0]);
+                                player.addQueue(loaded.slice(1, loaded.length))
+                            }
+
+                            load();
                         }} preview={p.cover.length > 0 ? <img src={p.cover} alt={p.title}/> : <h3>{p.title}</h3>}>
                         </SidebarEntry>
                     })}

@@ -29,7 +29,7 @@
         height: 82dvh;
 
         overflow-y: scroll;
-        background-color: var(--bg);
+        background: radial-gradient(var(--bg-light), var(--bg));
         box-sizing: border-box;
 
         border: 1px solid var(--border);

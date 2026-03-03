@@ -10,14 +10,14 @@ export default function LibraryPage() {
     const [search, setSearch] = useState("");
 
     function displaySongs() {
-        return db && db.filter(s => matches(s.title)).map((song: Song) => {
-            return <SongEntry song={song}/>
+        return db && db.filter(s => matches(s.title)).map((song: Song, i) => {
+            return <SongEntry key={i} song={song}/>
         })
     }
 
     function displayPlaylists() {
-        return currentUser && currentUser.playlists.filter(p => matches(p.title)).map((playlist: Playlist) => {
-            return <PlaylistEntry playlist={playlist}/>
+        return currentUser && currentUser.playlists.filter((p) => matches(p.title)).map((playlist: Playlist, i) => {
+            return <PlaylistEntry key={i} playlist={playlist}/>
         })
     }
 

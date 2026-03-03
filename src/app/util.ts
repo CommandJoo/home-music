@@ -1,13 +1,12 @@
-import type {Artist, LoadedPins, Song, User} from "./types.ts";
+import type {Artist, LoadedPins, Song, UserRaw} from "./types.ts";
 
 export async function pin(userId: string, category: string, id: string) {
     console.log("Pin")
     await fetch(`/api/users/${userId}/pin?category=${category}&id=${id}`);
 }
 
-export async function loadPins(currentUser: User, db: Song[]) {
+export async function loadPins(currentUser: UserRaw, db: Song[]) {
     if (currentUser) {
-        console.log(currentUser);
         const unloaded = currentUser.pins;
         const radios = currentUser.radio.filter(radio => {
             const unloadedRadios = unloaded.radios;
@@ -30,6 +29,6 @@ export async function loadPins(currentUser: User, db: Song[]) {
         });
         return {radios, playlists, songs, artists} as LoadedPins;
     } else {
-        return;
+        return {radios: [], playlists: [], songs: [], artists: []};
     }
 }

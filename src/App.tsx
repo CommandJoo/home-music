@@ -10,7 +10,6 @@ import RadioPage from "./app/pages/RadioPage.tsx";
 import {Navigate, Route, Routes} from "react-router-dom";
 import {ContextMenuProvider} from "./providers/ContextMenuProvider.tsx";
 
-
 function Basis() {
     return <MusicProvider>
             <App/>
@@ -19,15 +18,11 @@ function Basis() {
 
 
 function App() {
-    const {reloadSongs, refreshUsers, player} = useMusic();
+    const {refreshUsers, reloadSongs, player} = useMusic();
 
     useEffect(() => {
-        async function load() {
-            reloadSongs();
-            refreshUsers();
-        }
-
-        load();
+        reloadSongs();
+        refreshUsers();
     }, [refreshUsers, reloadSongs]);
 
     useEffect(() => {
@@ -41,7 +36,7 @@ function App() {
 
 
     return (
-        <div id={"root"} className={"light"}>
+        <div id={"root"} className={"dark"}>
             <ContextMenuProvider>
                 {player.queue.length > 0 && <div id={"queue"}>
                     {player.queue.map((item, i) => {
