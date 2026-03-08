@@ -24,6 +24,7 @@ function picture(user: User) {
 }
 
 function AddButton() {
+    const {refreshUsers} = useMusic();
     const [open, setOpen] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [image, setImage] = useState<File|null>(null);
@@ -32,10 +33,13 @@ function AddButton() {
     async function handleUpload() {
         const formData = new FormData();
         if(image) formData.append("image", image);
+        formData.append("name", name);
 
-        await fetch(`/api/users/register?name=${encodeURIComponent(name)}`, {
+        await fetch(`/api/users`, {
             method: "POST",
             body: formData,
+        }).then(() => {
+            refreshUsers();
         });
 
         setName("");

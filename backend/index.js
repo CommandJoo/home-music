@@ -4,9 +4,9 @@ const app = express()
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-const search = require("./src/search");
-const music = require("./src/music");
-const users = require("./src/users");
+const search = require("./src/rest/search");
+const music = require("./src/rest/music");
+const users = require("./src/rest/users");
 const QRCode = require('qrcode');
 
 const args = process.argv;

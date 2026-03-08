@@ -3,6 +3,9 @@ const path = require("path");
 const multer = require("multer");
 const upload = multer({storage: multer.memoryStorage()});
 
+const {toSafeFilename, resolveTrackPath} = require("../util/util");
+const {resolveRedirects} = require("../util/music_util");
+
 function users(app, config, baseDir, musicDir) {
     function userDir(userId) {
         return path.join(baseDir, `accounts/${userId}`);
@@ -10,14 +13,6 @@ function users(app, config, baseDir, musicDir) {
 
     function userFile(userId) {
         return path.join(userDir(userId), `userdata.json`);
-    }
-
-    function toSafeFilename(str) {
-        return str
-            .toLowerCase()
-            .replace(/[^a-z0-9.\-_]/g, '_')  // replace anything unsafe with _
-            .replace(/_+/g, '_')              // collapse multiple underscores
-            .replace(/^_|_$/g, '');           // trim leading/trailing underscores
     }
 
     function readUsers() {
@@ -50,20 +45,6 @@ function users(app, config, baseDir, musicDir) {
             return;
         }
         return JSON.parse(fs.readFileSync(file));
-    }
-
-
-    function resolveTrackPath(musicDir, artist, song) {
-        if (!fs.existsSync(musicDir)) {
-            return "";
-        }
-        if (!fs.existsSync(`${musicDir}/${artist}`)) {
-            return "";
-        }
-        if (!fs.existsSync(`${musicDir}/${artist}/${song}`)) {
-            return "";
-        }
-        return `/api/songs/${artist}/${song}`;
     }
 
     function genPlaylistId() {
@@ -105,29 +86,14 @@ function users(app, config, baseDir, musicDir) {
         })
     }
 
-    async function resolveRedirects(url, maxRedirects = 5) {
-        if (maxRedirects === 0) return url;
-        try {
-            const res = await fetch(url, {method: 'HEAD', redirect: 'manual'});
-            if (res.status === 301 || res.status === 302) {
-                return resolveRedirects(res.headers.get('location'), maxRedirects - 1);
-            }
-        } catch (e) {
-        }
-        return url;
-    }
-
     setup(baseDir);
 
 
     app.get("/api/users", async (req, res) => {
         res.json(readUsers(baseDir));
     });
-    app.get("/api/users/default_cover", (req, res) => {
-        res.sendFile(path.resolve(`${baseDir}/cover.png`));
-    });
-    app.post("/api/users/register", upload.single("image"), async (req, res) => {
-        const name = req.query.name;
+    app.post("/api/users", upload.fields([{name: "image", maxCount: 1}, {name: "name"}]), async (req, res) => {
+        const name = req.body.name;
         const id = toSafeFilename(name);
         const path = `/api/users/${id}`;
 
@@ -149,8 +115,8 @@ function users(app, config, baseDir, musicDir) {
             }
 
 
-            if (req.file) {
-                fs.writeFileSync(`${directory}/picture.png`, req.file.buffer);
+            if (req.files && req.files["image"]) {
+                fs.writeFileSync(`${directory}/picture.png`, req.files["image"][0].buffer);
             }
 
             const pictureExists = fs.existsSync(`${directory}/picture.png`);
@@ -181,18 +147,15 @@ function users(app, config, baseDir, musicDir) {
         }
 
     });
-    app.get("/api/users/switch", async (req, res) => {
-        const user = req.query.id;
-        if (!fs.existsSync(`${baseDir}/accounts/${user}`)) {
-            res.json({success: false, reason: "account does not exist"});
-            return;
+    app.get("/api/users/:userId/picture", async (req, res) => {
+        const user = req.params.userId;
+        const userdata = readUser(user);
+        if (userdata.picture && fs.existsSync(path.join(userDir(user), "picture.png"))) {
+            res.sendFile(path.resolve(path.join(userDir(user), "picture.png")));
         }
-        const users = await readUsers(baseDir);
-        users.current_user = user;
-        writeUsers(users);
+    });
 
-        res.json({success: true, user});
-    })
+
     app.get("/api/users/:userId", async (req, res) => {
         const user = req.params.userId;
         const userdata = readUser(user);
@@ -204,16 +167,6 @@ function users(app, config, baseDir, musicDir) {
                 if (listData) playlists.push(listData);
             }
         }
-        // if(!("pins" in userdata)) {
-        //     userdata.pins = {
-        //         radios: [],
-        //         songs: [],
-        //         playlists: [],
-        //         artists: [],
-        //     }
-        //     writeUser(user, userdata);
-        // }
-
         res.json({
             name: userdata.name,
             picture: userdata.picture,
@@ -222,6 +175,18 @@ function users(app, config, baseDir, musicDir) {
             pins: userdata.pins
         });
     });
+    app.patch("/api/users/:userId", async (req, res) => {
+        const user = req.params.userId;
+        if (!fs.existsSync(`${baseDir}/accounts/${user}`)) {
+            res.json({success: false, reason: "account does not exist"});
+            return;
+        }
+        const users = await readUsers(baseDir);
+        users.current_user = user;
+        writeUsers(users);
+
+        res.json({success: true, user});
+    })
     app.get("/api/users/:userId/pin", async (req, res) => {
         const user = req.params.userId;
         const category = req.query.category;
@@ -302,8 +267,10 @@ function users(app, config, baseDir, musicDir) {
         userdata.radio = radios;
         writeUser(user, userdata);
         res.json({success: true, radios: radios});
-    })
-    app.get("/api/users/:userId/playlists/create", async (req, res) => {
+    });
+
+
+    app.post("/api/users/:userId/playlists", async (req, res) => {
         const user = req.params.userId;
         if (!fs.existsSync(`${userDir(user)}`)) {
             res.json({success: false, reason: "account does not exist"});
@@ -329,7 +296,7 @@ function users(app, config, baseDir, musicDir) {
 
         res.json({success: true, id});
     });
-    app.get("/api/users/:userId/playlists/:playlistId/add", async (req, res) => {
+    app.post("/api/users/:userId/playlists/:playlistId", async (req, res) => {
         const user = req.params.userId;
         if (!fs.existsSync(`${baseDir}/accounts/${user}`)) {
             res.json({success: false, reason: "account does not exist"});
@@ -354,7 +321,7 @@ function users(app, config, baseDir, musicDir) {
         }
         fs.writeFileSync(`${baseDir}/accounts/${user}/playlists/${playlist}.json`, JSON.stringify(data));
         res.json(data);
-    })
+    });
     app.get("/api/users/:userId/playlists/:playlistId", async (req, res) => {
         const user = req.params.userId;
         const playlist = req.params.playlistId;
@@ -372,13 +339,9 @@ function users(app, config, baseDir, musicDir) {
             cover: playlistData.cover,
             content: playlistData.content
         });
-    })
-    app.get("/api/users/:userId/picture", async (req, res) => {
-        const user = req.params.userId;
-        const userdata = readUser(user);
-        if (userdata.picture && fs.existsSync(path.join(userDir(user), "picture.png"))) {
-            res.sendFile(path.resolve(path.join(userDir(user), "picture.png")));
-        }
+    });
+    app.get("/api/users/playlists/default_cover", (req, res) => {
+        res.sendFile(path.resolve(`${baseDir}/cover.png`));
     });
 }
 

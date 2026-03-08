@@ -117,7 +117,7 @@ export function MusicProvider({children}: { children: ReactNode }) {
     }, [users.current_user, users.users])
 
     const changeUser = useCallback(async (user: string) => {
-        const response = await fetch(`/api/users/switch?id=${user}`);
+        const response = await fetch(`/api/users/${user}`, {method: "PATCH"});
         const data = await response.json() as { success: boolean };
         if (data.success) {
             await refreshUsers();
@@ -125,7 +125,7 @@ export function MusicProvider({children}: { children: ReactNode }) {
     }, [refreshUsers]);
 
     const loadUnloadedPins = useCallback(async () => {
-        setPins(await loadPins(currentUser, db));
+        if (currentUser) setPins(await loadPins(currentUser, db));
     }, [currentUser, db]);
 
     useEffect(() => {
