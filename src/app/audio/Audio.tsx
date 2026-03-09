@@ -62,7 +62,7 @@ function SineWave() {
                     preserveAspectRatio="none"
                 >
                     <path
-                          d={generatePath(width)}/>
+                        d={generatePath(width)}/>
                 </svg>
             )}
         </div>
@@ -159,6 +159,73 @@ export default function Audio() {
         };
     }, [db, page?.songs, player.play, player.forward, player.queue.length, player.playing, player]);
 
+
+    useEffect(() => {
+        const el = audio.current;
+        if (!el || !player.playing) return;
+
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: player.isSong()
+                    ? player.asSong().title
+                    : (nowPlaying ?? player.playing.title),
+                artist: player.isSong()
+                    ? player.asSong().artist.name
+                    : player.asRadio().title,
+                artwork: player.playing.url.cover
+                    ? [{src: player.playing.url.cover, sizes: '512x512', type: 'image/jpeg'}]
+                    : [],
+            });
+
+            navigator.mediaSession.setActionHandler('play', () => {
+                el.play();
+                setPaused(false);
+            });
+
+            navigator.mediaSession.setActionHandler('pause', () => {
+                el.pause();
+                setPaused(true);
+            });
+
+            navigator.mediaSession.setActionHandler('previoustrack', () => {
+                player.back();
+            });
+
+            navigator.mediaSession.setActionHandler('nexttrack', () => {
+                player.forward();
+            });
+
+            if (player.isSong()) {
+                navigator.mediaSession.setActionHandler('seekto', (details) => {
+                    if (details.seekTime != null) {
+                        el.currentTime = details.seekTime;
+                        setCurrentTime(Math.round(details.seekTime));
+                    }
+                });
+            } else {
+                navigator.mediaSession.setActionHandler('seekto', null);
+            }
+        }
+    }, [player.playing, nowPlaying]);
+
+
+    useEffect(() => {
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.playbackState = paused ? 'paused' : 'playing';
+        }
+    }, [paused]);
+
+
+    useEffect(() => {
+        if ('mediaSession' in navigator && player.isSong?.() && duration > 0) {
+            navigator.mediaSession.setPositionState({
+                duration,
+                playbackRate: audio.current?.playbackRate ?? 1,
+                position: currentTime,
+            });
+        }
+    }, [currentTime, duration]);
+
     function changeTime(value: number) {
         const el = audio.current;
         if (!el) return;
@@ -195,7 +262,9 @@ export default function Audio() {
             <div id={"cover"}>
                 {player.playing ? (player.isSong() ?
                     <img src={player.playing?.url.cover} alt={player.playing?.title}/> :
-                    (player.asRadio().url.cover.length > 0 ?  <img src={player.asRadio().url.cover} alt={player.playing?.title}/> : <FaRadio className={"icon"} size={"6vh"}/>)) : ""}
+                    (player.asRadio().url.cover.length > 0 ?
+                        <img src={player.asRadio().url.cover} alt={player.playing?.title}/> :
+                        <FaRadio className={"icon"} size={"6vh"}/>)) : ""}
             </div>
             <div id={"info"}>
                 <h3>{player.playing ? (player.isSong() ? player.asSong().title : (nowPlaying ? nowPlaying : player.playing?.title)) : ""}</h3>
@@ -220,8 +289,8 @@ export default function Audio() {
                         <TbPlayerPlayFilled className={"icon"}/>}</div>
                     <div id={"next"} className={player.queue.length <= 0 ? "disabled" : "enabled"}>
                         <TbPlayerSkipForwardFilled className={"icon"} onClick={() => {
-                        player.forward();
-                    }}/></div>
+                            player.forward();
+                        }}/></div>
                 </div>
                 <div id={"bottom"}>
                     <a>{String(toMinutes(Math.round(currentTime)))}</a>

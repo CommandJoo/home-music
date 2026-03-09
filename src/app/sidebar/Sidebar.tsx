@@ -66,6 +66,7 @@ export default function Sidebar() {
                         return <SidebarEntry key={i} onClick={() => {
                             async function load() {
                                 const loaded = await loadPlaylist(p);
+                                console.log(p)
                                 player.play(loaded[0]);
                                 player.addQueue(loaded.slice(1, loaded.length))
                             }

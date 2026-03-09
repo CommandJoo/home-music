@@ -121,10 +121,10 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
         <div id={"cover-wrapper"}>
             <img id={"cover"} src={props.playlist.cover} alt={props.playlist.title}></img>
             <div id={"overlay"}></div>
-            <button id={"play-button"} onClick={() => {
+            {props.playlist.content.length > 0 && <button id={"play-button"} onClick={() => {
                 player.play(songs[0]);
                 player.addQueue(songs.slice(1, songs.length));
-            }}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>
+            }}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>}
         </div>
         <h1>{props.playlist.title}</h1>
         {songs.slice(0, showEntries).map((song: Song, i) => {
