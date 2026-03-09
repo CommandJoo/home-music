@@ -11,7 +11,8 @@ type SearchbarProps = {
 }
 
 type SongEntryProps = {
-    recording: Recording
+    recording: Recording,
+    close: () => void;
 }
 
 export function SongEntry(props: SongEntryProps) {
@@ -41,16 +42,11 @@ export function SongEntry(props: SongEntryProps) {
         load();
     }, [checkPresence, props]);
 
-    function reload() {
-        const timeout = setTimeout(() => {
-            reloadSongs();
-        }, 15000)
-        return clearTimeout(timeout);
-    }
-
     async function downloadTrack(track: string, artist: string, image: string, isrc: string, artist_picture: string) {
-        reload();
-        await fetch(`/api/download?track=${track}&artist=${artist}&cover=${image}&isrc=${isrc}&artist_picture=${btoa(encodeURIComponent(artist_picture))}`, {method: "POST"});
+        await fetch(`/api/download?track=${track}&artist=${artist}&cover=${image}&isrc=${isrc}&artist_picture=${btoa(encodeURIComponent(artist_picture))}`, {method: "POST"}).then(() => {
+            reloadSongs();
+            props.close();
+        });
     }
 
     function key() {
@@ -87,6 +83,12 @@ export default function DownloadSearchbar(props: SearchbarProps) {
     const [results, setResults] = useState<Recording[]>([])
     const [search, setSearch] = useState("")
 
+    function close() {
+        setSearch("");
+        setResults([]);
+        props.setSearching(false);
+    }
+
     useEffect(() => {
         const controller = new AbortController();
 
@@ -99,7 +101,7 @@ export default function DownloadSearchbar(props: SearchbarProps) {
 
             try {
                 const resp = await fetch(
-                    `/api/search?q=${encodeURIComponent(search)}`,
+                    `/api/song?q=${encodeURIComponent(search)}`,
                     {signal: controller.signal}
                 );
 
@@ -120,8 +122,7 @@ export default function DownloadSearchbar(props: SearchbarProps) {
 
     return <div id={"searchbar"} onKeyDown={(e) => {
         if (e.key === "Escape") {
-            setResults([]);
-            setSearch("");
+            close();
             if (inputRef.current) {
                 inputRef.current.value = "";
             }
@@ -130,8 +131,7 @@ export default function DownloadSearchbar(props: SearchbarProps) {
         <input ref={inputRef} type={"text"} placeholder={"Search..."} onChange={(e) => setSearch(e.target.value)}
                id={"searchbar-input"}/>
         <div id={"searchbar-clear"} onClick={() => {
-            setSearch("");
-            setResults([]);
+            close();
             if (inputRef.current) {
                 inputRef.current.value = "";
             }
@@ -140,7 +140,7 @@ export default function DownloadSearchbar(props: SearchbarProps) {
         </div>
         {(results && results.length > 0) && <ul id={"searchbar-results"}>
             {results.map((r: Recording) => {
-                return <SongEntry key={r.isrc} recording={r}/>
+                return <SongEntry close={close} key={r.isrc} recording={r}/>
             })}
         </ul>}
     </div>

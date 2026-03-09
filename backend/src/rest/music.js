@@ -11,7 +11,9 @@ function setup(baseDir) {
 function music(app, config, baseDir) {
     setup(baseDir);
 
-
+    /**
+     * Lists the song database
+     **/
     app.get("/api/songs", async (req, res) => {
         const songs = [];
         const artists = fs.readdirSync(baseDir);
@@ -52,6 +54,9 @@ function music(app, config, baseDir) {
         res.json(songs);
     })
 
+    /**
+     * List the artists of the songdatabase
+     **/
     app.get("/api/artists", async (req, res) => {
         const artists = [];
 
@@ -71,6 +76,11 @@ function music(app, config, baseDir) {
         res.json(artists);
     })
 
+
+    /**
+     * Returns a specific artist and their songs
+     * :artist -> Artists ID
+     **/
     app.get('/api/songs/:artist/', (req, res) => {
         const songs = [];
         const artist = req.params.artist;
@@ -106,6 +116,13 @@ function music(app, config, baseDir) {
         }
         res.json(songs);
     });
+
+
+    /**
+     *  Returns the song data of a specific track by a specific artist
+     *  :artist -> Artists ID
+     *  :track -> Track ID
+     **/
     app.get("/api/songs/:artist/:track", async (req, res) => {
         const artist = req.params.artist;
         const track = req.params.track;
@@ -146,6 +163,11 @@ function music(app, config, baseDir) {
         });
     })
 
+    /**
+     * Returns the mp3 file to a specific song by a specific artist
+     * :artist -> Artists ID
+     * :track -> Track ID
+     **/
     app.get('/api/songs/:artist/:track/track', (req, res) => {
         const filePath = path.resolve(baseDir, req.params.artist, req.params.track, 'track.mp3');
         res.setHeader('Content-Type', 'audio/mpeg');
@@ -153,6 +175,11 @@ function music(app, config, baseDir) {
         res.sendFile(filePath);
     });
 
+    /**
+     * Returns the cover image to a speicfic song by a specific artist
+     * :artist -> Artists ID
+     * :track -> Track ID
+     **/
     app.get('/api/songs/:artist/:track/cover', (req, res) => {
         const filePath = path.join(baseDir, req.params.artist, req.params.track, 'cover.png');
         res.sendFile(path.resolve(filePath));

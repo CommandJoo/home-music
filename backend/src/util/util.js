@@ -115,7 +115,6 @@ async function searchYoutube(track, artist, config) {
     }
 }
 
-
 async function downloadVideo(directory, artist, track, cover, isrc, artist_picture, url) {
     console.log("-".repeat(20));
     console.log("Trying to download " + track);
@@ -157,7 +156,7 @@ async function downloadVideo(directory, artist, track, cover, isrc, artist_pictu
         console.log(`[4/6] Track already present, skipped...`);
     }
 
-    if (!fs.existsSync(`${songDir}/cover.jpg`)) {
+    if (!fs.existsSync(`${songDir}/cover.png`)) {
         const coverResponse = await fetch(cover);
         const buffer = await coverResponse.arrayBuffer();
         fs.writeFileSync(`${songDir}/cover.png`, Buffer.from(buffer));
@@ -168,19 +167,16 @@ async function downloadVideo(directory, artist, track, cover, isrc, artist_pictu
 
     if (!fs.existsSync(`${songDir}/metadata.json`)) {
         async function writeMetaData() {
-            let duration = 0;
-            await mp3Duration(`${songDir}/track.mp3`, (err, dur) => {
-                duration = dur;
+            const duration = await new Promise((resolve, reject) => {
+                mp3Duration(`${songDir}/track.mp3`, (err, dur) => {
+                    if (err) reject(err);
+                    else resolve(dur);
+                });
             });
-            const metaData = {
-                duration,
-                isrc,
-                track,
-                artist,
-            }
+
+            const metaData = {duration, isrc, track, artist};
             fs.writeFileSync(`${songDir}/metadata.json`, JSON.stringify(metaData));
         }
-
         console.log(`[6/6] Song Metadata not found, creating...`);
         await writeMetaData();
     } else {

@@ -95,7 +95,7 @@ export default function RadioSearchbar(props: SearchbarProps) {
 
             try {
                 const resp = await fetch(
-                    `/api/radio?name=${encodeURIComponent(search)}`,
+                    `/api/radio?q=${encodeURIComponent(search)}`,
                 );
 
                 const result = (await resp.json());

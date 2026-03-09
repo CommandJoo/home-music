@@ -12,8 +12,11 @@ function setup(baseDir) {
 function search(app, config, baseDir) {
     setup(baseDir);
 
-
-    app.get("/api/search", async (req, res) => {
+    /**
+     * Search for songs on Deezer
+     * ?q -> Search Query (Song title + artist)
+     **/
+    app.get("/api/song", async (req, res) => {
         const q = req.query.q;
         const response = await fetch(
             `https://api.deezer.com/search?q=${encodeURIComponent(q)}&limit=20`
@@ -22,14 +25,22 @@ function search(app, config, baseDir) {
         res.json(await normalizedSearchResult(response));
     });
 
+    /**
+     * Search for radio stations on radio-browser
+     * ?q -> Search Query (Station name)
+     **/
     app.get("/api/radio", async (req, res) => {
-        const q = req.query.name;
+        const q = req.query.q;
         const response = await fetch(`https://all.api.radio-browser.info/json/stations/search?name=${q}`);
         console.log(`Searching radio browser for ${q}`);
         res.json(await normalizedRadio(response));
     })
 
-    app.get('/api/radio/nowplaying', (req, res) => {
+    /**
+     * Get Now playing data from radio stream icy metadata
+     * ?url -> stream url
+     **/
+    app.get('/api/radio/now_playing', (req, res) => {
         const streamUrl = req.query.url;
 
         res.setHeader('Content-Type', 'text/event-stream');
@@ -48,6 +59,14 @@ function search(app, config, baseDir) {
         req.on('close', () => socket.destroy());
     });
 
+    /**
+     * Downloads a song from Youtube
+     * ?track -> track name
+     * ?artist -> artist name
+     * ?cover -> cover url
+     * ?isrc
+     * ?artist_picture -> artist picture url
+     **/
     app.post("/api/download", async (req, res) => {
         const track = req.query.track;
         const artist = req.query.artist;
@@ -56,8 +75,13 @@ function search(app, config, baseDir) {
         const artist_picture = decodeURIComponent(atob(req.query.artist_picture));
 
         const result = await searchYoutube(artist, track, config)
-        res.json({success: true});
-        await downloadVideo(baseDir, artist, track, cover, isrc, artist_picture, `https://www.youtube.com/watch?v=${result.id.videoId}`);
+        try {
+            await downloadVideo(baseDir, artist, track, cover, isrc, artist_picture, `https://www.youtube.com/watch?v=${result.id.videoId}`);
+            res.json({success: true});
+        } catch (e) {
+            console.error("Download failed:", e);
+            res.json({success: false});
+        }
     });
 }
 

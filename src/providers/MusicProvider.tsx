@@ -11,7 +11,7 @@ export function useNowPlaying(streamUrl?: string) {
     useEffect(() => {
         if (!streamUrl) return;
 
-        const es = new EventSource(`/api/radio/nowplaying?url=${encodeURIComponent(streamUrl)}`);
+        const es = new EventSource(`/api/radio/now_playing?url=${encodeURIComponent(streamUrl)}`);
         es.onmessage = (e) => {
             const data = JSON.parse(e.data);
             setTitle(data.title);
