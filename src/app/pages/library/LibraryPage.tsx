@@ -1,8 +1,8 @@
 import "./LibraryPage.css"
-import "./Page.css"
-import {useMusic} from "../../providers/MusicProvider.tsx";
-import {PlaylistEntry, SongEntry} from "./entry/Entry.tsx";
-import type {Playlist, Song} from "../types.ts";
+import "../Page.css"
+import {useMusic} from "../../../providers/MusicProvider.tsx";
+import {PlaylistEntry, SongEntry} from "../../components/entry/Entry.tsx";
+import type {Playlist, Song} from "../../types.ts";
 import {useState} from "react";
 
 export default function LibraryPage() {

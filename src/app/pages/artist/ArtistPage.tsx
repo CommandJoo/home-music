@@ -1,8 +1,8 @@
 import "./ArtistPage.css"
-import "./Page.css"
-import {useMusic} from "../../providers/MusicProvider.tsx";
+import "../Page.css"
+import {useMusic} from "../../../providers/MusicProvider.tsx";
 import {TbPlayerPlayFilled} from "react-icons/tb";
-import {SongEntry} from "./entry/Entry.tsx";
+import {SongEntry} from "../../components/entry/Entry.tsx";
 import {useState} from "react";
 
 export default function ArtistPage() {

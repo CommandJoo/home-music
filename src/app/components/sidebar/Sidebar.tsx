@@ -1,11 +1,11 @@
 import "./Sidebar.css"
-import SidebarEntry from "./SidebarEntry.tsx";
+import SidebarEntry from "./sidebar-entries/SidebarEntry.tsx";
 import {type CSSProperties} from "react";
 import {FaDownload, FaRadio} from "react-icons/fa6";
 import {BsFillCollectionFill} from "react-icons/bs";
-import UserSidebarEntry from "./UserSidebarEntry.tsx";
-import {useMusic} from "../../providers/MusicProvider.tsx";
-import {loadPlaylist} from "../util.ts";
+import UserSidebarEntry from "./sidebar-entries/UserSidebarEntry.tsx";
+import {useMusic} from "../../../providers/MusicProvider.tsx";
+import {loadPlaylist} from "../../util.ts";
 
 function stringToColor(str: string, mult: number): string {
     let hash = 0;

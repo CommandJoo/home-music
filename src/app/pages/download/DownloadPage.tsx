@@ -1,9 +1,9 @@
 import "./DownloadPage.css"
-import "./Page.css"
-import DownloadSearchbar from "../searchbar/DownloadSearchbar.tsx";
-import {useMusic} from "../../providers/MusicProvider.tsx";
+import "../Page.css"
+import DownloadSearchbar from "../../components/searchbar/DownloadSearchbar.tsx";
+import {useMusic} from "../../../providers/MusicProvider.tsx";
 import {useState} from "react";
-import {SongEntry} from "./entry/Entry.tsx";
+import {SongEntry} from "../../components/entry/Entry.tsx";
 
 export default function DownloadPage() {
     const {db} = useMusic();

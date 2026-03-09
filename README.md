@@ -58,7 +58,6 @@ The App will be available at `http://localhost:3300/`
 ### Player
 - [ ] Safe Playing Song
 - [ ] Safe Volume
-- [ ] Add media api for mobile control
 
 ## License
 Distributed under the **GNU GPL v3** License. See [`LICENSE`](./LICENSE.md) for more information.

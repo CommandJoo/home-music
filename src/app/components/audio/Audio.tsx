@@ -7,7 +7,7 @@ import {
     TbPlayerSkipBackFilled,
     TbPlayerSkipForwardFilled
 } from "react-icons/tb";
-import {useMusic, useNowPlaying} from "../../providers/MusicProvider.tsx";
+import {useMusic, useNowPlaying} from "../../../providers/MusicProvider.tsx";
 
 function toMinutes(seconds: number): string {
     let hours = 0;

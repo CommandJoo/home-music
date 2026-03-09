@@ -1,10 +1,10 @@
 import "./RadioPage.css"
-import "./Page.css"
-import {useMusic} from "../../providers/MusicProvider.tsx";
+import "../Page.css"
+import {useMusic} from "../../../providers/MusicProvider.tsx";
 import {useEffect, useState} from "react";
-import {RadioEntry} from "./entry/Entry.tsx";
-import type {Radio} from "../types.ts";
-import RadioSearchbar from "../searchbar/RadioSearchbar.tsx";
+import {RadioEntry} from "../../components/entry/Entry.tsx";
+import type {Radio} from "../../types.ts";
+import RadioSearchbar from "../../components/searchbar/RadioSearchbar.tsx";
 
 export default function RadioPage() {
     const {currentUser, refreshCurrentUser} = useMusic();

@@ -61,7 +61,7 @@ if (args.length > 2 && args[2] === "--host") {
 }
 
 app.listen(port, async () => {
-    const matrix = await QRCode.create(`http://${getLocalIP()}:${args.length <= 2 ? 5173 : port}`, {errorCorrectionLevel: 'M'});
+    const matrix = await QRCode.create(`http://${getLocalIP()}:${args.length <= 2 ? 5173 : port}`, {errorCorrectionLevel: 'H'});
     console.log("");
     const size = matrix.modules.size;
     const outlineColor = `${background(defaultColor)}`
@@ -70,7 +70,7 @@ app.listen(port, async () => {
     for (let i = 0; i < size; i++) {
         let line = `${outlineColor}  `;
         for (let j = 0; j < size; j++) {
-            line += matrix.modules.get(i, j) === 1 ? "\u001b[107m  " : `${reset}  `;
+            line += matrix.modules.get(i, j) === 1 ? `${background(defaultColor)}  ` : `${reset}  `;
         }
         console.log(line + `${outlineColor}  ${reset}`);
     }

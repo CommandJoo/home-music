@@ -3,8 +3,8 @@ import {useCallback, useEffect, useRef, useState} from "react";
 import {TbPlayerPlayFilled} from "react-icons/tb";
 import {FaHeart, FaRadio, FaRegHeart} from "react-icons/fa6";
 import {FaTimes} from "react-icons/fa";
-import type {Radio} from "../types.ts";
-import {useMusic} from "../../providers/MusicProvider.tsx";
+import type {Radio} from "../../types.ts";
+import {useMusic} from "../../../providers/MusicProvider.tsx";
 
 type SearchbarProps = {
     setSearching: (searching: boolean) => void;

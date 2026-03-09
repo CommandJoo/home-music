@@ -1,12 +1,12 @@
 import './App.css'
-import Audio from "./app/audio/Audio.tsx";
-import Sidebar from "./app/sidebar/Sidebar.tsx";
+import Audio from "./app/components/audio/Audio.tsx";
+import Sidebar from "./app/components/sidebar/Sidebar.tsx";
 import {MusicProvider, useMusic} from "./providers/MusicProvider.tsx";
 import {useEffect} from "react";
-import DownloadPage from "./app/pages/DownloadPage.tsx";
-import LibraryPage from "./app/pages/LibraryPage.tsx";
-import ArtistPage from "./app/pages/ArtistPage.tsx";
-import RadioPage from "./app/pages/RadioPage.tsx";
+import DownloadPage from "./app/pages/download/DownloadPage.tsx";
+import LibraryPage from "./app/pages/library/LibraryPage.tsx";
+import ArtistPage from "./app/pages/artist/ArtistPage.tsx";
+import RadioPage from "./app/pages/radio/RadioPage.tsx";
 import {Navigate, Route, Routes} from "react-router-dom";
 import {ContextMenuProvider} from "./providers/ContextMenuProvider.tsx";
 
