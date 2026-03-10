@@ -133,6 +133,7 @@ function users(app, config, baseDir, musicDir) {
             const userdata = {
                 name,
                 picture: pictureExists ? `/api/users/${id}/picture` : "",
+                volume: 1.0,
                 radio: [],
                 pins: {
                     radios: [],
@@ -156,18 +157,6 @@ function users(app, config, baseDir, musicDir) {
 
     });
     /**
-     * Returns the profile picture of a certain user
-     * :userId -> the user to which the picture belongs
-     **/
-    app.get("/api/users/:userId/picture", async (req, res) => {
-        const user = req.params.userId;
-        const userdata = readUser(user);
-        if (userdata.picture && fs.existsSync(path.join(userDir(user), "picture.png"))) {
-            res.sendFile(path.resolve(path.join(userDir(user), "picture.png")));
-        }
-    });
-
-    /**
      * Returns the full userdata of a given userId
      * userId -> safe id string
      **/
@@ -182,9 +171,14 @@ function users(app, config, baseDir, musicDir) {
                 if (listData) playlists.push(listData);
             }
         }
+        if (!("volume" in userdata)) {
+            userdata.volume = 1.0;
+            writeUser(user, userdata);
+        }
         res.json({
             name: userdata.name,
             picture: userdata.picture,
+            volume: Math.max(0, Math.min(userdata.volume, 1)),
             playlists,
             radio: userdata.radio,
             pins: userdata.pins
@@ -205,6 +199,17 @@ function users(app, config, baseDir, musicDir) {
         writeUsers(users);
 
         res.json({success: true, user});
+    });
+    /**
+     * Returns the profile picture of a certain user
+     * :userId -> the user to which the picture belongs
+     **/
+    app.get("/api/users/:userId/picture", async (req, res) => {
+        const user = req.params.userId;
+        const userdata = readUser(user);
+        if (userdata.picture && fs.existsSync(path.join(userDir(user), "picture.png"))) {
+            res.sendFile(path.resolve(path.join(userDir(user), "picture.png")));
+        }
     });
     /**
      * Pins either a
@@ -270,6 +275,13 @@ function users(app, config, baseDir, musicDir) {
         }
         writeUser(user, userData);
         res.json(userData);
+    });
+    app.patch("/api/users/:userId/volume", async (req, res) => {
+        const userdata = readUser(req.params.userId);
+        const volume = Math.max(0, Math.min(1, Number(req.query.level)));
+        userdata.volume = volume;
+        writeUser(req.params.userId, userdata);
+        res.json({success: true, volume});
     });
     /**
      * Follows a radio station

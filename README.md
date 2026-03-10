@@ -55,9 +55,9 @@ The App will be available at `http://localhost:3300/`
 - [ ] Make things like covers abstract
 - [ ] Better utility functions (WIP)
 
-### Player
-- [ ] Safe Playing Song
-- [ ] Safe Volume
+## Theming
+
+- [ ] Add basic theme system
 
 ## License
 Distributed under the **GNU GPL v3** License. See [`LICENSE`](./LICENSE.md) for more information.

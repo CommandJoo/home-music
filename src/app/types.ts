@@ -66,6 +66,7 @@ export type User = {
     id: string;
     name: string;
     picture: string;
+    volume: number;
     playlists: Playlist[];
     radio: Radio[];
     pins: {

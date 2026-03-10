@@ -71,13 +71,13 @@ function SineWave() {
 
 export default function Audio() {
     const audio = useRef<HTMLAudioElement | null>(null);
-    const {player, page, db} = useMusic();
+    const {player, page, db, currentUser} = useMusic();
     const nowPlaying = useNowPlaying(player.isRadio() ? player.asRadio()?.url.track : undefined);
 
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
     const [paused, setPaused] = useState(false);
-    const [volume, setVolume] = useState(0);
+    const [volume, setVolume] = useState<number>();
     const [muted, setMuted] = useState(false);
 
     useEffect(() => {
@@ -112,7 +112,6 @@ export default function Audio() {
             const d = Number.isFinite(el.duration) ? el.duration : 0;
             setDuration(Math.round(d));
             setPaused(el.paused);
-            setVolume(el.volume);
         };
 
         const onTimeUpdate = () => {
@@ -159,6 +158,11 @@ export default function Audio() {
         };
     }, [db, page?.songs, player.play, player.forward, player.queue.length, player.playing, player]);
 
+    useEffect(() => {
+        const el = audio.current;
+        if (!el || !currentUser) return;
+        el.volume = currentUser.volume;
+    }, [currentUser]);
 
     useEffect(() => {
         const el = audio.current;
@@ -206,7 +210,7 @@ export default function Audio() {
                 navigator.mediaSession.setActionHandler('seekto', null);
             }
         }
-    }, [player.playing, nowPlaying]);
+    }, [player.playing, nowPlaying, player.forward, player.isSong, player.back, player.asSong, player.asRadio, player]);
 
 
     useEffect(() => {
@@ -214,7 +218,6 @@ export default function Audio() {
             navigator.mediaSession.playbackState = paused ? 'paused' : 'playing';
         }
     }, [paused]);
-
 
     useEffect(() => {
         if ('mediaSession' in navigator && player.isSong?.() && duration > 0) {
@@ -224,7 +227,7 @@ export default function Audio() {
                 position: currentTime,
             });
         }
-    }, [currentTime, duration]);
+    }, [currentTime, duration, player]);
 
     function changeTime(value: number) {
         const el = audio.current;
@@ -236,6 +239,9 @@ export default function Audio() {
     function changeVolume(value: number) {
         if (!audio.current) return;
         audio.current.volume = value;
+        if (currentUser) {
+            fetch(`/api/users/${currentUser.id}/volume?level=${value}`, {method: "PATCH"});
+        }
     }
 
     function toggle() {
@@ -318,7 +324,7 @@ export default function Audio() {
                 </div>
                 <input type={"range"} value={volume} min={0} max={1} step={0.01} style={{
                     "--volume": (muted ? 0 : volume),
-                    "--progress": `${muted ? 0 : volume * 100}%`
+                    "--progress": `${muted ? 0 : (volume ? volume : 1) * 100}%`
                 } as CSSProperties} onChange={(e) => {
                     changeVolume(Number(e.target.value));
                 }}/>
