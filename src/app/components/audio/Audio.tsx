@@ -268,7 +268,7 @@ export default function Audio() {
         <div id={"audio-left"}>
             <div id={"cover-wrapper"}>
                 <Cover
-                    url={player.isSong() ? (player.playing ? player.playing?.url.cover : "") : player.asRadio().url.cover}
+                    url={player.isSong() ? (player.playing ? player.playing?.url.cover : "") : player.asRadio() ? player.asRadio().url.cover : ""}
                     alt={player.isSong() ? player.playing?.title : <FaRadio className={"icon"} size={"6vh"}/>}/>
             </div>
             <div id={"info"}>

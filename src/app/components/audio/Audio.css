@@ -24,6 +24,7 @@
     }
 
     #audio-left {
+        margin: 2px;
         background: linear-gradient(to left, var(--bg), var(--bg-light));
         display: flex;
         box-sizing: border-box;
@@ -259,6 +260,7 @@
     }
 
     #audio-right {
+        margin: 2px;
         background: linear-gradient(to right, var(--bg), var(--bg-light));
         width: 40%;
         display: flex;

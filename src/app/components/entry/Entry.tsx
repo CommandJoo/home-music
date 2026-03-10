@@ -128,7 +128,7 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
         </div>
         <h1>{props.playlist.title}</h1>
         {songs.slice(0, showEntries).map((song: Song, i) => {
-            return <h2 style={{"--i": (showEntries - i) / (showEntries)} as CSSProperties}>{song.title}</h2>
+            return <h2 key={i} style={{"--i": (showEntries - i) / (showEntries)} as CSSProperties}>{song.title}</h2>
         })}
     </div>
 }
