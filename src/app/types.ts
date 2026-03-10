@@ -68,7 +68,10 @@ export type User = {
     radio: Radio[];
     pins: {
         radios: string[];
-        songs: string[];
+        songs: {
+            id: string;
+            artist: string;
+        }[];
         playlists: string[];
         artists: string[];
     }

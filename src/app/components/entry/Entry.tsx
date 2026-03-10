@@ -23,7 +23,18 @@ type RadioEntryProps = {
 
 export function RadioEntry({radio}: RadioEntryProps) {
     const {open, close} = useContextMenu();
-    const {player, currentUser} = useMusic();
+    const [pinned, setPinned] = useState(false);
+    const {player, currentUser, refreshCurrentUser, pins} = useMusic();
+
+    useEffect(() => {
+        async function load() {
+            if (pins.radios.some(s => s.uuid === radio.uuid)) {
+                setPinned(true);
+            }
+        }
+
+        load();
+    }, [pins, radio.uuid]);
 
     return <div id={"radio-entry"} className={"radio entry"} key={radio.uuid} onContextMenu={(e) => {
         e.preventDefault();
@@ -39,17 +50,28 @@ export function RadioEntry({radio}: RadioEntryProps) {
                     </ContextMenuButton>
                     <ContextMenuButton icon={<TbHeartOff className={"icon"}/>} onClick={() => {
                         if (currentUser) {
-                            fetch(`/api/users/${currentUser.id}/radio/follow?uuid=${radio.uuid}&unfollow`);
-                            close();
+                            fetch(`/api/users/${currentUser.id}/radio/follow?uuid=${radio.uuid}&unfollow`).then(() => {
+                                refreshCurrentUser();
+                                close();
+                            });
                         }
                     }}>
                         Unfollow Station
                     </ContextMenuButton>
                     <ContextMenuButton onClick={() => {
-                        if (currentUser) pin(currentUser?.id, "radio", radio.uuid);
-                        close()
+                        if (currentUser && !pinned) {
+                            pin(currentUser?.id, "radio", radio.uuid).then(() => {
+                                refreshCurrentUser();
+                                close();
+                            });
+                        } else if (currentUser && pinned) {
+                            unpin(currentUser?.id, "radio", radio.uuid).then(() => {
+                                refreshCurrentUser();
+                                close();
+                            });
+                        }
                     }} icon={<TbPin className={"icon"}/>}>
-                        Pin to Quickplay
+                        {!pinned ? "Pin to Quickplay" : "Unpin from Quickplay"}
                     </ContextMenuButton>
                 </>
             ));
@@ -69,9 +91,9 @@ export function RadioEntry({radio}: RadioEntryProps) {
 }
 
 export function PlaylistEntry(props: PlaylistEntryProps) {
-    const {open} = useContextMenu();
+    const {open, close} = useContextMenu();
     const [songs, setSongs] = useState<Song[]>([]);
-    const {player, currentUser, pins, changePage} = useMusic();
+    const {player, currentUser, pins, changePage, refreshCurrentUser} = useMusic();
     const [pinned, setPinned] = useState(false)
 
     useEffect(() => {
@@ -107,10 +129,16 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
                     <ContextMenuAddToPlaylistButton icon={<TbPlaylistAdd className={"icon"}/>} songs={songs}/>
                     <ContextMenuButton icon={<TbPin className={"icon"}/>} onClick={() => {
                         if (currentUser && !pinned) {
-                            pin(currentUser.id, "playlist", props.playlist.id);
+                            pin(currentUser.id, "playlist", props.playlist.id).then(() => {
+                                refreshCurrentUser();
+                                close();
+                            });
                             setPinned(true);
                         } else if (currentUser && pinned) {
-                            unpin(currentUser.id, "playlist", props.playlist.id);
+                            unpin(currentUser.id, "playlist", props.playlist.id).then(() => {
+                                refreshCurrentUser();
+                                close();
+                            });
                             setPinned(false);
                         }
                     }}>
@@ -138,8 +166,19 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
 }
 
 export function SongEntry({song}: SongEntryProps) {
-    const {open} = useContextMenu();
-    const {player, changePage} = useMusic();
+    const {open, close} = useContextMenu();
+    const {player, changePage, currentUser, pins, refreshCurrentUser} = useMusic();
+    const [pinned, setPinned] = useState(false);
+
+    useEffect(() => {
+        async function load() {
+            if (pins.songs.some(s => s.uuid === song.uuid)) {
+                setPinned(true);
+            }
+        }
+
+        load();
+    }, [pins, song.uuid]);
 
     return <div id={"song-entry"} className={"song entry"} key={song.title + song.artist} onContextMenu={(e) => {
         e.preventDefault();
@@ -151,8 +190,22 @@ export function SongEntry({song}: SongEntryProps) {
                     Add to queue
                 </ContextMenuButton>
                 <ContextMenuAddToPlaylistButton icon={<TbPlaylistAdd className={"icon"}/>} songs={[song]}/>
-                <ContextMenuButton icon={<TbPin className={"icon"}/>}>
-                    Pin to Quickplay
+                <ContextMenuButton icon={<TbPin className={"icon"}/>} onClick={() => {
+                    if (currentUser && !pinned) {
+                        pin(currentUser.id, "song", song.uuid + "&artist=" + song.artist.id).then(() => {
+                            refreshCurrentUser();
+                            close();
+                        });
+                        setPinned(true);
+                    } else if (currentUser && pinned) {
+                        unpin(currentUser.id, "song", song.uuid + "&artist=" + song.artist.id).then(() => {
+                            refreshCurrentUser();
+                            close();
+                        });
+                        setPinned(false);
+                    }
+                }}>
+                    {!pinned ? "Pin to Quickplay" : "Unpin from Quickplay"}
                 </ContextMenuButton>
             </>
         ));

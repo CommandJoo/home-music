@@ -50,19 +50,9 @@ export default function Sidebar() {
                 changePage({type: "radio"})
             }}>
             </SidebarEntry>
-            {pins && <>
-                <hr className={"sidebar-spacer"}/>
-                {pins.radios.map((r, i) => {
-                    return <SidebarEntry key={i} onClick={() => {
-                        player.play(r);
-                    }} preview={<Cover url={r.url.cover} alt={<FaRadio className={"alt-icon"}/>}/>}>
-                    </SidebarEntry>
-                })}
-            </>
-            }
             {pins &&
                 <>
-                    <hr className={"sidebar-spacer"}/>
+                    {pins.playlists.length > 0 && <hr className={"sidebar-spacer"}/>}
                     {pins.playlists.map((p, i) => {
                         return <SidebarEntry key={i} onClick={() => {
                             async function load() {
@@ -74,6 +64,28 @@ export default function Sidebar() {
 
                             load();
                         }} preview={p.cover.length > 0 ? <img src={p.cover} alt={p.title}/> : <h3>{p.title}</h3>}>
+                        </SidebarEntry>
+                    })}
+                </>
+            }
+            {pins && <>
+                {pins.radios.length > 0 && <hr className={"sidebar-spacer"}/>}
+                {pins.radios.map((r, i) => {
+                    return <SidebarEntry key={i} onClick={() => {
+                        player.play(r);
+                    }} preview={<Cover url={r.url.cover} alt={<FaRadio className={"alt-icon"}/>}/>}>
+                    </SidebarEntry>
+                })}
+            </>
+            }
+            {
+                pins && <>
+                    {pins.songs.length > 0 && <hr className={"sidebar-spacer"}/>}
+                    {pins.songs.map((s, i) => {
+                        return <SidebarEntry key={i} onClick={() => {
+                            player.play(s);
+                        }} preview={s.url.cover.length > 0 ? <img src={s.url.cover} alt={s.title}/> :
+                            <h3>{s.title}</h3>}>
                         </SidebarEntry>
                     })}
                 </>

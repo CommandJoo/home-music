@@ -17,6 +17,7 @@ const baseDir = "home-music";
 const musicDir = path.join(baseDir, "songs");
 const userDir = path.join(baseDir, "users");
 const os = require("os");
+const {toSafeFilename} = require("./src/util/util");
 
 function getLocalIP() {
     const nets = os.networkInterfaces();

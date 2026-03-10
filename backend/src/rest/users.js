@@ -225,57 +225,70 @@ function users(app, config, baseDir, musicDir) {
      * ?unpin -> unpins the given id rather than pinning it
      **/
     app.get("/api/users/:userId/pin", async (req, res) => {
-        const user = req.params.userId;
-        const category = req.query.category;
-        const id = req.query.id;
-        const userData = readUser(user);
+            const user = req.params.userId;
+            const category = req.query.category;
+            const id = req.query.id;
+            const userData = readUser(user);
 
-        if ("unpin" in req.query) {
-            switch (category) {
-                case "radio": {
-                    if (userData.pins.radios.some(s => s === id)) userData.pins.radios = userData.pins.radios.filter(s => s !== id);
-                    break;
+            if ("unpin" in req.query) {
+                switch (category) {
+                    case "radio": {
+                        if (userData.pins.radios.some(s => s === id)) userData.pins.radios = userData.pins.radios.filter(s => s !== id);
+                        break;
+                    }
+                    case "song": {
+                        if ("artist" in req.query) {
+                            if (userData.pins.songs.some(s => s.id === id && s.artist === req.query.artist)) userData.pins.songs = userData.pins.songs.filter(s => (s.id !== id || s.artist !== req.query.artist));
+                        }
+                        break;
+                    }
+                    case "playlist": {
+                        if (userData.pins.playlists.some(s => s === id)) userData.pins.playlists = userData.pins.playlists.filter(s => s !== id);
+                        break;
+                    }
+                    case "artists": {
+                        if (userData.pins.artists.some(s => s === id)) userData.pins.artists = userData.pins.artists.filter(s => s !== id);
+                        break;
+                    }
+                    default:
+                        res.json({success: false, reason: "category does not exist"});
                 }
-                case "song": {
-                    if (userData.pins.songs.some(s => s === id)) userData.pins.songs = userData.pins.songs.filter(s => s !== id);
-                    break;
+            } else {
+                switch (category) {
+                    case "radio": {
+                        if (!userData.pins.radios.some(s => s === id)) userData.pins.radios.push(id);
+                        break;
+                    }
+                    case "song": {
+                        if ("artist" in req.query) {
+                            if (!userData.pins.songs.some(s => s.id === id && s.artist === req.query.artist)) userData.pins.songs.push({
+                                id,
+                                artist: req.query.artist
+                            });
+                        }
+                        break;
+                    }
+                    case
+                    "playlist"
+                    : {
+                        if (!userData.pins.playlists.some(s => s === id)) userData.pins.playlists.push(id);
+                        break;
+                    }
+                    case
+                    "artists"
+                    : {
+                        if (!userData.pins.artists.some(s => s === id)) userData.pins.artists.push(id);
+                        break;
+                    }
+                    default:
+                        res.json({success: false, reason: "category does not exist"});
                 }
-                case "playlist": {
-                    if (userData.pins.playlists.some(s => s === id)) userData.pins.playlists = userData.pins.playlists.filter(s => s !== id);
-                    break;
-                }
-                case "artists": {
-                    if (userData.pins.artists.some(s => s === id)) userData.pins.artists = userData.pins.artists.filter(s => s !== id);
-                    break;
-                }
-                default:
-                    res.json({success: false, reason: "category does not exist"});
             }
-        } else {
-            switch (category) {
-                case "radio": {
-                    if (!userData.pins.radios.some(s => s === id)) userData.pins.radios.push(id);
-                    break;
-                }
-                case "song": {
-                    if (!userData.pins.songs.some(s => s === id)) userData.pins.songs.push(id);
-                    break;
-                }
-                case "playlist": {
-                    if (!userData.pins.playlists.some(s => s === id)) userData.pins.playlists.push(id);
-                    break;
-                }
-                case "artists": {
-                    if (!userData.pins.artists.some(s => s === id)) userData.pins.artists.push(id);
-                    break;
-                }
-                default:
-                    res.json({success: false, reason: "category does not exist"});
-            }
+            writeUser(user, userData);
+            res.json(userData);
         }
-        writeUser(user, userData);
-        res.json(userData);
-    });
+    )
+    ;
     app.patch("/api/users/:userId/volume", async (req, res) => {
         const userdata = readUser(req.params.userId);
         const volume = Math.max(0, Math.min(1, Number(req.query.level)));

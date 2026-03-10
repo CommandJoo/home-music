@@ -5,8 +5,7 @@ export async function pin(userId: string, category: string, id: string) {
 }
 
 export async function unpin(userId: string, category: string, id: string) {
-    console.log("Pin")
-    await fetch(`/api/users/${userId}/pin?category=${category}&id=${id}&unpin`);
+    await fetch(`/api/users/${userId}/pin?category=${category}&id=${id}&unpin`).then(r => console.log(r));
 }
 
 export async function loadPins(currentUser: User, db: Song[]) {
@@ -24,7 +23,7 @@ export async function loadPins(currentUser: User, db: Song[]) {
         });
         const songs = db.filter(song => {
             const unloadedSongs = unloaded.songs;
-            return unloadedSongs.some(unloadedSong => unloadedSong === song.uuid);
+            return unloadedSongs.some(unloadedSong => unloadedSong.id === song.uuid && unloadedSong.artist === song.artist.id);
         });
         const artistResponse = await fetch("/api/artists");
         const artists = (await artistResponse.json() as Artist[]).filter(artist => {
