@@ -79,11 +79,13 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
         loadPlaylist(props.playlist).then((loaded) => {
             setSongs(loaded)
         })
+
         async function load() {
             if (pins.playlists.some(p => p.id === props.playlist.id)) {
                 setPinned(true);
             }
         }
+
         load();
     }, [pins.playlists, props.playlist]);
 
@@ -137,7 +139,7 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
 
 export function SongEntry({song}: SongEntryProps) {
     const {open} = useContextMenu();
-    const {player} = useMusic();
+    const {player, changePage} = useMusic();
 
     return <div id={"song-entry"} className={"song entry"} key={song.title + song.artist} onContextMenu={(e) => {
         e.preventDefault();
@@ -163,7 +165,9 @@ export function SongEntry({song}: SongEntryProps) {
             }}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>
         </div>
         <h2>{song.title}</h2>
-        <div id={"artist"}>
+        <div id={"artist"} onClick={() => {
+            changePage({type: "artist"}, song.artist.id);
+        }}>
             <img src={song.artist.picture} alt={song.artist.name}/>
             <h4>{song.artist.name}</h4>
         </div>
