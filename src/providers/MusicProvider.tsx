@@ -26,7 +26,7 @@ type MusicContextType = {
     db: Song[];
     reloadSongs: () => void;
     page: Page;
-    changePage: (page: Page) => void;
+    changePage: (page: Page, id?: string) => void;
 
     player: PlayerType;
 
@@ -57,12 +57,22 @@ export function MusicProvider({children}: { children: ReactNode }) {
             return {...s, kind: "song"} as Song;
         }));
     }, []);
-    const changePage = useCallback((page: Page) => {
+    const changePage = useCallback((page: Page, id?: string) => {
         setPage(page);
         if (page.type == "downloads" || page.type == "library" || page.type == "radio") {
             navigate(`/${page.type}`);
         } else if (page.type == "artist") {
-            navigate(`/${page.type}?id=${page.artist?.id}`);
+            if (!id) {
+                console.error("Changing to an artist page requires an id");
+            } else {
+                navigate(`/${page.type}?id=${id}`);
+            }
+        } else if (page.type == "playlist") {
+            if (!id) {
+                console.error("Changing to a playlist page requires an id");
+            } else {
+                navigate(`/${page.type}?id=${id}`);
+            }
         }
     }, [navigate])
 

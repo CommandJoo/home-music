@@ -114,7 +114,12 @@ function music(app, config, baseDir) {
                 }
             });
         }
-        res.json(songs);
+        res.json({
+            data: {
+                ...artistMetaData,
+                path: `/api/songs/${artistMetaData.id}`
+            }, songs
+        });
     });
 
 

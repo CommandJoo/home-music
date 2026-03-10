@@ -71,7 +71,7 @@ export function RadioEntry({radio}: RadioEntryProps) {
 export function PlaylistEntry(props: PlaylistEntryProps) {
     const {open} = useContextMenu();
     const [songs, setSongs] = useState<Song[]>([]);
-    const {player, currentUser, pins} = useMusic();
+    const {player, currentUser, pins, changePage} = useMusic();
     const [pinned, setPinned] = useState(false)
 
     useEffect(() => {
@@ -89,7 +89,9 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
 
     const showEntries = 4;
 
-    return <div id={"playlist-entry"} className={"playlist entry"} key={props.playlist.id} onContextMenu={(e) => {
+    return <div id={"playlist-entry"} className={"playlist entry"} key={props.playlist.id} onClick={() => {
+        changePage({type: "playlist"}, props.playlist.id);
+    }} onContextMenu={(e) => {
         e.preventDefault();
 
         async function load() {

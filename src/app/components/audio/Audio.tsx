@@ -72,13 +72,13 @@ function SineWave() {
 
 export default function Audio() {
     const audio = useRef<HTMLAudioElement | null>(null);
-    const {player, page, db, currentUser} = useMusic();
+    const {player, db, currentUser} = useMusic();
     const nowPlaying = useNowPlaying(player.isRadio() ? player.asRadio()?.url.track : undefined);
 
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
     const [paused, setPaused] = useState(false);
-    const [volume, setVolume] = useState<number>();
+    const [volume, setVolume] = useState<number>(() => currentUser?.volume ?? 1);
     const [muted, setMuted] = useState(false);
 
     useEffect(() => {
@@ -136,7 +136,7 @@ export default function Audio() {
             if (player.queue.length > 0) {
                 player.forward();
             } else {
-                const pool = page?.songs ?? db;
+                const pool = db;
                 const song = pool[Math.round(Math.random() * (pool.length - 1))];
                 player.play(song);
             }
@@ -157,7 +157,7 @@ export default function Audio() {
             el.removeEventListener("volumechange", onVolumeChange);
             el.removeEventListener("ended", onEnded);
         };
-    }, [db, page?.songs, player.play, player.forward, player.queue.length, player.playing, player]);
+    }, [db, player.play, player.forward, player.queue.length, player.playing, player]);
 
     useEffect(() => {
         const el = audio.current;
@@ -323,7 +323,7 @@ export default function Audio() {
                 </div>
                 <input type={"range"} value={volume} min={0} max={1} step={0.01} style={{
                     "--volume": (muted ? 0 : volume),
-                    "--progress": `${muted ? 0 : (volume ? volume : 1) * 100}%`
+                    "--progress": `${muted ? 0 : (volume ?? 1) * 100}%`
                 } as CSSProperties} onChange={(e) => {
                     changeVolume(Number(e.target.value));
                 }}/>

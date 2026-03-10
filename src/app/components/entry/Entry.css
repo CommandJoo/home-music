@@ -82,6 +82,7 @@
         align-items: center;
 
         border-radius: 4px;
+        overflow: hidden;
         background: color-mix(in hsl, var(--bg-light), black 30%);
 
         margin-bottom: 1dvh;

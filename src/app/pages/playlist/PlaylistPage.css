@@ -1,0 +1,22 @@
+#playlist-page {
+    #search {
+        display: block;
+    }
+
+    #page {
+        padding: 1dvh;
+
+        h1 {
+            grid-column: 1/-1;
+        }
+
+        #playlist-info {
+            min-height: 8dvh;
+            grid-column: 1/-1;
+            padding: 1dvh;
+
+            position: relative;
+        }
+
+    }
+}

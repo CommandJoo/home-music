@@ -1,5 +1,5 @@
 export type Artist = {
-    id: string,
+    id: string;
     name: string;
     picture: string;
     path: string;
@@ -16,7 +16,7 @@ export type Playable = {
 }
 
 export type Song = Playable & {
-    readonly kind: "song",
+    readonly kind: "song";
     artist: Artist;
     metadata: {
         duration: number;
@@ -25,7 +25,7 @@ export type Song = Playable & {
 }
 
 export type Radio = Playable & {
-    readonly kind: "radio",
+    readonly kind: "radio";
     tags: string[];
 }
 
@@ -40,18 +40,15 @@ export type Recording = {
 }
 
 export type Playlist = {
-    id: string,
-    cover: string,
+    id: string;
+    cover: string;
     title: string;
     content: string[];
 }
 
 export type Page = {
     type: "downloads"|"library"|"artist"|"playlist"|"radio";
-    artist?: Artist
-    songs?: Song[];
-    playlists?: Playlist[];
-    radio?: Radio[];
+    artist?: Artist;
 }
 
 export type Users = {

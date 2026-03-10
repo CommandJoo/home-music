@@ -46,3 +46,13 @@ export async function loadPlaylist(playlist: Playlist) {
     }
     return loaded;
 }
+
+export async function searchPaylist(currentUser: User, id: string) {
+    const response = await fetch(`/api/users/${currentUser.id}/playlists/${id}`);
+    return await response.json() as Playlist;
+}
+
+export async function searchArtist(id: string) {
+    const response = await fetch(`/api/songs/${id}`);
+    return await response.json() as { data: Artist, songs: Song[] };
+}
