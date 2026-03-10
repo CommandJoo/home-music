@@ -8,6 +8,7 @@ import {
     TbPlayerSkipForwardFilled
 } from "react-icons/tb";
 import {useMusic, useNowPlaying} from "../../../providers/MusicProvider.tsx";
+import Cover from "../cover/Cover.tsx";
 
 function toMinutes(seconds: number): string {
     let hours = 0;
@@ -265,12 +266,10 @@ export default function Audio() {
 
     return <div id="audio-controller" className={!player.playing ? "no-song" : ""}>
         <div id={"audio-left"}>
-            <div id={"cover"}>
-                {player.playing ? (player.isSong() ?
-                    <img src={player.playing?.url.cover} alt={player.playing?.title}/> :
-                    (player.asRadio().url.cover.length > 0 ?
-                        <img src={player.asRadio().url.cover} alt={player.playing?.title}/> :
-                        <FaRadio className={"icon"} size={"6vh"}/>)) : ""}
+            <div id={"cover-wrapper"}>
+                <Cover
+                    url={player.isSong() ? (player.playing ? player.playing?.url.cover : "") : player.asRadio().url.cover}
+                    alt={player.isSong() ? player.playing?.title : <FaRadio className={"icon"} size={"6vh"}/>}/>
             </div>
             <div id={"info"}>
                 <h3>{player.playing ? (player.isSong() ? player.asSong().title : (nowPlaying ? nowPlaying : player.playing?.title)) : ""}</h3>

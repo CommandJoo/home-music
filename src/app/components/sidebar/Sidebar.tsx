@@ -6,6 +6,7 @@ import {BsFillCollectionFill} from "react-icons/bs";
 import UserSidebarEntry from "./sidebar-entries/UserSidebarEntry.tsx";
 import {useMusic} from "../../../providers/MusicProvider.tsx";
 import {loadPlaylist} from "../../util.ts";
+import Cover from "../cover/Cover.tsx";
 
 function stringToColor(str: string, mult: number): string {
     let hash = 0;
@@ -54,7 +55,7 @@ export default function Sidebar() {
                 {pins.radios.map((r, i) => {
                     return <SidebarEntry key={i} onClick={() => {
                         player.play(r);
-                    }} preview={r.url.cover.length > 0 ? <img src={r.url.cover} alt={r.title}/> : <h3>{r.title}</h3>}>
+                    }} preview={<Cover url={r.url.cover} alt={<FaRadio className={"alt-icon"}/>}/>}>
                     </SidebarEntry>
                 })}
             </>

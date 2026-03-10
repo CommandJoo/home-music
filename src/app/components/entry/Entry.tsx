@@ -7,6 +7,7 @@ import {type CSSProperties, useEffect, useState} from "react";
 import {useContextMenu} from "../../../providers/ContextMenuProvider.tsx";
 import ContextMenuButton, {ContextMenuAddToPlaylistButton,} from "../../context-menu/ContextMenuButton.tsx";
 import {loadPlaylist, pin, unpin} from "../../util.ts";
+import Cover from "../cover/Cover.tsx";
 
 type SongEntryProps = {
     song: Song;
@@ -57,8 +58,7 @@ export function RadioEntry({radio}: RadioEntryProps) {
         load();
     }}>
         <div id={"cover-wrapper"}>
-            {radio.url.cover.length > 0 ? <img id={"cover"} src={radio.url.cover} alt={radio.title}></img> :
-                <FaRadio className={"cover-icon"} size={"15vh"}/>}
+            <Cover url={radio.url.cover} alt={<FaRadio className={"cover-icon"} size={"15vh"}/>}/>
             <div id={"overlay"}></div>
             <button id={"play-button"} onClick={() => {
                 player.play(radio);
@@ -119,7 +119,7 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
         load();
     }}>
         <div id={"cover-wrapper"}>
-            <img id={"cover"} src={props.playlist.cover} alt={props.playlist.title}></img>
+            <Cover url={props.playlist.cover} alt={props.playlist.title}></Cover>
             <div id={"overlay"}></div>
             {props.playlist.content.length > 0 && <button id={"play-button"} onClick={() => {
                 player.play(songs[0]);
@@ -154,7 +154,7 @@ export function SongEntry({song}: SongEntryProps) {
         ));
     }}>
         <div id={"cover-wrapper"}>
-            <img id={"cover"} src={song.url.cover} alt={song.title}></img>
+            <Cover alt={song.title} url={song.url.cover}/>
             <div id={"overlay"}></div>
             <button id={"play-button"} onClick={() => {
                 player.play(song);

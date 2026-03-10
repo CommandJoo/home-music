@@ -34,7 +34,7 @@
 
         border-radius: 6px;
 
-        #cover {
+        #cover-wrapper {
             aspect-ratio: 1/1;
             display: flex;
             justify-content: center;
@@ -360,7 +360,7 @@
 @media (max-width: 1024px) {
     #audio-controller {
         #audio-left {
-            #cover {
+            #cover-wrapper {
                 height: 55%;
             }
 
