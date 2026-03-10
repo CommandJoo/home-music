@@ -53,16 +53,14 @@ The App will be available at `http://localhost:3300/`
 ### Utility
 - [ ] Better utility functions (WIP)
 
-## Theming
+### Theming
 - [ ] Add basic theme system
 
-## Notifications
-
+### Notifications
 - [ ] Add notification manager
 - [ ] Display Errors if fetch requests fail
 
 ## Queue
-
 - [ ] Add Queue Editor (Move songs around, reshuffle)
 
 ## License
