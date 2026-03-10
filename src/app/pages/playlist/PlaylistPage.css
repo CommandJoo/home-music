@@ -11,7 +11,7 @@
         }
 
         #playlist-info {
-            min-height: 8dvh;
+            min-height: 12dvh;
             grid-column: 1/-1;
             padding: 1dvh;
 

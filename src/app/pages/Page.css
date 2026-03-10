@@ -46,6 +46,49 @@
             gap: 1dvh;
             box-sizing: border-box;
         }
+
+        .large-playable {
+            #play-button:hover {
+                filter: brightness(0.85);
+            }
+
+            #play-button {
+                transition: opacity .2s ease, bottom .2s ease;
+                opacity: 0;
+                position: absolute;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                border: none;
+                outline: none;
+
+                background-color: var(--primary);
+
+                right: 0.5dvh;
+                bottom: -0.5dvh;
+
+                height: 6dvh;
+                width: 6dvh;
+                aspect-ratio: 1/1;
+
+                border-radius: 50%;
+
+                box-sizing: border-box;
+                padding: 0.5dvh;
+
+                .icon {
+                    fill: var(--bg-light);
+                }
+            }
+        }
+
+        .large-playable:hover {
+            #play-button {
+                opacity: 1;
+                bottom: 0.5dvh;
+            }
+        }
     }
 }
 

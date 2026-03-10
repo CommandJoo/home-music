@@ -58,7 +58,7 @@ export default function PlaylistPage() {
                 </div>
             </div>
             <div id={"page"}>
-                <div id={"playlist-info"} className={"entry"}>
+                <div id={"playlist-info"} className={"entry large-playable"}>
                     <h1>{playlist.title}</h1>
                     <button id={"play-button"} onClick={() => {
                         if (songs) {

@@ -42,14 +42,15 @@ export default function ArtistPage() {
         {artist && <>
             <div id={"search"}>
                 <div id={"searchbar"}>
-                    <input type={"text"} id={"searchbar-input"} placeholder={`Search for ${artist.data.name}s songs`}
+                    <input type={"text"} id={"searchbar-input"}
+                           placeholder={`Search for ${artist.data.name + (!artist.data.name.endsWith("s") ? "'s" : "'")} songs`}
                            onChange={(e) => {
                                setSearch(e.target.value)
                            }} value={search}/>
                 </div>
             </div>
             <div id={"page"}>
-                <div id={"artist-profile"} className={"entry"}>
+                <div id={"artist-profile"} className={"entry large-playable"}>
                     <h1>{artist.data.name}</h1>
                     <button id={"play-button"} onClick={() => {
                         if (artist.songs) {

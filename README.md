@@ -47,17 +47,23 @@ The App will be available at `http://localhost:3300/`
   no direct run button + songs clickable
 - [ ] Account Settings
 
-### Playlist Page
-- [ ] Playlist Page (Shows all songs of playlist) -> one run button
+### Library Page
 - [ ] button for creating playlists + modal for adding details like name, description and cover
 
 ### Utility
-- [ ] Make things like covers abstract
 - [ ] Better utility functions (WIP)
 
 ## Theming
-
 - [ ] Add basic theme system
+
+## Notifications
+
+- [ ] Add notification manager
+- [ ] Display Errors if fetch requests fail
+
+## Queue
+
+- [ ] Add Queue Editor (Move songs around, reshuffle)
 
 ## License
 Distributed under the **GNU GPL v3** License. See [`LICENSE`](./LICENSE.md) for more information.
