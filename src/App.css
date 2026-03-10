@@ -1,14 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100dvw;
-    height: 100dvh;
-    overflow: hidden;
-}
-
 :root {
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+
     --bg-dark: oklch(0 0 68deg);
     --bg: oklch(.15 0 68deg);
     --bg-light: oklch(.2 calc(0 * .8) 68deg);
@@ -37,12 +39,26 @@ html, body {
     overflow: hidden;
 }
 
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100dvw;
+    height: 100dvh;
+    overflow: hidden;
+
+    background: var(--bg);
+}
+
 * {
     color: var(--text);
     font-family: "Inter", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
+
+    margin: 0;
+    padding: 0;
+    user-select: none;
 }
 
 #root.light {
