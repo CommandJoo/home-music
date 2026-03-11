@@ -12,8 +12,8 @@
 
 
     --bg-dark: oklch(0 0 68deg);
-    --bg: oklch(.15 0 68deg);
-    --bg-light: oklch(.2 calc(0 * .8) 68deg);
+    --bg: oklch(.17 0 68deg);
+    --bg-light: oklch(.22 calc(0 * .8) 68deg);
 
     --text: oklch(1 0 68deg);
     --text-muted: oklch(.8 0 68deg);
@@ -46,7 +46,7 @@ html, body {
     height: 100dvh;
     overflow: hidden;
 
-    background: var(--bg);
+    background: var(--bg-dark);
 }
 
 * {
@@ -113,7 +113,7 @@ html, body {
         position: absolute;
         box-sizing: border-box;
         align-self: center;
-        width: 6dvw;
+        width: 5dvw;
         height: 100dvh;
 
         display: flex;
@@ -129,8 +129,8 @@ html, body {
         position: absolute;
 
         top: 0;
-        left: 6dvw;
-        width: 94dvw;
+        left: 5dvw;
+        width: 95dvw;
 
         #page-top {
             width: 94dvw;

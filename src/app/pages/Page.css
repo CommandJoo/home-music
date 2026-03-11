@@ -5,23 +5,22 @@
     gap: 1dvh;
 
     #search {
-        transition: border-color 0.2s ease;
+        transition: background-color 0.2s ease;
         align-self: center;
-        background-color: var(--bg);
+        background-color: var(--bg-light);
         height: 6dvh;
         box-sizing: border-box;
 
         width: 100%;
 
-        border: 1px solid var(--border);
-        border-radius: 8px;
+        border-radius: 2.5dvh;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
     #search:hover {
-        border-color: var(--secondary);
+        background-color: color-mix(in hsl, var(--bg-light) 95%, white 5%);
     }
 
     #page {
@@ -32,7 +31,6 @@
         background: radial-gradient(var(--bg-light), var(--bg));
         box-sizing: border-box;
 
-        border: 1px solid var(--border);
         border-radius: 8px;
 
         h1 {

@@ -10,11 +10,14 @@
     justify-content: flex-start;
 
     #sidebar-entry.user {
-        border-radius: 12px;
+        background: color-mix(in hsl, var(--bg-light) 90%, white 10%);
+        border-radius: 30%;
         overflow: hidden;
 
+        padding: 0.4dvh;
+
         #entry-preview {
-            border-radius: 10px;
+            border-radius: 30%;
             overflow: hidden;
             aspect-ratio: unset;
 

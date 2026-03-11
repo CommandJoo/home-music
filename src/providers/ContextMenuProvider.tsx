@@ -21,7 +21,7 @@ export function ContextMenuProvider({children}: { children: ReactNode }) {
 
     const open = (x: number, y: number, content: ReactNode) => {
         setMenu({x, y, content});
-    };
+    }
     const change = (content: ReactNode) => {
         setMenu(prev => {
             return {x: prev.x, y: prev.y, content}

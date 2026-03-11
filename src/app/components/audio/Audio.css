@@ -14,7 +14,6 @@
     box-sizing: border-box;
 
     background-color: var(--bg);
-    border: 1px solid var(--border);
     border-radius: 8px;
 
     &.no-song {
@@ -24,7 +23,6 @@
     }
 
     #audio-left {
-        margin: 2px;
         background: linear-gradient(to left, var(--bg), var(--bg-light));
         display: flex;
         box-sizing: border-box;
@@ -109,8 +107,8 @@
                     align-items: center;
 
                     .icon {
-                        width: 80%;
-                        height: 80%;
+                        width: 60%;
+                        height: 60%;
                     }
                 }
 
@@ -141,8 +139,8 @@
 
                     .icon {
                         fill: var(--bg);
-                        width: 80%;
-                        height: 80%;
+                        width: 60%;
+                        height: 60%;
                     }
                 }
 
@@ -260,7 +258,6 @@
     }
 
     #audio-right {
-        margin: 2px;
         background: linear-gradient(to right, var(--bg), var(--bg-light));
         width: 40%;
         display: flex;

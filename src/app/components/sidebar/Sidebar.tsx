@@ -7,6 +7,10 @@ import UserSidebarEntry from "./sidebar-entries/UserSidebarEntry.tsx";
 import {useMusic} from "../../../providers/MusicProvider.tsx";
 import {loadPlaylist} from "../../util.ts";
 import Cover from "../cover/Cover.tsx";
+import {useContextMenu} from "../../../providers/ContextMenuProvider.tsx";
+import MenuPlaylist from "../../context-menu/menus/MenuPlaylist.tsx";
+import MenuRadio from "../../context-menu/menus/MenuRadio.tsx";
+import MenuSong from "../../context-menu/menus/MenuSong.tsx";
 
 function stringToColor(str: string, mult: number): string {
     let hash = 0;
@@ -19,6 +23,7 @@ function stringToColor(str: string, mult: number): string {
 
 
 export default function Sidebar() {
+    const {open} = useContextMenu();
     const {changePage, pins, player} = useMusic();
 
     return <div id={"sidebar"}>
@@ -54,7 +59,9 @@ export default function Sidebar() {
                 <>
                     {pins.playlists.length > 0 && <hr className={"sidebar-spacer"}/>}
                     {pins.playlists.map((p, i) => {
-                        return <SidebarEntry key={i} onClick={() => {
+                        return <SidebarEntry key={i} onContext={(x, y) => {
+                            open(x, y, <MenuPlaylist playlist={p}/>);
+                        }} onClick={() => {
                             async function load() {
                                 const loaded = await loadPlaylist(p);
                                 console.log(p)
@@ -71,7 +78,9 @@ export default function Sidebar() {
             {pins && <>
                 {pins.radios.length > 0 && <hr className={"sidebar-spacer"}/>}
                 {pins.radios.map((r, i) => {
-                    return <SidebarEntry key={i} onClick={() => {
+                    return <SidebarEntry onContext={(x, y) => {
+                        open(x, y, <MenuRadio radio={r}/>);
+                    }} key={i} onClick={() => {
                         player.play(r);
                     }} preview={<Cover url={r.url.cover} alt={<FaRadio className={"alt-icon"}/>}/>}>
                     </SidebarEntry>
@@ -82,7 +91,9 @@ export default function Sidebar() {
                 pins && <>
                     {pins.songs.length > 0 && <hr className={"sidebar-spacer"}/>}
                     {pins.songs.map((s, i) => {
-                        return <SidebarEntry key={i} onClick={() => {
+                        return <SidebarEntry onContext={(x, y) => {
+                            open(x, y, <MenuSong song={s}/>);
+                        }} key={i} onClick={() => {
                             player.play(s);
                         }} preview={s.url.cover.length > 0 ? <img src={s.url.cover} alt={s.title}/> :
                             <h3>{s.title}</h3>}>

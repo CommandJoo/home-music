@@ -1,6 +1,5 @@
 #sidebar-entry {
-    background: var(--bg-light);
-    border: 1px solid var(--border);
+    transition: background-color 0.2s ease;
     border-radius: 6px;
 
     margin-left: calc(5%);
@@ -10,20 +9,27 @@
     display: flex;
 
     box-sizing: border-box;
-    padding: 0.1dvh;
+    padding: 0.7dvh;
 
     justify-content: center;
     flex-shrink: 0;
 
     &.generic {
         filter: brightness(1.1);
-        transition: --hue-a 0.2s, --hue-b 0.2s;
-        background: linear-gradient(to bottom right, hsl(var(--hue-a) 65% 50%), hsl(var(--hue-b) 65% 50%));
+        transition: --hue-a 0.2s, --hue-b 0.2s, background-color 0.2s ease;
+        padding: 0.7dvh;
+
+        #entry-preview {
+            background: linear-gradient(to bottom right, hsl(var(--hue-a) 65% 50%), hsl(var(--hue-b) 65% 50%));
+        }
     }
 
     &.generic:hover {
         filter: brightness(1.4);
-        background: linear-gradient(to top right, hsl(var(--hue-b) 65% 50%), hsl(var(--hue-a) 65% 50%));
+
+        #entry-preview {
+            background: linear-gradient(to top right, hsl(var(--hue-b) 65% 50%), hsl(var(--hue-a) 65% 50%));
+        }
     }
 
     #entry-preview {
@@ -64,10 +70,8 @@
 }
 
 #sidebar-entry:hover {
-    transition: 0.2s border-color ease, filter 0.2s;
+    background: var(--bg-light);
     filter: brightness(1.2);
-    border-color: var(--border-highlight);
-    border-width: 2px;
 
     #entry-preview {
         .icon {
