@@ -9,6 +9,7 @@ import Cover from "../cover/Cover.tsx";
 import MenuPlaylist from "../../context-menu/menus/MenuPlaylist.tsx";
 import MenuRadio from "../../context-menu/menus/MenuRadio.tsx";
 import MenuSong from "../../context-menu/menus/MenuSong.tsx";
+import LinkArtist from "../links/LinkArtist.tsx";
 
 type SongEntryProps = {
     song: Song;
@@ -23,20 +24,11 @@ type RadioEntryProps = {
 }
 
 export function RadioEntry({radio}: RadioEntryProps) {
-    const {open} = useContextMenu();
+    const {handleContextMenu} = useContextMenu();
     const {player} = useMusic();
 
-    return <div id={"radio-entry"} className={"radio entry"} key={radio.uuid} onContextMenu={(e) => {
-        e.preventDefault();
-
-        async function load() {
-            open(e.pageX, e.pageY, (
-                <MenuRadio radio={radio}/>
-            ));
-        }
-
-        load();
-    }}>
+    return <div id={"radio-entry"} className={"radio entry"} key={radio.uuid}
+                onContextMenu={(e) => handleContextMenu(e, <MenuRadio radio={radio}/>)}>
         <div id={"cover-wrapper"}>
             <Cover url={radio.url.cover} alt={<FaRadio className={"cover-icon"} size={"15vh"}/>}/>
             <div id={"overlay"}></div>
@@ -49,7 +41,7 @@ export function RadioEntry({radio}: RadioEntryProps) {
 }
 
 export function PlaylistEntry(props: PlaylistEntryProps) {
-    const {open} = useContextMenu();
+    const {handleContextMenu} = useContextMenu();
     const [songs] = useState<Song[]>([]);
     const {player, changePage} = useMusic();
 
@@ -57,15 +49,7 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
 
     return <div id={"playlist-entry"} className={"playlist entry"} key={props.playlist.id} onClick={() => {
         changePage({type: "playlist"}, props.playlist.id);
-    }} onContextMenu={(e) => {
-        e.preventDefault();
-
-        async function load() {
-            open(e.pageX, e.pageY, <MenuPlaylist playlist={props.playlist}/>);
-        }
-
-        load();
-    }}>
+    }} onContextMenu={(e) => handleContextMenu(e, <MenuPlaylist playlist={props.playlist}/>)}>
         <div id={"cover-wrapper"}>
             <Cover url={props.playlist.cover} alt={props.playlist.title}></Cover>
             <div id={"overlay"}></div>
@@ -82,15 +66,11 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
 }
 
 export function SongEntry({song}: SongEntryProps) {
-    const {open} = useContextMenu();
-    const {player, changePage} = useMusic();
+    const {handleContextMenu} = useContextMenu();
+    const {player} = useMusic();
 
-    return <div id={"song-entry"} className={"song entry"} key={song.title + song.artist} onContextMenu={(e) => {
-        e.preventDefault();
-        open(e.pageX, e.pageY, (
-            <MenuSong song={song}/>
-        ));
-    }}>
+    return <div id={"song-entry"} className={"song entry"} key={song.title + song.artist}
+                onContextMenu={(e) => handleContextMenu(e, <MenuSong song={song}/>)}>
         <div id={"cover-wrapper"}>
             <Cover alt={song.title} url={song.url.cover}/>
             <div id={"overlay"}></div>
@@ -99,11 +79,9 @@ export function SongEntry({song}: SongEntryProps) {
             }}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>
         </div>
         <h2>{song.title}</h2>
-        <div id={"artist"} onClick={() => {
-            changePage({type: "artist"}, song.artist.id);
-        }}>
+        <div id={"artist"}>
             <img src={song.artist.picture} alt={song.artist.name}/>
-            <h4>{song.artist.name}</h4>
+            <LinkArtist artist={song.artist}/>
         </div>
     </div>;
 }

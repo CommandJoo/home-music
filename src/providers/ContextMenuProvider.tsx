@@ -10,6 +10,7 @@ type ContextMenuState = {
 
 type ContextMenuContextType = {
     open: (x: number, y: number, content: ReactNode) => void;
+    handleContextMenu: (event: React.MouseEvent, content: ReactNode) => void;
     change: (content: ReactNode) => void;
     close: () => void;
 };
@@ -21,6 +22,11 @@ export function ContextMenuProvider({children}: { children: ReactNode }) {
 
     const open = (x: number, y: number, content: ReactNode) => {
         setMenu({x, y, content});
+    }
+    const handleContextMenu = (event: React.MouseEvent, content: ReactNode) => {
+        event.preventDefault();
+        event.stopPropagation();
+        open(event.clientX, event.clientY, content);
     }
     const change = (content: ReactNode) => {
         setMenu(prev => {
@@ -43,7 +49,7 @@ export function ContextMenuProvider({children}: { children: ReactNode }) {
     }, []);
 
     return (
-        <ContextMenuContext.Provider value={{open, close, change}}>
+        <ContextMenuContext.Provider value={{open, close, change, handleContextMenu}}>
             {children}
             {menu.content && (
                 <div
@@ -58,6 +64,7 @@ export function ContextMenuProvider({children}: { children: ReactNode }) {
     );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useContextMenu() {
     const ctx = useContext(ContextMenuContext);
     if (!ctx) throw new Error("useContextMenu must be used within ContextMenuProvider");

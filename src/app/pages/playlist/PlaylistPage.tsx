@@ -58,7 +58,11 @@ export default function PlaylistPage() {
                 </div>
             </div>
             <div id={"page"}>
-                <div id={"playlist-info"} className={"entry large-playable"}>
+                <div id={"header"} className={"large-playable"}>
+                    {playlist.cover.length > 0 &&
+                        <div className={"img-wrapper"}>
+                            <img src={playlist.cover} alt={""}/>
+                        </div>}
                     <h1>{playlist.title}</h1>
                     <button id={"play-button"} onClick={() => {
                         if (songs) {

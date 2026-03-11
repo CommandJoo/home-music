@@ -246,7 +246,7 @@ function users(app, config, baseDir, musicDir) {
                         if (userData.pins.playlists.some(s => s === id)) userData.pins.playlists = userData.pins.playlists.filter(s => s !== id);
                         break;
                     }
-                    case "artists": {
+                    case "artist": {
                         if (userData.pins.artists.some(s => s === id)) userData.pins.artists = userData.pins.artists.filter(s => s !== id);
                         break;
                     }
@@ -275,7 +275,7 @@ function users(app, config, baseDir, musicDir) {
                         break;
                     }
                     case
-                    "artists"
+                    "artist"
                     : {
                         if (!userData.pins.artists.some(s => s === id)) userData.pins.artists.push(id);
                         break;

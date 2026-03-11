@@ -11,6 +11,8 @@ import {useContextMenu} from "../../../providers/ContextMenuProvider.tsx";
 import MenuPlaylist from "../../context-menu/menus/MenuPlaylist.tsx";
 import MenuRadio from "../../context-menu/menus/MenuRadio.tsx";
 import MenuSong from "../../context-menu/menus/MenuSong.tsx";
+import {FaHome} from "react-icons/fa";
+import MenuArtist from "../../context-menu/menus/MenuArtist.tsx";
 
 function stringToColor(str: string, mult: number): string {
     let hash = 0;
@@ -23,17 +25,19 @@ function stringToColor(str: string, mult: number): string {
 
 
 export default function Sidebar() {
-    const {open} = useContextMenu();
-    const {changePage, pins, player} = useMusic();
+    const {handleContextMenu} = useContextMenu();
+    const {changePage, pins, player, currentUser} = useMusic();
 
     return <div id={"sidebar"}>
-        <UserSidebarEntry/>
-        <hr className={"sidebar-spacer"}/>
+        {currentUser && <UserSidebarEntry/>}
+        {currentUser && <hr className={"sidebar-spacer"}/>}
         <div id={"sidebar-scroll"}>
-            {/*<SidebarEntry className={"generic"} style={{"--hue-a": stringToColor("home", 3), "--hue-b": stringToColor("home", 4)} as CSSProperties} preview={<FaHome className={"icon"} size={"3vw"}/>} onClick={() => {*/}
-            {/*    select(null);*/}
-            {/*}}>*/}
-            {/*</SidebarEntry>*/}
+            <SidebarEntry className={"generic"} style={{
+                "--hue-a": stringToColor("home", 3),
+                "--hue-b": stringToColor("home", 4)
+            } as CSSProperties} preview={<FaHome className={"icon"} size={"3vw"}/>} onClick={() => {
+            }}>
+            </SidebarEntry>
             <SidebarEntry className={"generic"} style={{
                 "--hue-a": stringToColor("downloads", 10),
                 "--hue-b": stringToColor("downloads", 4)
@@ -59,9 +63,9 @@ export default function Sidebar() {
                 <>
                     {pins.playlists.length > 0 && <hr className={"sidebar-spacer"}/>}
                     {pins.playlists.map((p, i) => {
-                        return <SidebarEntry key={i} onContext={(x, y) => {
-                            open(x, y, <MenuPlaylist playlist={p}/>);
-                        }} onClick={() => {
+                        return <SidebarEntry key={i}
+                                             onContext={(e) => handleContextMenu(e, <MenuPlaylist playlist={p}/>)}
+                                             onClick={() => {
                             async function load() {
                                 const loaded = await loadPlaylist(p);
                                 console.log(p)
@@ -78,9 +82,8 @@ export default function Sidebar() {
             {pins && <>
                 {pins.radios.length > 0 && <hr className={"sidebar-spacer"}/>}
                 {pins.radios.map((r, i) => {
-                    return <SidebarEntry onContext={(x, y) => {
-                        open(x, y, <MenuRadio radio={r}/>);
-                    }} key={i} onClick={() => {
+                    return <SidebarEntry onContext={(e) => handleContextMenu(e, <MenuRadio radio={r}/>)} key={i}
+                                         onClick={() => {
                         player.play(r);
                     }} preview={<Cover url={r.url.cover} alt={<FaRadio className={"alt-icon"}/>}/>}>
                     </SidebarEntry>
@@ -89,11 +92,23 @@ export default function Sidebar() {
             }
             {
                 pins && <>
+                    {pins.artists.length > 0 && <hr className={"sidebar-spacer"}/>}
+                    {pins.artists.map((a, i) => {
+                        return <SidebarEntry onContext={(e) => handleContextMenu(e, <MenuArtist artist={a}/>)} key={i}
+                                             onClick={() => {
+                                                 changePage({type: "artist"}, a.id);
+                                             }} preview={a.picture.length > 0 ? <img src={a.picture} alt={a.name}/> :
+                            <h3>{a.name}</h3>}>
+                        </SidebarEntry>
+                    })}
+                </>
+            }
+            {
+                pins && <>
                     {pins.songs.length > 0 && <hr className={"sidebar-spacer"}/>}
                     {pins.songs.map((s, i) => {
-                        return <SidebarEntry onContext={(x, y) => {
-                            open(x, y, <MenuSong song={s}/>);
-                        }} key={i} onClick={() => {
+                        return <SidebarEntry onContext={(e) => handleContextMenu(e, <MenuSong song={s}/>)} key={i}
+                                             onClick={() => {
                             player.play(s);
                         }} preview={s.url.cover.length > 0 ? <img src={s.url.cover} alt={s.title}/> :
                             <h3>{s.title}</h3>}>

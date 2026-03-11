@@ -1,11 +1,12 @@
 import "./SidebarEntry.css"
-import type {CSSProperties, ReactElement} from "react";
+import * as React from "react";
+import {type CSSProperties, type ReactElement} from "react";
 
 type SidebarEntryProps = {
     preview?: ReactElement
     className?: string
     onClick?: () => void
-    onContext?: (x: number, y: number) => void
+    onContext?: (e: React.MouseEvent) => void
     style?: CSSProperties
     key?: number
 }
@@ -13,7 +14,7 @@ type SidebarEntryProps = {
 export default function SidebarEntry(props: SidebarEntryProps) {
     return <div id={"sidebar-entry"} style={props.style} className={props.className} onClick={props.onClick}
                 onContextMenu={(e) => {
-                    if (props.onContext) props.onContext(e.pageX, e.pageY);
+                    if (props.onContext) props.onContext(e);
                 }}>
         <div id={"entry-preview"}>
             {props.preview}

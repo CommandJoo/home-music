@@ -9,6 +9,7 @@ import {
 } from "react-icons/tb";
 import {useMusic, useNowPlaying} from "../../../providers/MusicProvider.tsx";
 import Cover from "../cover/Cover.tsx";
+import LinkArtist from "../links/LinkArtist.tsx";
 
 function toMinutes(seconds: number): string {
     let hours = 0;
@@ -273,7 +274,8 @@ export default function Audio() {
             </div>
             <div id={"info"}>
                 <h3>{player.playing ? (player.isSong() ? player.asSong().title : (nowPlaying ? nowPlaying : player.playing?.title)) : ""}</h3>
-                <h5>{player.playing ? (player.isSong() ? player.asSong()?.artist.name : player.asRadio()?.title) : ""}</h5>
+                {player.playing && player.isSong() ? <LinkArtist artist={player.asSong().artist}/> :
+                    <div className={"info-artist"}>{player.asRadio()?.title}</div>}
             </div>
         </div>
         <div id={"audio-middle"}>

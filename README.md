@@ -50,15 +50,7 @@ The App will be available at `http://localhost:3300/`
 ### Library Page
 - [ ] button for creating playlists + modal for adding details like name, description and cover
 
-### Notifications
-- [ ] Add notification manager
-- [ ] Display Errors if fetch requests fail
-
-### Context Menu
-- [ ] Further Improve Context Menu (Right Click on: artist, sidebar/quickplay)
-
 ### Theming
-
 - [ ] Add basic theme system
 
 ## Queue

@@ -66,7 +66,8 @@
             h3 {
                 text-overflow: fade;
             }
-            h5 {
+
+            .info-artist {
                 color: var(--text-muted);
             }
         }

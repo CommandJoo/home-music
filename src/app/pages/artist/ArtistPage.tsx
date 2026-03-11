@@ -50,7 +50,11 @@ export default function ArtistPage() {
                 </div>
             </div>
             <div id={"page"}>
-                <div id={"artist-profile"} className={"entry large-playable"}>
+                <div id={"header"} className={"large-playable"}>
+                    {artist.data.picture.length > 0 &&
+                        <div className={"img-wrapper"}>
+                            <img src={artist.data.picture} alt={""}/>
+                        </div>}
                     <h1>{artist.data.name}</h1>
                     <button id={"play-button"} onClick={() => {
                         if (artist.songs) {
