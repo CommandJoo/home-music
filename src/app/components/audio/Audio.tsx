@@ -8,7 +8,7 @@ import {
     TbPlayerSkipForwardFilled
 } from "react-icons/tb";
 import {useMusic, useNowPlaying} from "../../../providers/MusicProvider.tsx";
-import Cover from "../cover/Cover.tsx";
+import Cover from "../general/Cover.tsx";
 import LinkArtist from "../links/LinkArtist.tsx";
 
 function toMinutes(seconds: number): string {

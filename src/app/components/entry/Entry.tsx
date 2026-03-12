@@ -5,7 +5,7 @@ import {TbPlayerPlayFilled} from "react-icons/tb";
 import {FaRadio} from "react-icons/fa6";
 import {type CSSProperties, useState} from "react";
 import {useContextMenu} from "../../../providers/ContextMenuProvider.tsx";
-import Cover from "../cover/Cover.tsx";
+import Cover from "../general/Cover.tsx";
 import MenuPlaylist from "../../context-menu/menus/MenuPlaylist.tsx";
 import MenuRadio from "../../context-menu/menus/MenuRadio.tsx";
 import MenuSong from "../../context-menu/menus/MenuSong.tsx";

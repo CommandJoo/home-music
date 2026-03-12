@@ -6,7 +6,7 @@ import {BsFillCollectionFill} from "react-icons/bs";
 import UserSidebarEntry from "./sidebar-entries/UserSidebarEntry.tsx";
 import {useMusic} from "../../../providers/MusicProvider.tsx";
 import {loadPlaylist} from "../../util.ts";
-import Cover from "../cover/Cover.tsx";
+import Cover from "../general/Cover.tsx";
 import {useContextMenu} from "../../../providers/ContextMenuProvider.tsx";
 import MenuPlaylist from "../../context-menu/menus/MenuPlaylist.tsx";
 import MenuRadio from "../../context-menu/menus/MenuRadio.tsx";
@@ -26,11 +26,13 @@ function stringToColor(str: string, mult: number): string {
 
 export default function Sidebar() {
     const {handleContextMenu} = useContextMenu();
-    const {changePage, pins, player, currentUser} = useMusic();
+    const {changePage, pins, player} = useMusic();
 
     return <div id={"sidebar"}>
-        {currentUser && <UserSidebarEntry/>}
-        {currentUser && <hr className={"sidebar-spacer"}/>}
+        <div id={"sidebar-user"}>
+            <UserSidebarEntry/>
+            <hr className={"sidebar-spacer"}/>
+        </div>
         <div id={"sidebar-scroll"}>
             <SidebarEntry className={"generic"} style={{
                 "--hue-a": stringToColor("home", 3),

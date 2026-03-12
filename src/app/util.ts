@@ -1,5 +1,14 @@
 import type {Artist, LoadedPins, Playlist, Song, User} from "./types.ts";
 
+export function stringToColor(str: string): string {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const hue = Math.abs(hash) % 360;
+    return `hsl(${hue}, 65%, 60%)`;
+}
+
 export async function pin(userId: string, category: string, id: string) {
     await fetch(`/api/users/${userId}/pin?category=${category}&id=${id}`);
 }
@@ -54,4 +63,15 @@ export async function searchPaylist(currentUser: User, id: string) {
 export async function searchArtist(id: string) {
     const response = await fetch(`/api/songs/${id}`);
     return await response.json() as { data: Artist, songs: Song[] };
+}
+
+export async function createUser(name: string, image: File | null) {
+    const formData = new FormData();
+    if (image) formData.append("image", image);
+    formData.append("name", name);
+
+    await fetch(`/api/users`, {
+        method: "POST",
+        body: formData,
+    });
 }

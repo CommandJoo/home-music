@@ -181,7 +181,7 @@ function music(app, config, baseDir) {
     });
 
     /**
-     * Returns the cover image to a speicfic song by a specific artist
+     * Returns the general image to a speicfic song by a specific artist
      * :artist -> Artists ID
      * :track -> Track ID
      **/

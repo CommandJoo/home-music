@@ -1,0 +1,71 @@
+#profile-settings {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1dvh;
+
+    .settings-panel {
+        position: relative;
+        min-height: 20dvh;
+        height: 30dvh;
+
+        h2 {
+            margin-bottom: 0.5em;
+        }
+
+        h3 {
+            margin-top: 0.5em;
+            display: flex;
+        }
+
+        button {
+            position: absolute;
+            right: 1dvh;
+            bottom: 1dvh;
+
+            box-sizing: border-box;
+            outline: none;
+            border: none;
+            padding: 1dvh 2dvh;
+            font-size: 1.4rem;
+            background: var(--bg-light);
+            color: var(--text-muted);
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: color-mix(var(--bg-light) 90%, white 10%);
+            color: var(--text);
+        }
+
+        input[type=text] {
+            outline: none;
+
+            height: 16%;
+            box-sizing: border-box;
+            padding: 0.2dvh 1dvh;
+            font-size: 1.1rem;
+
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-bottom: 2dvh;
+        }
+
+        input[type=file] {
+            height: 17%;
+            box-sizing: border-box;
+            font-size: 1.1rem;
+        }
+
+        input[type=file]::file-selector-button {
+            box-sizing: border-box;
+            padding: 0.5dvh 1dvh;
+            font-size: 1.1rem;
+
+            color: var(--text);
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+    }
+}

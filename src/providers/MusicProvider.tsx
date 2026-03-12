@@ -26,15 +26,15 @@ type MusicContextType = {
     db: Song[];
     reloadSongs: () => void;
     page: Page;
-    changePage: (page: Page, id?: string) => void;
+    changePage: (page: Page, id?: string) => Promise<void>;
 
     player: PlayerType;
 
     users: Users;
-    refreshUsers: () => void;
+    refreshUsers: () => Promise<void>;
     currentUser?: User;
-    refreshCurrentUser: () => void;
-    changeUser: (user: string) => void;
+    refreshCurrentUser: () => Promise<void>;
+    changeUser: (user: string | null) => Promise<void>;
 
     pins: LoadedPins;
 }
@@ -57,7 +57,7 @@ export function MusicProvider({children}: { children: ReactNode }) {
             return {...s, kind: "song"} as Song;
         }));
     }, []);
-    const changePage = useCallback((page: Page, id?: string) => {
+    const changePage = useCallback(async (page: Page, id?: string) => {
         setPage(page);
         if (page.type == "downloads" || page.type == "library" || page.type == "radio") {
             navigate(`/${page.type}`);
@@ -72,6 +72,12 @@ export function MusicProvider({children}: { children: ReactNode }) {
                 console.error("Changing to a playlist page requires an id");
             } else {
                 navigate(`/${page.type}?id=${id}`);
+            }
+        } else if (page.type == "settings") {
+            if (!id) {
+                console.error("Changing to the settings page requires a sub category");
+            } else {
+                navigate(`/${page.type}?category=${id}`);
             }
         }
     }, [navigate])
@@ -101,6 +107,8 @@ export function MusicProvider({children}: { children: ReactNode }) {
                     break;
                 }
             }
+        } else {
+            setCurrentUser(undefined);
         }
     }, []);
 
@@ -128,12 +136,13 @@ export function MusicProvider({children}: { children: ReactNode }) {
         }
     }, [users.current_user, users.users])
 
-    const changeUser = useCallback(async (user: string) => {
+    const changeUser = useCallback(async (user: string | null) => {
         const response = await fetch(`/api/users/${user}`, {method: "PATCH"});
         const data = await response.json() as { success: boolean };
         if (data.success) {
             await refreshUsers();
         }
+        console.log(data);
     }, [refreshUsers]);
 
     const loadUnloadedPins = useCallback(async () => {

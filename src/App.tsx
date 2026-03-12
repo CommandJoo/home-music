@@ -10,6 +10,7 @@ import RadioPage from "./app/pages/radio/RadioPage.tsx";
 import {Navigate, Route, Routes} from "react-router-dom";
 import {ContextMenuProvider} from "./providers/ContextMenuProvider.tsx";
 import PlaylistPage from "./app/pages/playlist/PlaylistPage.tsx";
+import SettingsPage from "./app/pages/settings/SettingsPage.tsx";
 
 function Basis() {
     return <MusicProvider>
@@ -58,6 +59,7 @@ function App() {
                             <Route path={"/radio"} element={<RadioPage/>}/>
                             <Route path={"/downloads"} element={<DownloadPage/>}/>
                             <Route path={"/playlist"} element={<PlaylistPage/>}/>
+                            <Route path={"/settings"} element={<SettingsPage/>}/>
                         </Routes>
                     </div>
                     <div id={"page-bottom"}>

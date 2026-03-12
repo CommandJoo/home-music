@@ -190,6 +190,14 @@ function users(app, config, baseDir, musicDir) {
      **/
     app.patch("/api/users/:userId", async (req, res) => {
         const user = req.params.userId;
+        if (user === "null") {
+            const users = await readUsers(baseDir);
+            users.current_user = null;
+            writeUsers(users);
+
+            res.json({success: true, user: null});
+            return;
+        }
         if (!fs.existsSync(`${baseDir}/accounts/${user}`)) {
             res.json({success: false, reason: "account does not exist"});
             return;
@@ -420,7 +428,7 @@ function users(app, config, baseDir, musicDir) {
         });
     });
     /**
-     * Returns the default cover for all playlists if none was specified
+     * Returns the default general for all playlists if none was specified
      **/
     app.get("/api/users/playlists/default_cover", (req, res) => {
         res.sendFile(path.resolve(`${baseDir}/cover.png`));

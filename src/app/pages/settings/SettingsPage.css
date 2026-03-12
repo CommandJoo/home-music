@@ -1,0 +1,104 @@
+#settings-page {
+    #page {
+        height: 89dvh;
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        padding: 0.5dvh;
+        gap: 0.5dvh;
+
+        #settings-left {
+            width: 15%;
+            height: 100%;
+            background-color: color-mix(var(--bg-light) 80%, transparent 20%);
+            border-radius: 4px;
+            box-sizing: border-box;
+
+            display: flex;
+            flex-direction: column;
+
+            padding: 1dvh;
+
+            h1 {
+                text-transform: capitalize;
+                color: var(--text);
+                font-size: 2.6rem;
+                line-height: 2.6rem;
+            }
+
+            .settings-spacer {
+                margin-top: 2rem;
+                margin-bottom: 2rem;
+                background-color: var(--text-muted);
+                height: 1px;
+                outline: none;
+                border: none;
+            }
+
+            h3 {
+                font-size: 1.4rem;
+                text-transform: capitalize;
+                margin-bottom: 0.5rem;
+                color: var(--text-muted);
+            }
+
+            h3:hover {
+                transition: 0.1s color ease;
+                color: var(--text);
+            }
+
+            .logout {
+                position: absolute;
+                bottom: 1dvh;
+                color: color-mix(red 90%, white 10%);
+            }
+
+            .logout:hover {
+                color: color-mix(red 80%, white 20%);
+            }
+
+        }
+
+        #settings-divider {
+            background: gray;
+            width: 1px;
+            height: 100%;
+            border-radius: 1px;
+        }
+
+        #settings-right {
+            width: 85%;
+            height: 100%;
+            background-color: color-mix(var(--bg-light) 80%, transparent 20%);
+            border-radius: 4px;
+            box-sizing: border-box;
+
+            padding: 1dvh;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            h1 {
+                text-transform: capitalize;
+                color: var(--text);
+                font-size: 2.6rem;
+                line-height: 2.6rem;
+            }
+
+            .settings-subpage {
+                width: 100%;
+                height: 90%;
+
+                overflow: scroll;
+            }
+
+            .settings-panel {
+                box-sizing: border-box;
+                padding: 1dvh;
+                background: color-mix(var(--bg-light) 95%, white 5%);
+                border-radius: 4px;
+            }
+        }
+    }
+}

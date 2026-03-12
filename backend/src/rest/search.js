@@ -63,7 +63,7 @@ function search(app, config, baseDir) {
      * Downloads a song from Youtube
      * ?track -> track name
      * ?artist -> artist name
-     * ?cover -> cover url
+     * ?general -> general url
      * ?isrc
      * ?artist_picture -> artist picture url
      **/

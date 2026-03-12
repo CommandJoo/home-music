@@ -1,7 +1,17 @@
 #sidebar {
     position: relative;
+
+    #sidebar-user {
+        display: flex;
+        flex-direction: column;
+
+        width: 100%;
+
+        gap: 0.5dvh;
+    }
+
     #sidebar-scroll {
-        margin-top: 1dvh;
+        margin-top: 0.5dvh;
         overflow-y: scroll;
         overflow-x: visible;
 
