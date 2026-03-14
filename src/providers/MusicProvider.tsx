@@ -59,7 +59,7 @@ export function MusicProvider({children}: { children: ReactNode }) {
     }, []);
     const changePage = useCallback(async (page: Page, id?: string) => {
         setPage(page);
-        if (page.type == "downloads" || page.type == "library" || page.type == "radio") {
+        if (page.type == "downloads" || page.type == "library" || page.type == "radio" || page.type == "create_playlist") {
             navigate(`/${page.type}`);
         } else if (page.type == "artist") {
             if (!id) {

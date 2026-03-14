@@ -1,0 +1,9 @@
+#general-settings {
+    display: block;
+    position: relative;
+
+    #dropdown {
+        position: relative;
+        width: 90%;
+    }
+}

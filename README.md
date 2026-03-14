@@ -49,9 +49,6 @@ The App will be available at `http://localhost:3300/`
 ### Library Page
 - [ ] button for creating playlists + modal for adding details like name, description and cover
 
-### Theming
-- [ ] Add basic theme system
-
 ## Queue
 - [ ] Add Queue Editor (Move songs around, reshuffle)
 

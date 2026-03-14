@@ -49,6 +49,12 @@ export default function UserSidebarEntry() {
                     setOpen(false);
                 }}>Settings
                 </div>
+                <div className={"button"} onClick={() => {
+                    changePage({type: "create_playlist"});
+                    setOpen(false);
+                }}>
+                    Create Playlist
+                </div>
             </div>
         </div>;
     }

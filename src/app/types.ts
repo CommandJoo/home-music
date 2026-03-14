@@ -47,7 +47,7 @@ export type Playlist = {
 }
 
 export type Page = {
-    type: "downloads" | "library" | "artist" | "playlist" | "radio" | "settings";
+    type: "downloads" | "library" | "artist" | "playlist" | "radio" | "settings" | "create_playlist";
 }
 
 export type Users = {

@@ -1,8 +1,8 @@
 import "./ProfileSettings.css"
-import {useMusic} from "../../../../providers/MusicProvider.tsx";
-import {createUser} from "../../../util.ts";
+import {useMusic} from "../../../../../providers/MusicProvider.tsx";
+import {createUser} from "../../../../util.ts";
 import {useRef, useState} from "react";
-import Dropdown from "../../../components/general/Dropdown.tsx";
+import Dropdown from "../../../../components/general/Dropdown.tsx";
 
 export function ProfileCreation() {
     const {refreshUsers} = useMusic();

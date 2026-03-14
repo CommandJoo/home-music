@@ -11,16 +11,21 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import {ContextMenuProvider} from "./providers/ContextMenuProvider.tsx";
 import PlaylistPage from "./app/pages/playlist/PlaylistPage.tsx";
 import SettingsPage from "./app/pages/settings/SettingsPage.tsx";
+import {StylingProvider, useStyling} from "./providers/StylingProvider.tsx";
+import PlaylistCreationPage from "./app/pages/create_playlist/PlaylistCreationPage.tsx";
 
 function Basis() {
-    return <MusicProvider>
+    return <StylingProvider>
+        <MusicProvider>
             <App/>
-    </MusicProvider>
+        </MusicProvider>
+    </StylingProvider>
 }
 
 
 function App() {
     const {refreshUsers, reloadSongs, player} = useMusic();
+    const {theme} = useStyling();
 
     useEffect(() => {
         reloadSongs();
@@ -38,7 +43,7 @@ function App() {
 
 
     return (
-        <div id={"root"} className={"dark"}>
+        <div id={"root"} className={theme}>
             <ContextMenuProvider>
                 {player.queue.length > 0 && <div id={"queue"}>
                     {player.queue.map((item, i) => {
@@ -59,7 +64,9 @@ function App() {
                             <Route path={"/radio"} element={<RadioPage/>}/>
                             <Route path={"/downloads"} element={<DownloadPage/>}/>
                             <Route path={"/playlist"} element={<PlaylistPage/>}/>
+
                             <Route path={"/settings"} element={<SettingsPage/>}/>
+                            <Route path={"/create_playlist"} element={<PlaylistCreationPage/>}/>
                         </Routes>
                     </div>
                     <div id={"page-bottom"}>

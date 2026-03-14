@@ -2,7 +2,8 @@ import "./SettingsPage.css"
 import {useEffect, useState} from "react";
 import {useSearchParams} from "react-router";
 import {useMusic} from "../../../providers/MusicProvider.tsx";
-import ProfileSettings from "./pages/ProfileSettings.tsx";
+import ProfileSettings from "./pages/ProfileSettings/ProfileSettings.tsx";
+import GeneralSettings from "./pages/GeneralSettings/GeneralSettings.tsx";
 
 export default function SettingsPage() {
     const {changePage, changeUser, refreshUsers, currentUser} = useMusic();
@@ -43,6 +44,7 @@ export default function SettingsPage() {
             <div id={"settings-right"}>
                 <h1>{category}</h1>
                 {category === "profile" && <ProfileSettings/>}
+                {category === "general" && <GeneralSettings/>}
             </div>
         </div>
     </div>
