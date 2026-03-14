@@ -61,25 +61,33 @@ if (args.length > 2 && args[2] === "--host") {
     console.log(`Use option ${color(defaultColor)}--host${reset} to also host the frontend`);
 }
 
-app.listen(port, async () => {
-    const matrix = await QRCode.create(`http://${getLocalIP()}:${args.length <= 2 ? 5173 : port}`, {errorCorrectionLevel: 'H'});
-    console.log("");
-    const size = matrix.modules.size;
-    const outlineColor = `${background(defaultColor)}`
-    const outline = outlineColor + (" ".repeat((size + 2) * 2)) + reset;
-    console.log(outline);
-    for (let i = 0; i < size; i++) {
-        let line = `${outlineColor}  `;
-        for (let j = 0; j < size; j++) {
-            line += matrix.modules.get(i, j) === 1 ? `${background(defaultColor)}  ` : `${reset}  `;
+(async () => {
+    // const {default: MusixmatchLyrics} = await import('@bobandbob/musixmatch-lyrics');
+    // const mxm = new MusixmatchLyrics();
+    // const lyricsResult = await mxm.getLrc('Rick Astley - never gonna give you up');
+    // console.log(lyricsResult);
+
+    app.listen(port, async () => {
+
+        const matrix = await QRCode.create(`http://${getLocalIP()}:${args.length <= 2 ? 5173 : port}`, {errorCorrectionLevel: 'H'});
+        console.log("");
+        const size = matrix.modules.size;
+        const outlineColor = `${background(defaultColor)}`
+        const outline = outlineColor + (" ".repeat((size + 2) * 2)) + reset;
+        console.log(outline);
+        for (let i = 0; i < size; i++) {
+            let line = `${outlineColor}  `;
+            for (let j = 0; j < size; j++) {
+                line += matrix.modules.get(i, j) === 1 ? `${background(defaultColor)}  ` : `${reset}  `;
+            }
+            console.log(line + `${outlineColor}  ${reset}`);
         }
-        console.log(line + `${outlineColor}  ${reset}`);
-    }
-    console.log(outline);
-    console.log("\u001b[49m");
-    if (!fs.existsSync(baseDir)) {
-        console.log(`Base directory ${baseDir} does not exist, creating...`);
-        fs.mkdirSync(baseDir);
-    }
-    console.log(`Home Music backend listening at ${color(defaultColor)}${getLocalIP()}:${args.length <= 2 ? 5173 : port}`)
-})
+        console.log(outline);
+        console.log("\u001b[49m");
+        if (!fs.existsSync(baseDir)) {
+            console.log(`Base directory ${baseDir} does not exist, creating...`);
+            fs.mkdirSync(baseDir);
+        }
+        console.log(`Home Music backend listening at ${color(defaultColor)}${getLocalIP()}:${args.length <= 2 ? 5173 : port}`)
+    })
+})();

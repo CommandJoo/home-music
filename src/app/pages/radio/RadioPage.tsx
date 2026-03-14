@@ -7,7 +7,7 @@ import type {Radio} from "../../types.ts";
 import RadioSearchbar from "../../components/searchbar/RadioSearchbar.tsx";
 
 export default function RadioPage() {
-    const {currentUser, refreshCurrentUser} = useMusic();
+    const {currentUser} = useMusic();
     const [radio, setRadio] = useState<Radio[]>([]);
     const [searching, setSearching] = useState<boolean>(false);
 
@@ -20,13 +20,6 @@ export default function RadioPage() {
 
         load();
     }, [currentUser]);
-
-    useEffect(() => {
-        async function refresh() {
-            refreshCurrentUser();
-        }
-        refresh();
-    }, [refreshCurrentUser]);
 
     function display() {
         return radio.map((radio: Radio, i) => {

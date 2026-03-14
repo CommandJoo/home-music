@@ -48,6 +48,13 @@
             background: transparent;
 
             font-size: 1.2rem;
+            height: 4dvh;
+
+            display: flex;
+            align-items: center;
+            vertical-align: center;
+            padding-left: 0.5dvh;
+
             color: var(--text-muted);
         }
 

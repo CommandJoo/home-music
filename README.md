@@ -45,7 +45,6 @@ The App will be available at `http://localhost:3300/`
 ### Homepage
 - [ ] Home (Personal layout (playlists, pinned songs, pinned artists) search only able to run) -> links to everything,
   no direct run button + songs clickable
-- [ ] Account Settings
 
 ### Library Page
 - [ ] button for creating playlists + modal for adding details like name, description and cover
