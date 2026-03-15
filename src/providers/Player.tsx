@@ -1,5 +1,5 @@
 import type {Playable, Radio, Song} from "../app/types.ts";
-import {useCallback, useMemo, useReducer} from "react";
+import {useCallback, useEffect, useMemo, useReducer} from "react";
 
 export type PlayerType = {
     play: (song?: Playable) => void,
@@ -76,13 +76,17 @@ function playerReducer(state: PlayerState, action: PlayerAction): PlayerState {
     }
 }
 
-export function usePlayer() {
+export function usePlayer(onPlay?: (song: Playable) => void) {
     const [state, dispatch] = useReducer(playerReducer, {
         playing: undefined,
         history: [],
         queue: [],
         hasInteracted: false,
     });
+
+    useEffect(() => {
+        if (state.playing) onPlay?.(state.playing);
+    }, [onPlay, state.playing]);
 
     const play = useCallback((song?: Playable) => dispatch({type: "play", song}), []);
     const back = useCallback(() => dispatch({type: "back"}), []);

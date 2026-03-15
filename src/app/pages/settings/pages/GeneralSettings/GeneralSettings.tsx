@@ -9,6 +9,9 @@ export default function GeneralSettings() {
         <div className={"settings-panel"}>
             <h2>Theme</h2>
             <Dropdown options={["dark", "light"]} default={theme} onSelect={(s) => setTheme(s)}/>
+            <br/>
+            <h2>Playback Mode (not implemented)</h2>
+            <Dropdown options={["web-app", "backend"]} default={"web-app"}/>
         </div>
     </div>
 }

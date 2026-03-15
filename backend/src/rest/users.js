@@ -39,6 +39,20 @@ function users(app, config, baseDir, musicDir) {
         return fs.writeFileSync(userFile(userId), JSON.stringify(userData));
     }
 
+    function readPlays(userId) {
+        const file = path.join(userDir(userId), `plays.json`);
+        if (!fs.existsSync(file)) {
+            const result = {plays: []}
+            fs.writeFileSync(file, JSON.stringify(result));
+            return result
+        }
+        return JSON.parse(fs.readFileSync(file));
+    }
+
+    function writePlays(userId, data) {
+        return fs.writeFileSync(path.join(userDir(userId), `plays.json`), JSON.stringify(data));
+    }
+
     function readList(userId, listId) {
         const file = `${userDir(userId)}/playlists/${listId}`;
         if (!fs.existsSync(file)) {
@@ -247,6 +261,8 @@ function users(app, config, baseDir, musicDir) {
                     case "song": {
                         if ("artist" in req.query) {
                             if (userData.pins.songs.some(s => s.id === id && s.artist === req.query.artist)) userData.pins.songs = userData.pins.songs.filter(s => (s.id !== id || s.artist !== req.query.artist));
+                        } else {
+                            res.json({success: false, reason: "artist not provided"});
                         }
                         break;
                     }
@@ -273,6 +289,8 @@ function users(app, config, baseDir, musicDir) {
                                 id,
                                 artist: req.query.artist
                             });
+                        } else {
+                            res.json({success: false, reason: "artist not provided"});
                         }
                         break;
                     }
@@ -295,8 +313,51 @@ function users(app, config, baseDir, musicDir) {
             writeUser(user, userData);
             res.json(userData);
         }
-    )
-    ;
+    );
+
+    app.get("/api/users/:userId/plays", async (req, res) => {
+        res.json(readPlays(req.params.userId));
+    })
+    app.post("/api/users/:userId/plays", async (req, res) => {
+        const userId = req.params.userId;
+
+        const category = req.query.category;
+        const id = req.query.id;
+
+        const data = readPlays(userId);
+
+        switch (category) {
+            case "radio": {
+                data.plays.unshift({type: "radio", id: id});
+                break;
+            }
+            case "song": {
+                if ("artist" in req.query) {
+                    data.plays.unshift({type: "song", id: id, artist: req.query.artist});
+                } else {
+                    res.json({success: false, reason: "artist not provided"});
+                }
+                break;
+            }
+            case
+            "playlist"
+            : {
+                data.plays.unshift({type: "playlist", id: id});
+                break;
+            }
+            case
+            "artist"
+            : {
+                data.plays.unshift({type: "artist", id: id});
+                break;
+            }
+            default:
+                res.json({success: false, reason: "category does not exist"});
+        }
+        writePlays(userId, data);
+        return res.json(data);
+    });
+
     app.patch("/api/users/:userId/volume", async (req, res) => {
         const userdata = readUser(req.params.userId);
         const volume = Math.max(0, Math.min(1, Number(req.query.level)));

@@ -1,4 +1,4 @@
-import type {LoadedPins, Page, Song, User, Users} from "../app/types.ts";
+import type {LoadedPins, Page, Playable, Plays, Song, User, Users} from "../app/types.ts";
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {type PlayerType, usePlayer} from "./Player.tsx";
 import {useNavigate} from "react-router-dom";
@@ -33,10 +33,10 @@ type MusicContextType = {
     users: Users;
     refreshUsers: () => Promise<void>;
     currentUser?: User;
-    refreshCurrentUser: () => Promise<void>;
     changeUser: (user: string | null) => Promise<void>;
 
     pins: LoadedPins;
+    plays: Plays;
 }
 
 const MusicContext = createContext<MusicContextType | null>(null);
@@ -45,10 +45,20 @@ export function MusicProvider({children}: { children: ReactNode }) {
     const navigate = useNavigate();
     const [db, setDb] = useState<Song[]>([]);
     const [page, setPage] = useState<Page>({type: "downloads"});
-    const player = usePlayer();
     const [users, setUsers] = useState<Users>({current_user: "", users: []});
     const [currentUser, setCurrentUser] = useState<User>();
     const [pins, setPins] = useState<LoadedPins>({radios: [], playlists: [], artists: [], songs: []});
+    const [plays, setPlays] = useState<Plays>({plays: []});
+
+    const handlePlay = useCallback((song: Playable) => {
+        if (!currentUser) return;
+
+        fetch(`/api/users/${currentUser.id}/plays?category=${song.kind}&id=${song.uuid}${song.kind === "song" ? "&artist=" + (song as Song).artist.id : ""}`, {
+            method: "POST",
+        }).catch(console.error).then((r) => console.log(r));
+    }, [currentUser]);
+
+    const player = usePlayer(handlePlay);
 
     const reloadSongs = useCallback(async () => {
         const response = await fetch("/api/songs");
@@ -91,19 +101,26 @@ export function MusicProvider({children}: { children: ReactNode }) {
         if (currentId && currentId.length > 0) {
             for (const user of data.users) {
                 if (user.id === currentId) {
-                    const currentResponse = await fetch(user.path);
-                    const currentData = await currentResponse.json();
-
-                    const rawNewUser = {
-                        id: currentId,
-                        name: currentData.name,
-                        picture: currentData.picture,
-                        volume: currentData.volume,
-                        playlists: currentData.playlists,
-                        radio: currentData.radio,
-                        pins: currentData.pins,
+                    {
+                        const currentResponse = await fetch(`/api/users/${currentId}/plays`);
+                        const currentData = await currentResponse.json() as Plays;
+                        setPlays(currentData);
                     }
-                    setCurrentUser(rawNewUser);
+                    {
+                        const currentResponse = await fetch(user.path);
+                        const currentData = await currentResponse.json();
+
+                        const rawNewUser = {
+                            id: currentId,
+                            name: currentData.name,
+                            picture: currentData.picture,
+                            volume: currentData.volume,
+                            playlists: currentData.playlists,
+                            radio: currentData.radio,
+                            pins: currentData.pins,
+                        }
+                        setCurrentUser(rawNewUser);
+                    }
                     break;
                 }
             }
@@ -111,30 +128,6 @@ export function MusicProvider({children}: { children: ReactNode }) {
             setCurrentUser(undefined);
         }
     }, []);
-
-    const refreshCurrentUser = useCallback(async () => {
-        const currentId = users.current_user;
-        if (currentId && currentId.length > 0) {
-            for (const user of users.users) {
-                if (user.id === currentId) {
-                    const currentResponse = await fetch(user.path);
-                    const currentData = await currentResponse.json();
-
-                    const rawNewUser = {
-                        id: currentId,
-                        name: currentData.name,
-                        picture: currentData.picture,
-                        volume: currentData.volume,
-                        playlists: currentData.playlists,
-                        radio: currentData.radio,
-                        pins: currentData.pins,
-                    }
-                    setCurrentUser(rawNewUser);
-                    break;
-                }
-            }
-        }
-    }, [users.current_user, users.users])
 
     const changeUser = useCallback(async (user: string | null) => {
         const response = await fetch(`/api/users/${user}`, {method: "PATCH"});
@@ -166,10 +159,10 @@ export function MusicProvider({children}: { children: ReactNode }) {
             users,
             refreshUsers,
             currentUser,
-            refreshCurrentUser,
             changeUser,
             pins,
-        }), [db, reloadSongs, page, changePage, player, users, refreshUsers, currentUser, refreshCurrentUser, changeUser, pins])}>
+            plays,
+        }), [db, reloadSongs, page, changePage, player, users, refreshUsers, currentUser, changeUser, pins, plays])}>
         {children}
     </MusicContext.Provider>
 }

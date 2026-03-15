@@ -45,12 +45,17 @@ The App will be available at `http://localhost:3300/`
 ### Homepage
 - [ ] Home (Personal layout (playlists, pinned songs, pinned artists) search only able to run) -> links to everything,
   no direct run button + songs clickable
+- [ ] Recommendations
 
 ### Library Page
 - [ ] button for creating playlists + modal for adding details like name, description and cover
 
 ## Queue
 - [ ] Add Queue Editor (Move songs around, reshuffle)
+
+## Server Mode
+
+- [ ] Controll the Audio via the Web frontend, play it on the server for good home music integration
 
 ## License
 Distributed under the **GNU GPL v3** License. See [`LICENSE`](./LICENSE.md) for more information.

@@ -82,3 +82,7 @@ export type LoadedPins = {
     playlists: Playlist[];
     artists: Artist[];
 }
+
+export type Plays = {
+    plays: { type: string, id: string, artist?: string }[];
+}
