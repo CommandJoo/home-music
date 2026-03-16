@@ -12,7 +12,7 @@ type MenuArtistProps = {
 
 export default function MenuArtist(props: MenuArtistProps) {
     const {close} = useContextMenu();
-    const {currentUser, pins, refreshCurrentUser} = useMusic();
+    const {currentUser, pins, refreshUsers} = useMusic();
     const [pinned, setPinned] = useState(false)
 
 
@@ -38,13 +38,13 @@ export default function MenuArtist(props: MenuArtistProps) {
             if (currentUser && !pinned) {
                 pin(currentUser.id, "artist", props.artist.id).then(() => {
                     close();
-                    refreshCurrentUser();
+                    refreshUsers();
                 });
                 setPinned(true);
             } else if (currentUser && pinned) {
                 unpin(currentUser.id, "artist", props.artist.id).then(() => {
                     close();
-                    refreshCurrentUser();
+                    refreshUsers();
                 });
                 setPinned(false);
             }

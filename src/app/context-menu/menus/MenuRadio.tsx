@@ -13,7 +13,7 @@ type MenuRadioEntryProps = {
 export default function MenuRadio({radio}: MenuRadioEntryProps) {
     const {close} = useContextMenu();
     const [pinned, setPinned] = useState(false);
-    const {player, currentUser, refreshCurrentUser, pins} = useMusic();
+    const {player, currentUser, refreshUsers, pins} = useMusic();
 
     useEffect(() => {
         async function load() {
@@ -35,7 +35,7 @@ export default function MenuRadio({radio}: MenuRadioEntryProps) {
         <ContextMenuButton icon={<TbHeartOff className={"icon"}/>} onClick={() => {
             if (currentUser) {
                 fetch(`/api/users/${currentUser.id}/radio/follow?uuid=${radio.uuid}&unfollow`).then(() => {
-                    refreshCurrentUser();
+                    refreshUsers();
                     close();
                 });
             }
@@ -45,12 +45,12 @@ export default function MenuRadio({radio}: MenuRadioEntryProps) {
         <ContextMenuButton onClick={() => {
             if (currentUser && !pinned) {
                 pin(currentUser?.id, "radio", radio.uuid).then(() => {
-                    refreshCurrentUser();
+                    refreshUsers();
                     close();
                 });
             } else if (currentUser && pinned) {
                 unpin(currentUser?.id, "radio", radio.uuid).then(() => {
-                    refreshCurrentUser();
+                    refreshUsers();
                     close();
                 });
             }

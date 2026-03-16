@@ -12,7 +12,7 @@ type MenuSongEntryProps = {
 
 export default function MenuSong({song}: MenuSongEntryProps) {
     const {close} = useContextMenu();
-    const {player, currentUser, pins, refreshCurrentUser} = useMusic();
+    const {player, currentUser, pins, refreshUsers} = useMusic();
     const [pinned, setPinned] = useState(false);
 
     useEffect(() => {
@@ -35,13 +35,13 @@ export default function MenuSong({song}: MenuSongEntryProps) {
         <ContextMenuButton icon={<TbPin className={"icon"}/>} onClick={() => {
             if (currentUser && !pinned) {
                 pin(currentUser.id, "song", song.uuid + "&artist=" + song.artist.id).then(() => {
-                    refreshCurrentUser();
+                    refreshUsers();
                     close();
                 });
                 setPinned(true);
             } else if (currentUser && pinned) {
                 unpin(currentUser.id, "song", song.uuid + "&artist=" + song.artist.id).then(() => {
-                    refreshCurrentUser();
+                    refreshUsers();
                     close();
                 });
                 setPinned(false);

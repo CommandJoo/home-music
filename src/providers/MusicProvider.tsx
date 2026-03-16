@@ -1,4 +1,4 @@
-import type {LoadedPins, Page, Playable, Plays, Song, User, Users} from "../app/types.ts";
+import type {LoadedPins, Playable, Plays, Song, User, Users} from "../app/types.ts";
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {type PlayerType, usePlayer} from "./Player.tsx";
 import {useNavigate} from "react-router-dom";
@@ -25,8 +25,7 @@ export function useNowPlaying(streamUrl?: string) {
 type MusicContextType = {
     db: Song[];
     reloadSongs: () => void;
-    page: Page;
-    changePage: (page: Page, id?: string) => Promise<void>;
+    changePage: (page: string, id?: string) => Promise<void>;
 
     player: PlayerType;
 
@@ -44,7 +43,6 @@ const MusicContext = createContext<MusicContextType | null>(null);
 export function MusicProvider({children}: { children: ReactNode }) {
     const navigate = useNavigate();
     const [db, setDb] = useState<Song[]>([]);
-    const [page, setPage] = useState<Page>({type: "downloads"});
     const [users, setUsers] = useState<Users>({current_user: "", users: []});
     const [currentUser, setCurrentUser] = useState<User>();
     const [pins, setPins] = useState<LoadedPins>({radios: [], playlists: [], artists: [], songs: []});
@@ -67,27 +65,26 @@ export function MusicProvider({children}: { children: ReactNode }) {
             return {...s, kind: "song"} as Song;
         }));
     }, []);
-    const changePage = useCallback(async (page: Page, id?: string) => {
-        setPage(page);
-        if (page.type == "downloads" || page.type == "library" || page.type == "radio" || page.type == "create_playlist") {
-            navigate(`/${page.type}`);
-        } else if (page.type == "artist") {
+    const changePage = useCallback(async (page: string, id?: string) => {
+        if (page == "downloads" || page == "library" || page == "radio" || page == "create_playlist") {
+            navigate(`/${page}`);
+        } else if (page == "artist") {
             if (!id) {
                 console.error("Changing to an artist page requires an id");
             } else {
-                navigate(`/${page.type}?id=${id}`);
+                navigate(`/${page}?id=${id}`);
             }
-        } else if (page.type == "playlist") {
+        } else if (page == "playlist") {
             if (!id) {
                 console.error("Changing to a playlist page requires an id");
             } else {
-                navigate(`/${page.type}?id=${id}`);
+                navigate(`/${page}?id=${id}`);
             }
-        } else if (page.type == "settings") {
+        } else if (page == "settings") {
             if (!id) {
                 console.error("Changing to the settings page requires a sub category");
             } else {
-                navigate(`/${page.type}?category=${id}`);
+                navigate(`/${page}?category=${id}`);
             }
         }
     }, [navigate])
@@ -153,7 +150,6 @@ export function MusicProvider({children}: { children: ReactNode }) {
         value={useMemo(() => ({
             db,
             reloadSongs,
-            page,
             changePage,
             player,
             users,
@@ -162,7 +158,7 @@ export function MusicProvider({children}: { children: ReactNode }) {
             changeUser,
             pins,
             plays,
-        }), [db, reloadSongs, page, changePage, player, users, refreshUsers, currentUser, changeUser, pins, plays])}>
+        }), [db, reloadSongs, changePage, player, users, refreshUsers, currentUser, changeUser, pins, plays])}>
         {children}
     </MusicContext.Provider>
 }

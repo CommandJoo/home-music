@@ -34,6 +34,7 @@
 
     #list {
         display: flex;
+        flex-direction: column;
 
         transition: max-height 0.5s ease;
         max-height: 0;

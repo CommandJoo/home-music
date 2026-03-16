@@ -12,7 +12,7 @@ export function ProfileCreation() {
 
     async function handleUpload() {
         createUser(name, image).then(() => {
-            refreshUsers()
+            refreshUsers();
         })
 
         setName("");

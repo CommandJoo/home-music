@@ -12,7 +12,7 @@ export default function LinkArtist(props: LinkArtistProps) {
     const {handleContextMenu} = useContextMenu();
     const {changePage} = useMusic();
     return <div onContextMenu={(e) => handleContextMenu(e, <MenuArtist artist={props.artist}/>)} id={"link-artist"}
-                className={"link"} onClick={() => changePage({type: "artist"}, props.artist.id)}>
+                className={"link"} onClick={() => changePage("artist", props.artist.id)}>
         {props.artist.name}
     </div>
 }

@@ -15,7 +15,7 @@ type RadioEntryProps = {
 }
 
 export function RadioEntry(props: RadioEntryProps) {
-    const {refreshCurrentUser, currentUser, player} = useMusic();
+    const {refreshUsers, currentUser, player} = useMusic();
 
     const [downloading, setDownloading] = useState(false);
     const [downloaded, setDownloaded] = useState(false);
@@ -37,7 +37,7 @@ export function RadioEntry(props: RadioEntryProps) {
 
     function reload() {
         const timeout = setTimeout(() => {
-            refreshCurrentUser();
+            refreshUsers();
         }, 15000)
         return clearTimeout(timeout);
     }

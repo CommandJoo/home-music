@@ -44,21 +44,21 @@ export default function Sidebar() {
                 "--hue-a": stringToColor("downloads", 10),
                 "--hue-b": stringToColor("downloads", 4)
             } as CSSProperties} preview={<FaDownload className={"icon"}/>} onClick={() => {
-                changePage({type: "downloads"})
+                changePage("downloads")
             }}>
             </SidebarEntry>
             <SidebarEntry className={"generic"} style={{
                 "--hue-a": stringToColor("library", 5),
                 "--hue-b": stringToColor("collections", 1)
             } as CSSProperties} preview={<BsFillCollectionFill className={"icon"}/>} onClick={() => {
-                changePage({type: "library"})
+                changePage("library")
             }}>
             </SidebarEntry>
             <SidebarEntry className={"generic"} style={{
                 "--hue-a": stringToColor("radio", 3),
                 "--hue-b": stringToColor("radio", 3.8)
             } as CSSProperties} preview={<FaRadio className={"icon"}/>} onClick={() => {
-                changePage({type: "radio"})
+                changePage("radio")
             }}>
             </SidebarEntry>
             {pins &&
@@ -98,7 +98,7 @@ export default function Sidebar() {
                     {pins.artists.map((a, i) => {
                         return <SidebarEntry onContext={(e) => handleContextMenu(e, <MenuArtist artist={a}/>)} key={i}
                                              onClick={() => {
-                                                 changePage({type: "artist"}, a.id);
+                                                 changePage("artist", a.id);
                                              }} preview={a.picture.length > 0 ? <img src={a.picture} alt={a.name}/> :
                             <h3>{a.name}</h3>}>
                         </SidebarEntry>

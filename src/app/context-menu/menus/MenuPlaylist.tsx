@@ -13,7 +13,7 @@ type MenuPlaylistEntryProps = {
 export default function MenuPlaylist(props: MenuPlaylistEntryProps) {
     const {close} = useContextMenu();
     const [songs, setSongs] = useState<Song[]>([]);
-    const {player, currentUser, pins, refreshCurrentUser} = useMusic();
+    const {player, currentUser, pins, refreshUsers} = useMusic();
     const [pinned, setPinned] = useState(false)
 
 
@@ -42,13 +42,13 @@ export default function MenuPlaylist(props: MenuPlaylistEntryProps) {
             if (currentUser && !pinned) {
                 pin(currentUser.id, "playlist", props.playlist.id).then(() => {
                     close();
-                    refreshCurrentUser();
+                    refreshUsers();
                 });
                 setPinned(true);
             } else if (currentUser && pinned) {
                 unpin(currentUser.id, "playlist", props.playlist.id).then(() => {
                     close();
-                    refreshCurrentUser();
+                    refreshUsers();
                 });
                 setPinned(false);
             }

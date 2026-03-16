@@ -28,7 +28,7 @@ export default function UserSidebarEntry() {
             </SidebarEntry>
             <div id={"user-menu"}>
                 <div className={"button"} onClick={() => {
-                    changePage({type: "settings"}, "profile");
+                    changePage("settings", "profile");
                     setOpen(false);
                 }}>Create Profile
                 </div>
@@ -45,12 +45,12 @@ export default function UserSidebarEntry() {
             </SidebarEntry>
             <div id={"user-menu"}>
                 <div className={"button"} onClick={() => {
-                    changePage({type: "settings"}, "general");
+                    changePage("settings", "general");
                     setOpen(false);
                 }}>Settings
                 </div>
                 <div className={"button"} onClick={() => {
-                    changePage({type: "create_playlist"});
+                    changePage("create_playlist");
                     setOpen(false);
                 }}>
                     Create Playlist

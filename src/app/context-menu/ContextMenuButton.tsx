@@ -11,7 +11,7 @@ type ContextMenuButtonProps = HTMLProps<HTMLDivElement> & {
 
 export function ContextMenuAddToPlaylistButton(props: ContextMenuButtonProps & { songs: Song[] }) {
     const {close} = useContextMenu();
-    const {currentUser, refreshCurrentUser} = useMusic();
+    const {currentUser, refreshUsers} = useMusic();
 
     return <ContextMenuListButton icon={props.icon} items={currentUser && currentUser.playlists.map((p) => {
         return <ContextMenuButton className={"playlist"} onClick={() => {
@@ -20,7 +20,7 @@ export function ContextMenuAddToPlaylistButton(props: ContextMenuButtonProps & {
                 for (const songElement of props.songs) {
                     const res = await fetch(`/api/users/${currentUser.id}/playlists/${p.id}?song=${songElement.uuid}&artist=${songElement.artist.id}`, {method: "POST"});
                     await res.json().then(() => {
-                        refreshCurrentUser();
+                        refreshUsers();
                         close()
                     })
                 }

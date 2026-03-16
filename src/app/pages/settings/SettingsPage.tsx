@@ -30,7 +30,7 @@ export default function SettingsPage() {
                 <h1>Settings</h1>
                 <hr className={"settings-spacer"}/>
                 {categories.map(category => {
-                    return <h3 onClick={() => changePage({type: "settings"}, category)}>{category}</h3>
+                    return <h3 onClick={() => changePage("settings", category)}>{category}</h3>
                 })}
                 <h3 className={"logout"} onClick={() => {
                     changeUser(null).then(() => {

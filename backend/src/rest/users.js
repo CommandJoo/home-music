@@ -54,7 +54,7 @@ function users(app, config, baseDir, musicDir) {
     }
 
     function readList(userId, listId) {
-        const file = `${userDir(userId)}/playlists/${listId}`;
+        const file = `${userDir(userId)}/playlists/${listId}/playlist.json`;
         if (!fs.existsSync(file)) {
             return;
         }
@@ -128,12 +128,15 @@ function users(app, config, baseDir, musicDir) {
             if (!fs.existsSync(playlistDir)) {
                 fs.mkdirSync(playlistDir, {recursive: true});
             }
-            if (fs.existsSync(`${playlistDir}/liked_songs.json`)) {
+            if (!fs.existsSync(`${playlistDir}/liked_songs`)) {
+                fs.mkdirSync(`${playlistDir}/liked_songs`, {recursive: true});
+            }
+            if (fs.existsSync(`${playlistDir}/liked_songs/playlist.json`)) {
                 res.json({success: false, reason: "playlist id SOMEHOW already exists"});
                 return;
             } else {
-                const playlist = {cover: "/api/users/default_cover", title: "Liked Songs", content: []};
-                fs.writeFileSync(`${playlistDir}/liked_songs.json`, JSON.stringify(playlist));
+                const playlist = {cover: "/api/users/playlists/default_cover", title: "Liked Songs", content: []};
+                fs.writeFileSync(`${playlistDir}/liked_songs/playlist.json`, JSON.stringify(playlist));
             }
 
 
@@ -181,7 +184,7 @@ function users(app, config, baseDir, musicDir) {
         if (fs.existsSync(`${baseDir}/accounts/${user}/playlists`)) {
             const lists = fs.readdirSync(`${baseDir}/accounts/${user}/playlists`);
             for (let list of lists) {
-                const listData = {id: list.substring(0, list.indexOf(".json")), ...readList(user, list)};
+                const listData = {id: list, ...readList(user, list)};
                 if (listData) playlists.push(listData);
             }
         }
@@ -406,32 +409,44 @@ function users(app, config, baseDir, musicDir) {
      * :userId -> safe id string of the user for whom the playlist should be created
      * ?title -> The display title of the playlist
      **/
-    app.post("/api/users/:userId/playlists", async (req, res) => {
+    app.post("/api/users/:userId/playlists", upload.fields([{
+        name: "image",
+        maxCount: 1
+    }, {name: "description"}, {name: "title"}]), async (req, res) => {
         const user = req.params.userId;
         if (!fs.existsSync(`${userDir(user)}`)) {
             res.json({success: false, reason: "account does not exist"});
             return;
         }
-
-        const title = req.query.title;
-        const cover = "/api/users/default_cover";
-        const content = [];
-
         const id = genPlaylistId();
 
-        const playlistDir = `${userDir(user)}/playlists`;
-        if (!fs.existsSync(playlistDir)) {
-            fs.mkdirSync(playlistDir, {recursive: true});
+        const directory = path.join(userDir(user), `playlists/${id}`);
+        if (!fs.existsSync(directory)) {
+            fs.mkdirSync(directory, {recursive: true});
         }
-        if (fs.existsSync(path.join(playlistDir, `${id}.json`))) {
+        if (fs.existsSync(path.join(directory, `playlist.json`))) {
             res.json({success: false, reason: "playlist id SOMEHOW already exists"});
             return;
         }
+
+        const title = req.body.title;
+        const description = req.body.description;
+
+        if (req.files && req.files["image"]) {
+            fs.writeFileSync(`${directory}/picture.png`, req.files["image"][0].buffer);
+        }
+
+        const pictureExists = fs.existsSync(`${directory}/picture.png`);
+
+        const cover = !pictureExists ? "/api/users/playlists/default_cover" : `/api/users/${user}/playlists/${id}/cover`;
+        const content = [];
+
         const playlist = {cover, title, content};
-        fs.writeFileSync(`${playlistDir}/${id}.json`, JSON.stringify(playlist));
+        fs.writeFileSync(`${directory}/playlist.json`, JSON.stringify(playlist));
 
         res.json({success: true, id});
     });
+
     /**
      * Adds a song to the playlist of the user
      * :userId -> safe id string of the user to whos playlist a song should be added
@@ -446,11 +461,11 @@ function users(app, config, baseDir, musicDir) {
             return;
         }
         const playlist = req.params.playlistId;
-        if (!fs.existsSync(`${baseDir}/accounts/${user}/playlists/${playlist}.json`)) {
+        if (!fs.existsSync(`${baseDir}/accounts/${user}/playlists/${playlist}/playlist.json`)) {
             res.json({success: false, reason: "playlist does not exist"});
             return;
         }
-        const data = JSON.parse(fs.readFileSync(`${baseDir}/accounts/${user}/playlists/${playlist}.json`));
+        const data = JSON.parse(fs.readFileSync(`${baseDir}/accounts/${user}/playlists/${playlist}/playlist.json`));
 
         const song = req.query.song;
         const artist = req.query.artist;
@@ -462,9 +477,17 @@ function users(app, config, baseDir, musicDir) {
             )
 
         }
-        fs.writeFileSync(`${baseDir}/accounts/${user}/playlists/${playlist}.json`, JSON.stringify(data));
+        fs.writeFileSync(`${baseDir}/accounts/${user}/playlists/${playlist}/playlist.json`, JSON.stringify(data));
         res.json(data);
     });
+
+    /**
+     * Returns the default general for all playlists if none was specified
+     **/
+    app.get("/api/users/playlists/default_cover", (req, res) => {
+        res.sendFile(path.resolve(`${baseDir}/cover.png`));
+    });
+
     /**
      * Returns playlist data for a given playlist
      * :userId -> safe id string of the user whos playlist data should be returned
@@ -480,7 +503,7 @@ function users(app, config, baseDir, musicDir) {
         }
 
         const playlistDir = `${baseDir}/accounts/${user}/playlists`;
-        const playlistData = JSON.parse(fs.readFileSync(path.join(playlistDir, playlist + ".json")));
+        const playlistData = JSON.parse(fs.readFileSync(path.join(playlistDir, `${playlist}/playlist.json`)));
         res.json({
             id: playlist,
             title: playlistData.title,
@@ -489,11 +512,23 @@ function users(app, config, baseDir, musicDir) {
         });
     });
     /**
-     * Returns the default general for all playlists if none was specified
+     * Returns the playlist cover for a playlist
      **/
-    app.get("/api/users/playlists/default_cover", (req, res) => {
-        res.sendFile(path.resolve(`${baseDir}/cover.png`));
-    });
+    app.get("/api/users/:userId/playlists/:playlistId/cover", async (req, res) => {
+        const user = req.params.userId;
+        const playlist = req.params.playlistId;
+
+        if (!fs.existsSync(`${baseDir}/accounts/${user}`)) {
+            res.json({success: false, reason: "account does not exist"});
+            return;
+        }
+        const playlistDir = `${baseDir}/accounts/${user}/playlists/${playlist}`;
+        if (!fs.existsSync(path.join(playlistDir, `picture.png`))) {
+            res.json({success: false, reason: "playlist does not exist"});
+        } else {
+            res.sendFile(path.resolve(path.join(playlistDir, `picture.png`)));
+        }
+    })
 }
 
 module.exports = users;

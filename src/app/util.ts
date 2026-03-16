@@ -75,3 +75,14 @@ export async function createUser(name: string, image: File | null) {
         body: formData,
     });
 }
+
+export async function createPlaylist(currentUser: User, name: string, description: string, image: File | null) {
+    const formData = new FormData();
+    if (image) formData.append("image", image);
+    formData.append("title", name);
+    formData.append("description", description);
+    await fetch(`/api/users/${currentUser.id}/playlists`, {
+        method: "POST",
+        body: formData,
+    }).then((r) => console.log(r));
+}
