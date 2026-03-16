@@ -4,7 +4,7 @@ import {useMusic} from "../../../providers/MusicProvider.tsx";
 import {useRef, useState} from "react";
 
 export default function PlaylistCreationPage() {
-    const {refreshUsers, currentUser} = useMusic();
+    const {refreshUsers, currentUser, changePage} = useMusic();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [image, setImage] = useState<File | null>(null);
     const [name, setName] = useState("");
@@ -12,13 +12,14 @@ export default function PlaylistCreationPage() {
 
     async function handleUpload() {
         if (currentUser) createPlaylist(currentUser, name, description, image).then(() => {
-            refreshUsers()
+            refreshUsers();
+            changePage("library");
         });
 
-        // setDescription("");
-        // setName("");
-        // setImage(null);
-        // if (fileInputRef.current) fileInputRef.current.value = "";
+        setDescription("");
+        setName("");
+        setImage(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
     }
 
     return <div id={"playlist-creation-page"} className={"page"}>

@@ -135,7 +135,12 @@ function users(app, config, baseDir, musicDir) {
                 res.json({success: false, reason: "playlist id SOMEHOW already exists"});
                 return;
             } else {
-                const playlist = {cover: "/api/users/playlists/default_cover", title: "Liked Songs", content: []};
+                const playlist = {
+                    cover: "/api/users/playlists/default_cover",
+                    title: "Liked Songs",
+                    description: "A collection of songs you like",
+                    content: []
+                };
                 fs.writeFileSync(`${playlistDir}/liked_songs/playlist.json`, JSON.stringify(playlist));
             }
 
@@ -441,7 +446,7 @@ function users(app, config, baseDir, musicDir) {
         const cover = !pictureExists ? "/api/users/playlists/default_cover" : `/api/users/${user}/playlists/${id}/cover`;
         const content = [];
 
-        const playlist = {cover, title, content};
+        const playlist = {cover, title, description, content};
         fs.writeFileSync(`${directory}/playlist.json`, JSON.stringify(playlist));
 
         res.json({success: true, id});
@@ -508,6 +513,7 @@ function users(app, config, baseDir, musicDir) {
             id: playlist,
             title: playlistData.title,
             cover: playlistData.cover,
+            description: playlistData.description,
             content: playlistData.content
         });
     });
