@@ -1,20 +1,19 @@
 import "./UserSidebarEntry.css"
-import type {User} from "../../../types.ts";
 import SidebarEntry from "./SidebarEntry.tsx";
 import {type CSSProperties} from "react";
 import {useMusic} from "../../../../providers/MusicProvider.tsx";
 import {stringToColor} from "../../../util.ts";
 import {useContextMenu} from "../../../../providers/ContextMenuProvider.tsx";
 import ContextMenuButton from "../../../context-menu/ContextMenuButton.tsx";
-import {TbPlaylistAdd, TbSettings, TbUserPlus} from "react-icons/tb";
+import {TbPlaylistAdd, TbSettings, TbUser, TbUserPlus} from "react-icons/tb";
 
-function picture(user: User) {
-    if (user.picture.length > 0) {
+function picture(name: string, picture: string) {
+    if (picture.length > 0) {
         return <img
-            style={{"--color": stringToColor(user.name.length > 0 ? stringToColor(user.name) : "#333")} as CSSProperties}
-            src={user.picture}/>
+            style={{"--color": stringToColor(name.length > 0 ? stringToColor(name) : "#333")} as CSSProperties}
+            src={picture}/>
     }
-    return <h1 style={{"--color": stringToColor(user.name)} as CSSProperties}>{user.name.charAt(0).toUpperCase()}</h1>;
+    return <h1 style={{"--color": stringToColor(name)} as CSSProperties}>{name.charAt(0).toUpperCase()}</h1>;
 }
 
 function UserMenu({hasUser}: { hasUser: boolean }) {
@@ -52,8 +51,7 @@ export default function UserSidebarEntry() {
     const {open} = useContextMenu();
 
     if (!currentUser) {
-        return <div id={"user-with-menu"}>
-            <SidebarEntry onClick={(e) => {
+        return <SidebarEntry onClick={(e) => {
                 if (e) {
                     e.stopPropagation();
                     const rect = e.currentTarget.getBoundingClientRect();
@@ -62,13 +60,10 @@ export default function UserSidebarEntry() {
                         rect.bottom,
                         <UserMenu hasUser={false}/>);
                 }
-            }} className={"user none"} preview={<h1>x</h1>}>
-            </SidebarEntry>
-
-        </div>;
+        }} className={"user"} preview={<TbUser className={"icon"}/>}>
+        </SidebarEntry>;
     } else {
-        return <div id={"user-with-menu"}>
-            <SidebarEntry onClick={(e) => {
+        return <SidebarEntry onClick={(e) => {
                 if (e) {
                     e.stopPropagation();
                     const rect = e.currentTarget.getBoundingClientRect();
@@ -77,8 +72,7 @@ export default function UserSidebarEntry() {
                         rect.bottom,
                         <UserMenu hasUser={true}/>);
                 }
-            }} className={"user selected"} preview={picture(currentUser)}>
-            </SidebarEntry>
-        </div>;
+        }} className={"user"} preview={picture(currentUser.name, currentUser.picture)}>
+        </SidebarEntry>;
     }
 }

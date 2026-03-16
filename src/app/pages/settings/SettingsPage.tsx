@@ -6,7 +6,7 @@ import ProfileSettings from "./pages/ProfileSettings/ProfileSettings.tsx";
 import GeneralSettings from "./pages/GeneralSettings/GeneralSettings.tsx";
 
 export default function SettingsPage() {
-    const {changePage, changeUser, refreshUsers, currentUser} = useMusic();
+    const {changePage, changeUser, refreshUsers} = useMusic();
     const [searchParams] = useSearchParams();
     const [category, setCategory] = useState("general");
 
@@ -34,9 +34,7 @@ export default function SettingsPage() {
                 })}
                 <h3 className={"logout"} onClick={() => {
                     changeUser(null).then(() => {
-                        refreshUsers().then(() => {
-                            console.log(currentUser);
-                        });
+                        refreshUsers();
                     });
                 }}>Logout</h3>
             </div>

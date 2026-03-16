@@ -53,7 +53,7 @@ export function MusicProvider({children}: { children: ReactNode }) {
 
         fetch(`/api/users/${currentUser.id}/plays?category=${song.kind}&id=${song.uuid}${song.kind === "song" ? "&artist=" + (song as Song).artist.id : ""}`, {
             method: "POST",
-        }).catch(console.error).then((r) => console.log(r));
+        }).catch(console.error);
     }, [currentUser]);
 
     const player = usePlayer(handlePlay);
@@ -132,7 +132,6 @@ export function MusicProvider({children}: { children: ReactNode }) {
         if (data.success) {
             await refreshUsers();
         }
-        console.log(data);
     }, [refreshUsers]);
 
     const loadUnloadedPins = useCallback(async () => {

@@ -1,15 +1,26 @@
 import "./Dropdown.css"
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 type DropdownProps = {
     options: string[];
-    default: string;
+    value: string;
+    unselectedValue: string;
     onSelect?: (value: string) => void;
 }
 
 export default function Dropdown(props: DropdownProps) {
-    const [selected, setSelected] = useState(props.default);
     const [open, setOpen] = useState(false);
+    const [selected, setSelected] = useState("");
+
+    useEffect(() => {
+        if (!props.value) {
+            const load = async () => setSelected(props.unselectedValue);
+            load();
+        } else {
+            const load = async () => setSelected(props.value);
+            load();
+        }
+    }, [props.value]);
 
     return <div id={"dropdown"}>
         <div id={"preview"} className={!open ? "open" : ""}

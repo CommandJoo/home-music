@@ -34,9 +34,11 @@ export function ProfileCreation() {
 
 export function ProfileSelection() {
     const {users, changeUser, refreshUsers} = useMusic();
+
     return <div id={"profile-selection"} className={"settings-panel"}>
         <h2>Select Profile</h2>
-        <Dropdown options={users.users.map((u) => u.id)} default={users.current_user} onSelect={(opt) => {
+        <Dropdown options={users.users.map((u) => u.id)} value={users.current_user} unselectedValue={"No User"}
+                  onSelect={(opt) => {
             changeUser(opt);
             refreshUsers();
         }}/>
