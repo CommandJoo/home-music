@@ -334,14 +334,38 @@ function users(app, config, baseDir, musicDir) {
 
         const data = readPlays(userId);
 
+        const timestamp = Date.now();
+        const timelimit = 14 * (24 * 60 * 60 * 1000);
+        const minentries = 30;
+
+        function filterPlays(plays, options = {}) {
+            const {
+                timeLimit = timelimit,
+                minEntries = minentries,
+                type = null,
+            } = options;
+
+            const cutoff = Date.now() - timeLimit;
+            let filtered = plays.filter(p => p.timestamp >= cutoff);
+
+            if (type) filtered = filtered.filter(p => p.type === type);
+
+            if (filtered.length < minEntries) {
+                const pool = type ? plays.filter(p => p.type === type) : plays;
+                filtered = pool.slice(0, minEntries);
+            }
+
+            return filtered;
+        }
+
         switch (category) {
             case "radio": {
-                data.plays.unshift({type: "radio", id: id});
+                data.plays.unshift({type: "radio", id: id, timestamp});
                 break;
             }
             case "song": {
                 if ("artist" in req.query) {
-                    data.plays.unshift({type: "song", id: id, artist: req.query.artist});
+                    data.plays.unshift({type: "song", id: id, artist: req.query.artist, timestamp});
                 } else {
                     res.json({success: false, reason: "artist not provided"});
                 }
@@ -350,18 +374,19 @@ function users(app, config, baseDir, musicDir) {
             case
             "playlist"
             : {
-                data.plays.unshift({type: "playlist", id: id});
+                data.plays.unshift({type: "playlist", id: id, timestamp});
                 break;
             }
             case
             "artist"
             : {
-                data.plays.unshift({type: "artist", id: id});
+                data.plays.unshift({type: "artist", id: id, timestamp});
                 break;
             }
             default:
                 res.json({success: false, reason: "category does not exist"});
         }
+        data.plays = filterPlays(data.plays);
         writePlays(userId, data);
         return res.json(data);
     });

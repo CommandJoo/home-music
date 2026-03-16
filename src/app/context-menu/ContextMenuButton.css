@@ -1,9 +1,14 @@
 .context-menu-button {
     position: relative;
     box-sizing: border-box;
-    padding: 0.1dvh;
+    padding: 0.1dvh 2dvh 0.1dvh 0.1dvh;
+
+    &:has(#list) {
+        padding: 0.1dvh 0.1dvh 0.1dvh 0.1dvh;
+    }
 
     font-size: 1.2rem;
+    line-height: 1.2rem;
     height: 4dvh;
 
     display: flex;
