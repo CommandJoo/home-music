@@ -335,7 +335,7 @@ function users(app, config, baseDir, musicDir) {
         const data = readPlays(userId);
 
         const timestamp = Date.now();
-        const timelimit = (config["recommendations"]["time-limit"] ?? 14) * (24 * 60 * 60 * 1000);
+        const timelimit = (config["recommendations"]["time-limit-days"] ?? 14) * (24 * 60 * 60 * 1000);
         const minentries = (config["recommendations"]["min-entries"] ?? 50);
 
         function filterPlays(plays, options = {}) {

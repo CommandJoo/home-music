@@ -27,7 +27,7 @@ The json file needs to look like this
   "port": 3300,
   "youtube-api-key": "some-api-key",
   "recommendations": {
-    "time-limit": 14,
+    "time-limit-days": 14,
     "min-entries": 100
   }
 }
