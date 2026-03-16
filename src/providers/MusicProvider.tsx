@@ -25,7 +25,7 @@ export function useNowPlaying(streamUrl?: string) {
 type MusicContextType = {
     db: Song[];
     reloadSongs: () => void;
-    changePage: (page: string, id?: string) => Promise<void>;
+    changePage: (page: "downloads" | "library" | "artist" | "playlist" | "radio" | "settings" | "create_playlist", id?: string) => Promise<void>;
 
     player: PlayerType;
 

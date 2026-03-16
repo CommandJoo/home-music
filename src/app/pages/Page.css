@@ -68,13 +68,24 @@
                 }
             }
 
-            h1 {
+            #information {
                 position: absolute;
-                line-height: 7rem;
-                font-size: 7rem;
-                font-weight: 800;
                 bottom: 2dvh;
                 left: 2dvh;
+                max-width: 90%;
+
+                h1 {
+                    font-weight: 800;
+                    line-height: 7rem;
+                    font-size: 7rem;
+                    margin-bottom: 2dvh;
+                }
+
+                p {
+                    font-weight: 600;
+                    line-height: 2rem;
+                    font-size: 2rem;
+                }
             }
 
             #play-button {

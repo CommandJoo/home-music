@@ -5,8 +5,7 @@
 
     #page {
 
-        h1 {
-            grid-column: 1/-1;
+        #information {
         }
 
         #songs {

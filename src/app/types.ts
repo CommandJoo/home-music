@@ -43,11 +43,8 @@ export type Playlist = {
     id: string;
     cover: string;
     title: string;
+    description: string;
     content: string[];
-}
-
-export type Page = {
-    type: "downloads" | "library" | "artist" | "playlist" | "radio" | "settings" | "create_playlist";
 }
 
 export type Users = {

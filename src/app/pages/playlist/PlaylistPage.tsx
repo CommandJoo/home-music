@@ -63,7 +63,10 @@ export default function PlaylistPage() {
                         <div className={"img-wrapper"}>
                             <img src={playlist.cover} alt={""}/>
                         </div>}
-                    <h1>{playlist.title}</h1>
+                    <div id={"information"}>
+                        <h1>{playlist.title}</h1>
+                        <p>{playlist.description}</p>
+                    </div>
                     <button id={"play-button"} onClick={() => {
                         if (songs) {
                             player.play(songs[0]);
