@@ -25,7 +25,11 @@ The json file needs to look like this
 ```json
 {
   "port": 3300,
-  "youtube-api-key": "some-api-key"
+  "youtube-api-key": "some-api-key",
+  "recommendations": {
+    "time-limit": 14,
+    "min-entries": 100
+  }
 }
 ```
 

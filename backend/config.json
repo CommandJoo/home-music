@@ -1,4 +1,8 @@
 {
   "port": 3300,
-  "youtube-api-key": "AIzaSyDxDzQJs_mwmniBnWE-XslwoVJEsbU7qfg"
+  "youtube-api-key": "AIzaSyDxDzQJs_mwmniBnWE-XslwoVJEsbU7qfg",
+  "recommendations": {
+    "time-limit": 21,
+    "min-entries": 100
+  }
 }
