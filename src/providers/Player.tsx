@@ -114,11 +114,24 @@ export function usePlayer(onPlay?: (song: Playable) => void) {
     }, [onPlay]);
 
     const play = useCallback((song?: Playable) => {
-        if (onPlayRef.current && song) onPlayRef.current(song);
+        if (song) {
+            onPlayRef.current?.(song);
+            if (song.kind === "playlist" && song.content[0]) onPlayRef.current?.(song.content[0]);
+            if (song.kind === "artist" && song.songs[0]) onPlayRef.current?.(song.songs[0]);
+        }
         dispatch({type: "play", song});
     }, []);
-    const back = useCallback(() => dispatch({type: "back"}), []);
-    const forward = useCallback(() => dispatch({type: "forward"}), []);
+    const back = useCallback(() => {
+        const prev = state.history[state.history.length - 1];
+        if (prev) onPlayRef.current?.(prev);
+        dispatch({type: "back"});
+    }, [state.history]);
+
+    const forward = useCallback(() => {
+        const next = state.queue[0];
+        if (next) onPlayRef.current?.(next);
+        dispatch({type: "forward"});
+    }, [state.queue]);
     const addQueue = useCallback((songs: Playable | Playable[]) => dispatch({type: "addQueue", songs}), []);
     const interact = useCallback(() => dispatch({type: "interact"}), []);
 

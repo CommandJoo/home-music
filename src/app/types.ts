@@ -97,4 +97,4 @@ export type LoadedPins = {
     artists: Artist[];
 }
 
-export type LoadedPlays = (Radio | Song | Playlist | Artist)[];
+export type LoadedPlays = (Radio | Song | Playlist | FullArtist)[];

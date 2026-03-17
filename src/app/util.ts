@@ -93,7 +93,7 @@ export async function loadPlays(currentUser: User, plays: {
                 const artistResponse = await fetch("/api/artists");
                 const a = (await artistResponse.json() as Artist[]).find((a) => a.id === play.id);
                 if (a) {
-                    loaded.push(a);
+                    loaded.push(await searchArtist(a.id));
                 }
                 break;
             }
