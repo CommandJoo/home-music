@@ -1,4 +1,15 @@
-import type {Artist, LoadedPins, Playlist, Song, User} from "./types.ts";
+import type {
+    Artist,
+    LoadedPins,
+    LoadedPlays,
+    Playlist,
+    Radio,
+    RawArtist,
+    RawRadio,
+    RawSong,
+    Song,
+    User
+} from "./types.ts";
 
 export function stringToColor(str: string): string {
     let hash = 0;
@@ -45,19 +56,52 @@ export async function loadPins(currentUser: User, db: Song[]) {
     }
 }
 
-export async function loadPlaylist(playlist: Playlist) {
-    const loaded: Song[] = [];
-    for (const url of playlist.content) {
-        const response = await fetch(url);
-        const data = await response.json() as Song;
-        loaded.push({...data, kind: "song"});
-    }
-    return loaded;
-}
+export async function loadPlays(currentUser: User, plays: {
+    type: "radio" | "song" | "playlist" | "artist";
+    id: string;
+    artist?: string;
+    time_stamp: number
+}[], db: Song[]): Promise<LoadedPlays> {
+    const loaded = [] as LoadedPlays;
 
-export async function searchPaylist(currentUser: User, id: string) {
-    const response = await fetch(`/api/users/${currentUser.id}/playlists/${id}`);
-    return await response.json() as Playlist;
+    for (const play of plays) {
+        switch (play.type) {
+            case "radio": {
+                const r = currentUser.radio.find((r) => r.uuid === play.id);
+                if (r) {
+                    loaded.push({...r, kind: "radio"});
+                }
+                break;
+            }
+            case "song": {
+                const s = db.find((s) => s.uuid === play.id && s.artist.id === play.artist);
+                if (s) {
+                    loaded.push(s);
+                }
+                break;
+            }
+            case "playlist": {
+                const p = currentUser.playlists.find((p) => p.id === play.id);
+                if (p) {
+                    loaded.push(p);
+                }
+                break;
+            }
+            case "artist": {
+                const artistResponse = await fetch("/api/artists");
+                const a = (await artistResponse.json() as Artist[]).find((a) => a.id === play.id);
+                if (a) {
+                    loaded.push(a);
+                }
+                break;
+            }
+            default:
+                throw Error(`Unknown type for plays ${play.type}`);
+                break;
+        }
+    }
+
+    return loaded;
 }
 
 export async function searchArtist(id: string) {
@@ -85,4 +129,39 @@ export async function createPlaylist(currentUser: User, name: string, descriptio
         method: "POST",
         body: formData,
     }).then((r) => console.log(r));
+}
+
+
+export async function loadPlaylist(playlist: {
+    id: string;
+    cover: string;
+    title: string;
+    description: string;
+    content: string[]
+}) {
+    const loaded: Song[] = [];
+    for (const url of playlist.content) {
+        const response = await fetch(url);
+        const data = await response.json() as RawSong;
+        loaded.push(loadSong(data));
+    }
+    return {
+        id: playlist.id,
+        cover: playlist.cover,
+        title: playlist.title,
+        description: playlist.description,
+        content: loaded
+    } as Playlist;
+}
+
+export function loadSong(song: RawSong) {
+    return {...song, kind: "song"} as Song;
+}
+
+export function loadRadio(radio: RawRadio) {
+    return {...radio, kind: "radio"} as Radio;
+}
+
+export function loadArtist(artist: RawArtist) {
+    return {...artist, kind: "artist"} as Artist;
 }

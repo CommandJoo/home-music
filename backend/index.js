@@ -41,6 +41,9 @@ const port = config["port"] || 3300;
 search(app, config, musicDir);
 music(app, config, musicDir);
 users(app, config, userDir, musicDir);
+app.get("/api/config", (req, res) => {
+    res.sendFile(path.resolve("config.json"));
+});
 
 const defaultColor = {r: 220, g: 100, b: 0};
 const color = (rgb) => {

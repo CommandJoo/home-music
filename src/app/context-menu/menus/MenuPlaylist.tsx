@@ -3,8 +3,8 @@ import ContextMenuButton from "../ContextMenuButton.tsx";
 import {useMusic} from "../../../providers/MusicProvider.tsx";
 import {useContextMenu} from "../../../providers/ContextMenuProvider.tsx";
 import {useEffect, useState} from "react";
-import type {Playlist, Song} from "../../types.ts";
-import {loadPlaylist, pin, unpin} from "../../util.ts";
+import type {Playlist} from "../../types.ts";
+import {pin, unpin} from "../../util.ts";
 
 type MenuPlaylistEntryProps = {
     playlist: Playlist;
@@ -12,17 +12,11 @@ type MenuPlaylistEntryProps = {
 
 export default function MenuPlaylist(props: MenuPlaylistEntryProps) {
     const {close} = useContextMenu();
-    const [songs, setSongs] = useState<Song[]>([]);
     const {player, currentUser, pins, refreshUsers} = useMusic();
     const [pinned, setPinned] = useState(false)
 
 
     useEffect(() => {
-        if (!props.playlist) return;
-        loadPlaylist(props.playlist).then((loaded) => {
-            setSongs(loaded)
-        })
-
         async function load() {
             if (pins.playlists.some(p => p.id === props.playlist.id)) {
                 setPinned(true);
@@ -34,7 +28,7 @@ export default function MenuPlaylist(props: MenuPlaylistEntryProps) {
 
     return <>
         <ContextMenuButton icon={<TbPlaylist className={"icon"}/>} onClick={() => {
-            player.addQueue(songs);
+            player.addQueue(props.playlist.content);
         }}>
             Add to queue
         </ContextMenuButton>

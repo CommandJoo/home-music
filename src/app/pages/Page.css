@@ -35,6 +35,7 @@
 
         h1 {
             font-weight: 600;
+            grid-column: 1/-1;
         }
 
         #header {
@@ -79,6 +80,7 @@
                     line-height: 7rem;
                     font-size: 7rem;
                     margin-bottom: 2dvh;
+                    grid-column: 1/-1;
                 }
 
                 p {

@@ -1,33 +1,48 @@
-export type Artist = {
+export type WithKind<T, K extends string> = T & {
+    kind: K;
+}
+export type RawArtist = {
     id: string;
     name: string;
     picture: string;
     path: string;
 }
-
-export type Playable = {
+export type RawSong = {
+    artist: Artist;
+    metadata: {
+        duration: number;
+        isrc: string;
+    }
     uuid: string;
-    kind: string;
     title: string;
     url: {
         track: string;
         cover: string;
     }
 }
-
-export type Song = Playable & {
-    readonly kind: "song";
-    artist: Artist;
-    metadata: {
-        duration: number;
-        isrc: string;
+export type RawRadio = {
+    tags: string[];
+    uuid: string;
+    title: string;
+    url: {
+        track: string;
+        cover: string;
     }
 }
-
-export type Radio = Playable & {
-    readonly kind: "radio";
-    tags: string[];
+export type RawPlaylist = {
+    id: string;
+    cover: string;
+    title: string;
+    description: string;
+    content: Song[];
 }
+
+export type Song = WithKind<RawSong, "song">;
+export type Radio = WithKind<RawRadio, "radio">;
+export type Playlist = WithKind<RawPlaylist, "playlist">;
+export type Artist = WithKind<RawArtist, "artist">;
+
+export type Playable = Song | Radio | Playlist | Artist;
 
 export type Recording = {
     title: string;
@@ -37,14 +52,6 @@ export type Recording = {
         name: string;
         picture: string;
     }
-}
-
-export type Playlist = {
-    id: string;
-    cover: string;
-    title: string;
-    description: string;
-    content: string[];
 }
 
 export type Users = {
@@ -80,6 +87,4 @@ export type LoadedPins = {
     artists: Artist[];
 }
 
-export type Plays = {
-    plays: { type: string, id: string, artist?: string }[];
-}
+export type LoadedPlays = (Radio | Song | Playlist | Artist)[];

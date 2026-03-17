@@ -5,7 +5,6 @@ import {FaDownload, FaRadio} from "react-icons/fa6";
 import {BsFillCollectionFill} from "react-icons/bs";
 import UserSidebarEntry from "./sidebar-entries/UserSidebarEntry.tsx";
 import {useMusic} from "../../../providers/MusicProvider.tsx";
-import {loadPlaylist} from "../../util.ts";
 import Cover from "../general/Cover.tsx";
 import {useContextMenu} from "../../../providers/ContextMenuProvider.tsx";
 import MenuPlaylist from "../../context-menu/menus/MenuPlaylist.tsx";
@@ -38,6 +37,7 @@ export default function Sidebar() {
                 "--hue-a": stringToColor("home", 3),
                 "--hue-b": stringToColor("home", 4)
             } as CSSProperties} preview={<FaHome className={"icon"} size={"3vw"}/>} onClick={() => {
+                changePage("home");
             }}>
             </SidebarEntry>
             <SidebarEntry className={"generic"} style={{
@@ -69,12 +69,9 @@ export default function Sidebar() {
                                              onContext={(e) => handleContextMenu(e, <MenuPlaylist playlist={p}/>)}
                                              onClick={() => {
                             async function load() {
-                                const loaded = await loadPlaylist(p);
-                                console.log(p)
-                                player.play(loaded[0]);
-                                player.addQueue(loaded.slice(1, loaded.length))
+                                player.play(p.content[0]);
+                                player.addQueue(p.content.slice(1, p.content.length))
                             }
-
                             load();
                         }} preview={p.cover.length > 0 ? <img src={p.cover} alt={p.title}/> : <h3>{p.title}</h3>}>
                         </SidebarEntry>

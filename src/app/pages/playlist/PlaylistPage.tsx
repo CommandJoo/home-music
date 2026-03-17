@@ -5,40 +5,28 @@ import {useEffect, useState} from "react";
 import {useSearchParams} from "react-router";
 import {useMusic} from "../../../providers/MusicProvider.tsx";
 import {TbPlayerPlayFilled} from "react-icons/tb";
-import type {Playlist, Song} from "../../types.ts";
-import {loadPlaylist, searchPaylist} from "../../util.ts";
+import type {Playlist} from "../../types.ts";
 
 export default function PlaylistPage() {
     const {player} = useMusic();
     const [searchParams] = useSearchParams();
     const {currentUser} = useMusic();
     const [playlist, setPlaylist] = useState<Playlist>();
-    const [songs, setSongs] = useState<Song[]>()
     const [search, setSearch] = useState("");
 
     useEffect(() => {
         async function load() {
             const id = searchParams.get("id");
-            if (id && currentUser) {
-                setPlaylist(await searchPaylist(currentUser, id));
+            if (id && currentUser && currentUser.playlists.some((p) => p.id === id)) {
+                setPlaylist(currentUser.playlists.find((p) => p.id === id));
             }
         }
 
         load();
     }, [searchParams, currentUser]);
 
-    useEffect(() => {
-        async function load() {
-            if (playlist) {
-                setSongs(await loadPlaylist(playlist));
-            }
-        }
-
-        load();
-    }, [playlist]);
-
     function display() {
-        return songs ? songs.filter(song => matches(song.title)).map(song => {
+        return playlist ? playlist.content.filter(song => matches(song.title)).map(song => {
             return <SongEntry song={song}/>
         }) : "";
     }
@@ -68,9 +56,9 @@ export default function PlaylistPage() {
                         <p>{playlist.description}</p>
                     </div>
                     <button id={"play-button"} onClick={() => {
-                        if (songs) {
-                            player.play(songs[0]);
-                            player.addQueue(songs.slice(1, songs.length));
+                        if (playlist) {
+                            player.play(playlist.content[0]);
+                            player.addQueue(playlist.content.slice(1, playlist.content.length));
                         }
                     }}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>
                 </div>

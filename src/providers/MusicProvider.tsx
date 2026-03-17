@@ -1,8 +1,8 @@
-import type {LoadedPins, Playable, Plays, Song, User, Users} from "../app/types.ts";
+import type {LoadedPins, LoadedPlays, Playable, RawArtist, RawRadio, Song, User, Users} from "../app/types.ts";
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {type PlayerType, usePlayer} from "./Player.tsx";
 import {useNavigate} from "react-router-dom";
-import {loadPins} from "../app/util.ts";
+import {loadArtist, loadPins, loadPlaylist, loadPlays, loadRadio, loadSong} from "../app/util.ts";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useNowPlaying(streamUrl?: string) {
@@ -25,17 +25,17 @@ export function useNowPlaying(streamUrl?: string) {
 type MusicContextType = {
     db: Song[];
     reloadSongs: () => void;
-    changePage: (page: "downloads" | "library" | "artist" | "playlist" | "radio" | "settings" | "create_playlist", id?: string) => Promise<void>;
+    changePage: (page: "downloads" | "home" | "library" | "artist" | "playlist" | "radio" | "settings" | "create_playlist", id?: string) => void;
 
     player: PlayerType;
 
     users: Users;
     refreshUsers: () => Promise<void>;
     currentUser?: User;
-    changeUser: (user: string | null) => Promise<void>;
+    changeUser: (user: string | null) => void;
 
     pins: LoadedPins;
-    plays: Plays;
+    plays: LoadedPlays;
 }
 
 const MusicContext = createContext<MusicContextType | null>(null);
@@ -46,27 +46,39 @@ export function MusicProvider({children}: { children: ReactNode }) {
     const [users, setUsers] = useState<Users>({current_user: "", users: []});
     const [currentUser, setCurrentUser] = useState<User>();
     const [pins, setPins] = useState<LoadedPins>({radios: [], playlists: [], artists: [], songs: []});
-    const [plays, setPlays] = useState<Plays>({plays: []});
+    const [plays, setPlays] = useState<LoadedPlays>([]);
 
     const handlePlay = useCallback((song: Playable) => {
         if (!currentUser) return;
-
-        fetch(`/api/users/${currentUser.id}/plays?category=${song.kind}&id=${song.uuid}${song.kind === "song" ? "&artist=" + (song as Song).artist.id : ""}`, {
-            method: "POST",
-        }).catch(console.error);
+        if (song.kind === "song" || song.kind === "radio") {
+            fetch(`/api/users/${currentUser.id}/plays?category=${song.kind}&id=${song.uuid}${song.kind === "song" ? "&artist=" + (song as Song).artist.id : ""}`, {
+                method: "POST",
+            }).catch(console.error);
+        }
     }, [currentUser]);
-
     const player = usePlayer(handlePlay);
 
     const reloadSongs = useCallback(async () => {
         const response = await fetch("/api/songs");
-        const json = await response.json() as Song[];
+        const json = await response.json() as {
+            artist: RawArtist;
+            metadata: {
+                duration: number;
+                isrc: string;
+            }
+            uuid: string;
+            title: string;
+            url: {
+                track: string;
+                cover: string;
+            }
+        }[];
         setDb(json.map((s) => {
-            return {...s, kind: "song"} as Song;
+            return loadSong({...s, artist: loadArtist(s.artist)});
         }));
     }, []);
-    const changePage = useCallback(async (page: string, id?: string) => {
-        if (page == "downloads" || page == "library" || page == "radio" || page == "create_playlist") {
+    const changePage = useCallback((page: string, id?: string) => {
+        if (page == "downloads" || page == "library" || page == "radio" || page == "create_playlist" || page === "home") {
             navigate(`/${page}`);
         } else if (page == "artist") {
             if (!id) {
@@ -99,21 +111,29 @@ export function MusicProvider({children}: { children: ReactNode }) {
             for (const user of data.users) {
                 if (user.id === currentId) {
                     {
-                        const currentResponse = await fetch(`/api/users/${currentId}/plays`);
-                        const currentData = await currentResponse.json() as Plays;
-                        setPlays(currentData);
-                    }
-                    {
                         const currentResponse = await fetch(user.path);
                         const currentData = await currentResponse.json();
+
+                        const playlists = await Promise.all(
+                            (currentData.playlists as {
+                                id: string;
+                                cover: string;
+                                title: string;
+                                description: string;
+                                content: string[];
+                            }[]).map((p) => loadPlaylist(p))
+                        );
+                        const radios = (currentData.radio as RawRadio[]).map((r) => {
+                            return loadRadio(r);
+                        })
 
                         const rawNewUser = {
                             id: currentId,
                             name: currentData.name,
                             picture: currentData.picture,
                             volume: currentData.volume,
-                            playlists: currentData.playlists,
-                            radio: currentData.radio,
+                            playlists: playlists,
+                            radio: radios,
                             pins: currentData.pins,
                         }
                         setCurrentUser(rawNewUser);
@@ -137,13 +157,28 @@ export function MusicProvider({children}: { children: ReactNode }) {
     const loadUnloadedPins = useCallback(async () => {
         if (currentUser) setPins(await loadPins(currentUser, db));
     }, [currentUser, db]);
+    const loadUnloadedPlays = useCallback(async () => {
+        if (currentUser) {
+            const currentResponse = await fetch(`/api/users/${currentUser.id}/plays`);
+            const currentData = await currentResponse.json() as {
+                plays: {
+                    type: "radio" | "song" | "playlist" | "artist";
+                    id: string;
+                    artist?: string;
+                    time_stamp: number
+                }[]
+            };
+            setPlays(await loadPlays(currentUser, currentData.plays, db));
+        }
+    }, [currentUser, db]);
 
     useEffect(() => {
         if (currentUser && db.length > 0) {
             // eslint-disable-next-line react-hooks/exhaustive-deps
             loadUnloadedPins();
+            loadUnloadedPlays();
         }
-    }, [currentUser, db, loadUnloadedPins]);
+    }, [currentUser, db, loadUnloadedPins, loadUnloadedPlays]);
 
     return <MusicContext.Provider
         value={useMemo(() => ({

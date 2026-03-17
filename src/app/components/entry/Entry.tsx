@@ -3,14 +3,13 @@ import {useMusic} from "../../../providers/MusicProvider.tsx";
 import type {Playlist, Radio, Song} from "../../types.ts";
 import {TbPlayerPlayFilled} from "react-icons/tb";
 import {FaRadio} from "react-icons/fa6";
-import {type CSSProperties, useEffect, useState} from "react";
+import {type CSSProperties} from "react";
 import {useContextMenu} from "../../../providers/ContextMenuProvider.tsx";
 import Cover from "../general/Cover.tsx";
 import MenuPlaylist from "../../context-menu/menus/MenuPlaylist.tsx";
 import MenuRadio from "../../context-menu/menus/MenuRadio.tsx";
 import MenuSong from "../../context-menu/menus/MenuSong.tsx";
 import LinkArtist from "../links/LinkArtist.tsx";
-import {loadPlaylist} from "../../util.ts";
 
 type SongEntryProps = {
     song: Song;
@@ -43,18 +42,9 @@ export function RadioEntry({radio}: RadioEntryProps) {
 
 export function PlaylistEntry(props: PlaylistEntryProps) {
     const {handleContextMenu} = useContextMenu();
-    const [songs, setSongs] = useState<Song[]>([]);
     const {player, changePage} = useMusic();
 
     const showEntries = 4;
-
-    useEffect(() => {
-        async function load() {
-            setSongs(await loadPlaylist(props.playlist));
-        }
-
-        load();
-    }, [props.playlist]);
 
     return <div id={"playlist-entry"} className={"playlist entry"} key={props.playlist.id} onClick={() => {
         changePage("playlist", props.playlist.id);
@@ -62,15 +52,14 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
         <div id={"cover-wrapper"}>
             <Cover url={props.playlist.cover} alt={props.playlist.title}></Cover>
             <div id={"overlay"}></div>
-            {props.playlist.content.length > 0 && <button id={"play-button"} onClick={(e) => {
+            {props.playlist.content && props.playlist.content.length > 0 && <button id={"play-button"} onClick={(e) => {
                 e.stopPropagation();
-                console.log(songs);
-                player.play(songs[0]);
-                player.addQueue(songs.slice(1, songs.length));
+                player.play(props.playlist.content[0]);
+                player.addQueue(props.playlist.content.slice(1, props.playlist.content.length));
             }}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>}
         </div>
         <h1>{props.playlist.title}</h1>
-        {songs.slice(0, showEntries).map((song: Song, i) => {
+        {props.playlist.content.slice(0, showEntries).map((song: Song, i) => {
             return <h2 key={i} style={{"--i": (showEntries - i) / (showEntries)} as CSSProperties}>{song.title}</h2>
         })}
     </div>

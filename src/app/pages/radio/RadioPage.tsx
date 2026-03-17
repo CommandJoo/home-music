@@ -1,28 +1,18 @@
 import "./RadioPage.css"
 import "../Page.css"
 import {useMusic} from "../../../providers/MusicProvider.tsx";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {RadioEntry} from "../../components/entry/Entry.tsx";
 import type {Radio} from "../../types.ts";
 import RadioSearchbar from "../../components/searchbar/RadioSearchbar.tsx";
 
 export default function RadioPage() {
     const {currentUser} = useMusic();
-    const [radio, setRadio] = useState<Radio[]>([]);
     const [searching, setSearching] = useState<boolean>(false);
 
-    useEffect(() => {
-        function load() {
-            if(currentUser) setRadio(currentUser.radio.map(radio => {
-                return {...radio, kind:"radio"};
-            }));
-        }
-
-        load();
-    }, [currentUser]);
 
     function display() {
-        return radio.map((radio: Radio, i) => {
+        return currentUser && currentUser.radio.map((radio: Radio, i) => {
             return <RadioEntry key={i} radio={radio}/>
         })
     }

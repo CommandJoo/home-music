@@ -13,6 +13,7 @@ import PlaylistPage from "./app/pages/playlist/PlaylistPage.tsx";
 import SettingsPage from "./app/pages/settings/SettingsPage.tsx";
 import {StylingProvider, useStyling} from "./providers/StylingProvider.tsx";
 import PlaylistCreationPage from "./app/pages/create_playlist/PlaylistCreationPage.tsx";
+import HomePage from "./app/pages/homepage/HomePage.tsx";
 
 function Basis() {
     return <StylingProvider>
@@ -58,7 +59,8 @@ function App() {
                 <div id={"right"}>
                     <div id={"page-top"}>
                         <Routes>
-                            <Route path={"/"} element={<Navigate to={"/radio"} replace/>}/>
+                            <Route path={"/"} element={<Navigate to={"/home"} replace/>}/>
+                            <Route path={"/home"} element={<HomePage/>}/>
                             <Route path={"/library"} element={<LibraryPage/>}/>
                             <Route path={"/artist"} element={<ArtistPage/>}/>
                             <Route path={"/radio"} element={<RadioPage/>}/>
