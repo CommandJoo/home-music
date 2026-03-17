@@ -1,10 +1,12 @@
 import type {
     Artist,
+    FullArtist,
     LoadedPins,
     LoadedPlays,
     Playlist,
     Radio,
     RawArtist,
+    RawFullArtist,
     RawRadio,
     RawSong,
     Song,
@@ -106,7 +108,8 @@ export async function loadPlays(currentUser: User, plays: {
 
 export async function searchArtist(id: string) {
     const response = await fetch(`/api/songs/${id}`);
-    return await response.json() as { data: Artist, songs: Song[] };
+    const data = await response.json() as { data: RawArtist, songs: RawSong[] };
+    return loadArtist({...data.data, songs: data.songs.map((s) => loadSong(s))}) as FullArtist;
 }
 
 export async function createUser(name: string, image: File | null) {
@@ -163,6 +166,8 @@ export function loadRadio(radio: RawRadio) {
     return {...radio, kind: "radio"} as Radio;
 }
 
-export function loadArtist(artist: RawArtist) {
-    return {...artist, kind: "artist"} as Artist;
+export function loadArtist(artist: RawFullArtist): FullArtist;
+export function loadArtist(artist: RawArtist): Artist;
+export function loadArtist(artist: RawArtist | RawFullArtist): Artist | FullArtist {
+    return {...artist, kind: "artist"};
 }

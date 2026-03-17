@@ -10,6 +10,7 @@ import MenuPlaylist from "../../context-menu/menus/MenuPlaylist.tsx";
 import MenuRadio from "../../context-menu/menus/MenuRadio.tsx";
 import MenuSong from "../../context-menu/menus/MenuSong.tsx";
 import LinkArtist from "../links/LinkArtist.tsx";
+import {loadArtist} from "../../util.ts";
 
 type SongEntryProps = {
     song: Song;
@@ -54,8 +55,7 @@ export function PlaylistEntry(props: PlaylistEntryProps) {
             <div id={"overlay"}></div>
             {props.playlist.content && props.playlist.content.length > 0 && <button id={"play-button"} onClick={(e) => {
                 e.stopPropagation();
-                player.play(props.playlist.content[0]);
-                player.addQueue(props.playlist.content.slice(1, props.playlist.content.length));
+                player.play(props.playlist);
             }}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>}
         </div>
         <h1>{props.playlist.title}</h1>
@@ -81,7 +81,7 @@ export function SongEntry({song}: SongEntryProps) {
         <h2>{song.title}</h2>
         <div id={"artist"}>
             <img src={song.artist.picture} alt={song.artist.name}/>
-            <LinkArtist artist={song.artist}/>
+            <LinkArtist artist={loadArtist(song.artist)}/>
         </div>
     </div>;
 }

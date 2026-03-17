@@ -10,6 +10,7 @@ import {
 import {useMusic, useNowPlaying} from "../../../providers/MusicProvider.tsx";
 import Cover from "../general/Cover.tsx";
 import LinkArtist from "../links/LinkArtist.tsx";
+import {loadArtist} from "../../util.ts";
 
 function toMinutes(seconds: number): string {
     let hours = 0;
@@ -274,7 +275,7 @@ export default function Audio() {
             </div>
             <div id={"info"}>
                 <h3>{player.playing ? (player.isSong() ? player.asSong().title : (nowPlaying ? nowPlaying : player.playing?.title)) : ""}</h3>
-                {player.playing && player.isSong() ? <LinkArtist artist={player.asSong().artist}/> :
+                {player.playing && player.isSong() ? <LinkArtist artist={loadArtist(player.asSong().artist)}/> :
                     <div className={"info-artist"}>{player.asRadio()?.title}</div>}
             </div>
         </div>

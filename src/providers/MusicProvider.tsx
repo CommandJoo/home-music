@@ -50,8 +50,20 @@ export function MusicProvider({children}: { children: ReactNode }) {
 
     const handlePlay = useCallback((song: Playable) => {
         if (!currentUser) return;
-        if (song.kind === "song" || song.kind === "radio") {
-            fetch(`/api/users/${currentUser.id}/plays?category=${song.kind}&id=${song.uuid}${song.kind === "song" ? "&artist=" + (song as Song).artist.id : ""}`, {
+        if (song.kind === "song") {
+            fetch(`/api/users/${currentUser.id}/plays?category=song&id=${song.uuid}&artist=${song.artist.id}`, {
+                method: "POST",
+            }).catch(console.error);
+        } else if (song.kind === "radio") {
+            fetch(`/api/users/${currentUser.id}/plays?category=radio&id=${song.uuid}`, {
+                method: "POST",
+            }).catch(console.error);
+        } else if (song.kind === "playlist") {
+            fetch(`/api/users/${currentUser.id}/plays?category=playlist&id=${song.id}`, {
+                method: "POST",
+            }).catch(console.error);
+        } else if (song.kind === "artist") {
+            fetch(`/api/users/${currentUser.id}/plays?category=artist&id=${song.id}`, {
                 method: "POST",
             }).catch(console.error);
         }

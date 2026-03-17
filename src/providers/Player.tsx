@@ -1,5 +1,5 @@
 import type {Playable, Radio, Song} from "../app/types.ts";
-import {useCallback, useEffect, useMemo, useReducer} from "react";
+import {useCallback, useEffect, useMemo, useReducer, useRef} from "react";
 
 export type PlayerType = {
     play: (song?: Playable) => void,
@@ -8,8 +8,8 @@ export type PlayerType = {
     addQueue: (songs: Playable | Playable[]) => void,
 
     playing?: Song | Radio,
-    queue: Song | Radio[],
-    history: Song | Radio[],
+    queue: (Song | Radio)[],
+    history: (Song | Radio)[],
 
     isSong: () => boolean,
     isRadio: () => boolean,
@@ -50,18 +50,14 @@ function playerReducer(state: PlayerState, action: PlayerAction): PlayerState {
                 if (!first) return state;
                 toPlay = first;
                 toQueue = rest;
-            }
-                // else if (action.song.kind === "artist") {
-                // const [first, ...rest] = action.song.songs; // whatever your Artist songs field is
-                // if (!first) return state;
-                // toPlay = first;
-                // toQueue = rest;
-            // }
-            else {
+            } else if (action.song.kind === "artist") {
+                const [first, ...rest] = action.song.songs;
+                if (!first) return state;
+                toPlay = first;
+                toQueue = rest;
+            } else {
                 return state;
             }
-
-            console.log("Hey")
 
             return {
                 ...state,
@@ -105,6 +101,7 @@ function playerReducer(state: PlayerState, action: PlayerAction): PlayerState {
 }
 
 export function usePlayer(onPlay?: (song: Playable) => void) {
+    const onPlayRef = useRef(onPlay);
     const [state, dispatch] = useReducer(playerReducer, {
         playing: undefined,
         history: [],
@@ -113,10 +110,13 @@ export function usePlayer(onPlay?: (song: Playable) => void) {
     });
 
     useEffect(() => {
-        if (state.playing) onPlay?.(state.playing);
-    }, [onPlay, state.playing]);
+        onPlayRef.current = onPlay;
+    }, [onPlay]);
 
-    const play = useCallback((song?: Playable) => dispatch({type: "play", song}), []);
+    const play = useCallback((song?: Playable) => {
+        if (onPlayRef.current && song) onPlayRef.current(song);
+        dispatch({type: "play", song});
+    }, []);
     const back = useCallback(() => dispatch({type: "back"}), []);
     const forward = useCallback(() => dispatch({type: "forward"}), []);
     const addQueue = useCallback((songs: Playable | Playable[]) => dispatch({type: "addQueue", songs}), []);
