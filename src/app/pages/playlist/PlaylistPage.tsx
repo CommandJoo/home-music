@@ -57,8 +57,7 @@ export default function PlaylistPage() {
                     </div>
                     <button id={"play-button"} onClick={() => {
                         if (playlist) {
-                            player.play(playlist.content[0]);
-                            player.addQueue(playlist.content.slice(1, playlist.content.length));
+                            player.play(playlist);
                         }
                     }}><TbPlayerPlayFilled size={"3.5vh"} className={"icon"}/></button>
                 </div>

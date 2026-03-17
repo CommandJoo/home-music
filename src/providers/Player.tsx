@@ -7,9 +7,9 @@ export type PlayerType = {
     forward: () => void,
     addQueue: (songs: Playable | Playable[]) => void,
 
-    playing?: Playable,
-    queue: Song[],
-    history: Playable[],
+    playing?: Song | Radio,
+    queue: Song | Radio[],
+    history: Song | Radio[],
 
     isSong: () => boolean,
     isRadio: () => boolean,
@@ -36,13 +36,41 @@ type PlayerAction =
 
 function playerReducer(state: PlayerState, action: PlayerAction): PlayerState {
     switch (action.type) {
-        case "play":
+        case "play": {
+            if (!action.song) return {...state, playing: undefined, hasInteracted: state.hasInteracted};
+
+            let toPlay: Song | Radio;
+            let toQueue: (Song | Radio)[];
+
+            if (action.song.kind === "song" || action.song.kind === "radio") {
+                toPlay = action.song;
+                toQueue = [];
+            } else if (action.song.kind === "playlist") {
+                const [first, ...rest] = action.song.content;
+                if (!first) return state;
+                toPlay = first;
+                toQueue = rest;
+            }
+                // else if (action.song.kind === "artist") {
+                // const [first, ...rest] = action.song.songs; // whatever your Artist songs field is
+                // if (!first) return state;
+                // toPlay = first;
+                // toQueue = rest;
+            // }
+            else {
+                return state;
+            }
+
+            console.log("Hey")
+
             return {
                 ...state,
-                playing: action.song,
+                playing: toPlay,
+                queue: toQueue,
                 history: state.playing ? [...state.history, state.playing] : state.history,
-                hasInteracted: action.song ? true : state.hasInteracted,
+                hasInteracted: true,
             };
+        }
         case "back": {
             if (state.history.length === 0) return state;
             const history = [...state.history];

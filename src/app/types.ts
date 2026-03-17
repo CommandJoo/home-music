@@ -1,14 +1,13 @@
 export type WithKind<T, K extends string> = T & {
     kind: K;
 }
-export type RawArtist = {
-    id: string;
-    name: string;
-    picture: string;
-    path: string;
-}
 export type RawSong = {
-    artist: Artist;
+    artist: {
+        id: string;
+        name: string;
+        picture: string;
+        path: string;
+    };
     metadata: {
         duration: number;
         isrc: string;
@@ -29,6 +28,16 @@ export type RawRadio = {
         cover: string;
     }
 }
+export type RawArtist = {
+    id: string;
+    name: string;
+    picture: string;
+    path: string;
+}
+export type RawFullArtist = RawArtist & {
+    songs: Song[];
+}
+
 export type RawPlaylist = {
     id: string;
     cover: string;
@@ -41,8 +50,9 @@ export type Song = WithKind<RawSong, "song">;
 export type Radio = WithKind<RawRadio, "radio">;
 export type Playlist = WithKind<RawPlaylist, "playlist">;
 export type Artist = WithKind<RawArtist, "artist">;
+export type FullArtist = WithKind<RawFullArtist, "artist">;
 
-export type Playable = Song | Radio | Playlist | Artist;
+export type Playable = Song | Radio | Playlist | FullArtist;
 
 export type Recording = {
     title: string;

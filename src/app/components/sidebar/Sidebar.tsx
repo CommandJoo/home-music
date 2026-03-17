@@ -69,8 +69,7 @@ export default function Sidebar() {
                                              onContext={(e) => handleContextMenu(e, <MenuPlaylist playlist={p}/>)}
                                              onClick={() => {
                             async function load() {
-                                player.play(p.content[0]);
-                                player.addQueue(p.content.slice(1, p.content.length))
+                                player.play(p);
                             }
                             load();
                         }} preview={p.cover.length > 0 ? <img src={p.cover} alt={p.title}/> : <h3>{p.title}</h3>}>

@@ -146,6 +146,7 @@ export async function loadPlaylist(playlist: {
         loaded.push(loadSong(data));
     }
     return {
+        kind: "playlist",
         id: playlist.id,
         cover: playlist.cover,
         title: playlist.title,

@@ -1,8 +1,8 @@
-import type {LoadedPins, LoadedPlays, Playable, RawArtist, RawRadio, Song, User, Users} from "../app/types.ts";
+import type {LoadedPins, LoadedPlays, Playable, RawRadio, RawSong, Song, User, Users} from "../app/types.ts";
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {type PlayerType, usePlayer} from "./Player.tsx";
 import {useNavigate} from "react-router-dom";
-import {loadArtist, loadPins, loadPlaylist, loadPlays, loadRadio, loadSong} from "../app/util.ts";
+import {loadPins, loadPlaylist, loadPlays, loadRadio, loadSong} from "../app/util.ts";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useNowPlaying(streamUrl?: string) {
@@ -60,22 +60,11 @@ export function MusicProvider({children}: { children: ReactNode }) {
 
     const reloadSongs = useCallback(async () => {
         const response = await fetch("/api/songs");
-        const json = await response.json() as {
-            artist: RawArtist;
-            metadata: {
-                duration: number;
-                isrc: string;
-            }
-            uuid: string;
-            title: string;
-            url: {
-                track: string;
-                cover: string;
-            }
-        }[];
+        const json = await response.json() as RawSong[];
         setDb(json.map((s) => {
-            return loadSong({...s, artist: loadArtist(s.artist)});
-        }));
+            return loadSong(s);
+        }))
+        ;
     }, []);
     const changePage = useCallback((page: string, id?: string) => {
         if (page == "downloads" || page == "library" || page == "radio" || page == "create_playlist" || page === "home") {
